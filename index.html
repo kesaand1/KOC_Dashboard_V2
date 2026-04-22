@@ -423,6 +423,51 @@ tr:hover td { background:var(--bg3); }
 }
 @keyframes spin { to { transform:rotate(360deg); } }
 
+
+/* ── Time filter bar ── */
+.filter-bar {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  margin-bottom:1.25rem;
+}
+.filter-group { display:flex; gap:4px; background:var(--bg3); border-radius:var(--radius); padding:4px; }
+.filter-btn {
+  padding:6px 14px; border:none; border-radius:8px;
+  font-size:12px; font-weight:600; font-family:inherit;
+  cursor:pointer; transition:all 0.15s; color:var(--text2);
+  background:transparent;
+}
+.filter-btn.active { background:var(--blue); color:#fff; }
+.filter-btn:hover:not(.active) { color:var(--text); background:var(--bg4); }
+.filter-sep { width:1px; background:var(--border); margin:4px 2px; }
+.date-range {
+  display:flex; align-items:center; gap:6px;
+  background:var(--bg3); border-radius:var(--radius); padding:6px 12px;
+  font-size:12px; color:var(--text2);
+}
+.date-range input[type="date"] {
+  background:var(--bg4); border:1px solid var(--border2);
+  border-radius:6px; padding:4px 8px; color:var(--text);
+  font-size:12px; font-family:inherit; outline:none;
+  cursor:pointer;
+}
+.date-range input[type="date"]:focus { border-color:var(--blue); }
+.chart-loading {
+  display:none; position:absolute; inset:0;
+  align-items:center; justify-content:center;
+  background:rgba(15,17,23,0.7); border-radius:var(--radius);
+  font-size:13px; color:var(--text2);
+}
+.chart-loading.show { display:flex; }
+.chart-wrap { position:relative; }
+.summary-row {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr));
+  gap:8px; margin-top:1rem; padding-top:1rem;
+  border-top:1px solid var(--border);
+}
+.summary-item { text-align:center; }
+.summary-val { font-family:'Sora',sans-serif; font-size:16px; font-weight:700; color:var(--text); }
+.summary-lbl { font-size:10px; color:var(--text2); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px; }
+
 /* ── KOC profile row ── */
 .koc-row { display:flex; align-items:center; gap:10px; }
 .koc-name { font-weight:600; font-size:13px; color:var(--text); }
@@ -595,13 +640,45 @@ tr:hover td { background:var(--bg3); }
       <div class="page" id="pportal-revenue">
         <div class="page-header">
           <div class="page-title">Doanh thu</div>
-          <div class="page-sub">Chi tiết hiệu suất doanh thu của bạn</div>
+          <div class="page-sub" id="revPageSub">Chi tiết hiệu suất doanh thu của bạn</div>
         </div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <button class="filter-btn active" onclick="setRevFilter('7d',this)">7 ngày</button>
+            <button class="filter-btn" onclick="setRevFilter('14d',this)">14 ngày</button>
+            <button class="filter-btn" onclick="setRevFilter('30d',this)">30 ngày</button>
+            <div class="filter-sep"></div>
+            <button class="filter-btn" onclick="setRevFilter('month',this)">Tháng này</button>
+            <button class="filter-btn" onclick="setRevFilter('6m',this)">6 tháng</button>
+          </div>
+          <div class="date-range">
+            <span>Từ</span>
+            <input type="date" id="revDateFrom" onchange="setRevFilter('custom',null)"/>
+            <span>đến</span>
+            <input type="date" id="revDateTo" onchange="setRevFilter('custom',null)"/>
+          </div>
+        </div>
+        <div class="metrics" id="portalRevMetrics" style="margin-bottom:1.25rem;"></div>
         <div class="card">
-          <div class="card-head"><span class="card-title">Biểu đồ doanh thu</span></div>
-          <div style="position:relative;height:260px;"><canvas id="portalChartRev2" role="img" aria-label="Doanh thu"></canvas></div>
+          <div class="card-head">
+            <span class="card-title" id="revChartTitle">Doanh thu theo ngày</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+                <span style="width:10px;height:3px;border-radius:2px;background:var(--blue);display:inline-block;"></span>Doanh thu
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+                <span style="width:10px;height:3px;border-radius:2px;background:var(--amber);display:inline-block;border-top:2px dashed var(--amber);"></span>TB ngày
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <div style="position:relative;height:280px;">
+              <canvas id="portalChartRev2" role="img" aria-label="Doanh thu theo ngày"></canvas>
+            </div>
+            <div class="chart-loading" id="revChartLoading"><span class="spinner" style="border-top-color:var(--blue);margin-right:8px;"></span>Đang tải...</div>
+          </div>
+          <div class="summary-row" id="revSummaryRow"></div>
         </div>
-        <div class="metrics" id="portalRevMetrics"></div>
       </div>
 
       <!-- Leads page -->
@@ -610,10 +687,32 @@ tr:hover td { background:var(--bg3); }
           <div class="page-title">Leads</div>
           <div class="page-sub">Theo dõi lead phát sinh và tỷ lệ chốt</div>
         </div>
-        <div class="metrics" id="portalLeadMetrics"></div>
-        <div class="card">
-          <div class="card-head"><span class="card-title">Phân tích lead</span></div>
-          <div style="position:relative;height:220px;"><canvas id="portalChartLead" role="img" aria-label="Lead phân tích"></canvas></div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <button class="filter-btn active" onclick="setLeadFilter('7d',this)">7 ngày</button>
+            <button class="filter-btn" onclick="setLeadFilter('14d',this)">14 ngày</button>
+            <button class="filter-btn" onclick="setLeadFilter('30d',this)">30 ngày</button>
+            <div class="filter-sep"></div>
+            <button class="filter-btn" onclick="setLeadFilter('month',this)">Tháng này</button>
+          </div>
+        </div>
+        <div class="metrics" id="portalLeadMetrics" style="margin-bottom:1.25rem;"></div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-head"><span class="card-title">Lead theo ngày</span></div>
+            <div class="chart-wrap">
+              <div style="position:relative;height:220px;">
+                <canvas id="portalChartLeadBar" role="img" aria-label="Lead theo ngày"></canvas>
+              </div>
+              <div class="chart-loading" id="leadChartLoading"><span class="spinner" style="border-top-color:var(--green);margin-right:8px;"></span>Đang tải...</div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-head"><span class="card-title">Phân bổ lead</span></div>
+            <div style="position:relative;height:220px;">
+              <canvas id="portalChartLead" role="img" aria-label="Phân bổ lead"></canvas>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -743,8 +842,10 @@ const aC = i => AC[Math.abs(i) % AC.length];
 const hashColor = s => aC(s.split('').reduce((a,c)=>a+c.charCodeAt(0),0));
 const PB = { Tiktok:'b-red', Instagram:'b-purple', Youtube:'b-red', Facebook:'b-blue' };
 
-let session = null, portalData = null;
-let chartRevInst = null, chartRev2Inst = null, chartLeadInst = null;
+let session = null, portalData = null, historyData = [];
+let chartRevInst = null, chartRev2Inst = null, chartLeadInst = null, chartLeadBarInst = null;
+let currentRevFilter = '7d', currentLeadFilter = '7d';
+let allDays = []; // tất cả dữ liệu ngày của KOC hiện tại
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -782,87 +883,248 @@ async function doLogin() {
 
 document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
+/* ── Helpers ── */
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+function daysAgoStr(n) {
+  const d = new Date(); d.setDate(d.getDate()-n);
+  return d.toISOString().slice(0,10);
+}
+function currentMonthStr() {
+  const now = new Date();
+  return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+}
+function filterDaysByRange(days, filter) {
+  const today = todayStr();
+  let from, to;
+  if (filter==='7d')    { from=daysAgoStr(6);  to=today; }
+  else if(filter==='14d') { from=daysAgoStr(13); to=today; }
+  else if(filter==='30d') { from=daysAgoStr(29); to=today; }
+  else if(filter==='month') {
+    const m = currentMonthStr();
+    from = m+'-01'; to = today;
+  } else if(filter==='6m') {
+    from = daysAgoStr(179); to = today;
+  } else if(filter==='custom') {
+    from = document.getElementById('revDateFrom').value;
+    to   = document.getElementById('revDateTo').value;
+    if(!from||!to) return days;
+  } else return days;
+  return days.filter(d => d.date >= from && d.date <= to);
+}
+
 /* ── Portal data ── */
 async function loadPortalData() {
-  let koc = null;
-  const r = await callApi({ action:'getKocData', username:session.username });
-  if (r && r.ok) koc = r.koc;
-  if (!koc) koc = { doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_chat_luong:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,history:[0,0,0,0,0,0] };
+  // Load tháng hiện tại + history song song
+  const [r1, r2] = await Promise.all([
+    callApi({ action:'getKocData', username:session.username }),
+    callApi({ action:'getKocHistory', username:session.username, months:6 })
+  ]);
+
+  let koc = r1 && r1.ok ? r1.koc : { doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_cl:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,days:[] };
   portalData = koc;
+  allDays = koc.days || [];
+  historyData = r2 && r2.ok ? r2.history : [];
 
   const color = hashColor(session.username);
   const initials = session.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
 
   ['portalSidebarAvatar','portalWelcomeAvatar'].forEach(id=>{
-    const el = document.getElementById(id);
-    el.textContent = initials; el.style.background = color;
+    const el=document.getElementById(id);
+    el.textContent=initials; el.style.background=color;
   });
   document.getElementById('portalSidebarName').textContent = session.full_name.split(' ').pop();
-  document.getElementById('portalWelcomeName').textContent = 'Xin chào, ' + session.full_name.split(' ').pop() + '!';
-  document.getElementById('portalWelcomeSub').textContent = `Tháng này bạn đạt ${koc.doanh_thu.toFixed(1)}tr doanh thu`;
+  document.getElementById('portalWelcomeName').textContent = 'Xin chào, '+session.full_name.split(' ').pop()+'!';
+  document.getElementById('portalWelcomeSub').textContent = `Tháng này đạt ${(+koc.doanh_thu).toFixed(1)}tr / mục tiêu ${koc.muc_tieu_rev}tr`;
   document.getElementById('portalPlatformBadge').textContent = session.platform || 'KOC';
 
-  const conv = koc.leads>0 ? (koc.lead_chot/koc.leads*100).toFixed(1) : '0.0';
+  const conv = koc.leads>0?(koc.lead_chot/koc.leads*100).toFixed(1):'0.0';
   document.getElementById('portalMetrics').innerHTML = `
-    <div class="metric"><div class="metric-accent" style="background:${color}"></div><div class="metric-label">Doanh thu</div><div class="metric-value">${koc.doanh_thu.toFixed(1)}tr</div><div class="metric-change change-up">↑ tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:${color}"></div><div class="metric-label">Doanh thu</div><div class="metric-value">${(+koc.doanh_thu).toFixed(1)}tr</div><div class="metric-change change-up">↑ tháng này</div></div>
     <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Đơn hàng</div><div class="metric-value">${koc.don_hang}</div><div class="metric-change change-neu">đơn</div></div>
     <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div><div class="metric-label">Lead phát sinh</div><div class="metric-value">${koc.leads}</div><div class="metric-change change-neu">Conv: ${conv}%</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div><div class="metric-label">Hoa hồng</div><div class="metric-value">${koc.hoa_hong.toFixed(1)}tr</div><div class="metric-change change-up">↑ tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div><div class="metric-label">Hoa hồng</div><div class="metric-value">${(+koc.hoa_hong).toFixed(1)}tr</div><div class="metric-change change-up">↑ tháng này</div></div>
   `;
 
-  const bar = p => p>=100?'#22c55e':p>=70?'#4f7cff':'#f59e0b';
-  const rp=Math.round(koc.doanh_thu/koc.muc_tieu_rev*100);
-  const lp=Math.round(koc.leads/koc.muc_tieu_lead*100);
-  const cp=Math.round(koc.lead_chot/koc.muc_tieu_lead*100);
-  document.getElementById('portalProgress').innerHTML = [
+  const bar = p=>p>=100?'#22c55e':p>=70?'#4f7cff':'#f59e0b';
+  const rp=Math.round(koc.doanh_thu/(koc.muc_tieu_rev||1)*100);
+  const lp=Math.round(koc.leads/(koc.muc_tieu_lead||1)*100);
+  const cp=Math.round(koc.lead_chot/(koc.muc_tieu_lead||1)*100);
+  document.getElementById('portalProgress').innerHTML=[
     {label:'Doanh thu',pct:rp},{label:'Lead phát sinh',pct:lp},{label:'Lead đã chốt',pct:cp}
   ].map(r=>`<div class="prog-item"><span class="prog-label">${r.label}</span><div class="prog-bg"><div class="prog-fill" style="width:${Math.min(r.pct,100)}%;background:${bar(r.pct)}"></div></div><span class="prog-pct">${r.pct}%</span></div>`).join('');
 
-  renderPortalCharts(koc, color);
-
-  document.getElementById('portalRevMetrics').innerHTML = `
-    <div class="metric"><div class="metric-accent" style="background:${color}"></div><div class="metric-label">Doanh thu tháng</div><div class="metric-value">${koc.doanh_thu.toFixed(1)}tr</div><div class="metric-change change-neu">Mục tiêu: ${koc.muc_tieu_rev}tr</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Đơn hàng</div><div class="metric-value">${koc.don_hang}</div><div class="metric-change change-neu">tháng này</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div><div class="metric-label">Hoa hồng</div><div class="metric-value">${koc.hoa_hong.toFixed(1)}tr</div><div class="metric-change change-neu">10% doanh thu</div></div>
-  `;
-  document.getElementById('portalLeadMetrics').innerHTML = `
-    <div class="metric"><div class="metric-accent" style="background:#4f7cff"></div><div class="metric-label">Tổng lead</div><div class="metric-value">${koc.leads}</div><div class="metric-change change-neu">Mục tiêu: ${koc.muc_tieu_lead}</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Lead chất lượng</div><div class="metric-value">${koc.lead_chat_luong}</div><div class="metric-change change-neu">${koc.leads>0?Math.round(koc.lead_chat_luong/koc.leads*100):0}% tổng lead</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div><div class="metric-label">Lead đã chốt</div><div class="metric-value">${koc.lead_chot}</div><div class="metric-change change-neu">Conv: ${conv}%</div></div>
-  `;
+  renderDashboardChart(color);
+  renderRevChart(currentRevFilter);
+  renderLeadChart(currentLeadFilter);
 }
 
-function renderPortalCharts(koc, color) {
-  const labels = ['T11','T12','T1','T2','T3','T4'];
-  const opts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-    scales:{ y:{ticks:{color:'#555b72',font:{size:11},callback:v=>v+'M'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+/* ── Dashboard chart (6 tháng) ── */
+function renderDashboardChart(color) {
+  const c = color || hashColor(session.username);
+  const labels = historyData.map(h=>{
+    const [y,m] = h.month.split('-');
+    return `T${parseInt(m)}/${y.slice(2)}`;
+  });
+  const data = historyData.map(h=>+h.doanh_thu);
+  const opts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(1)} tr`}}},
+    scales:{ y:{ticks:{color:'#555b72',font:{size:11},callback:v=>v+'tr'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
              x:{ticks:{color:'#555b72',font:{size:11}},grid:{display:false},border:{display:false}} } };
-
   if(chartRevInst) chartRevInst.destroy();
   chartRevInst = new Chart(document.getElementById('portalChartRev'),{
     type:'line', data:{labels, datasets:[{
-      data:koc.history, borderColor:color, backgroundColor:color+'22',
-      fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:color, borderWidth:2
+      data, borderColor:c, backgroundColor:c+'22',
+      fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:c, borderWidth:2
     }]}, options:opts
   });
+}
 
+/* ── Revenue chart with filter ── */
+function setRevFilter(filter, btn) {
+  currentRevFilter = filter;
+  // Update active button
+  if (btn) {
+    document.querySelectorAll('#pportal-revenue .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  // Set date inputs if preset filter
+  if(filter!=='custom') {
+    const today = todayStr();
+    document.getElementById('revDateTo').value = today;
+    if(filter==='7d')    document.getElementById('revDateFrom').value = daysAgoStr(6);
+    else if(filter==='14d') document.getElementById('revDateFrom').value = daysAgoStr(13);
+    else if(filter==='30d') document.getElementById('revDateFrom').value = daysAgoStr(29);
+    else if(filter==='month') document.getElementById('revDateFrom').value = currentMonthStr()+'-01';
+    else if(filter==='6m') document.getElementById('revDateFrom').value = daysAgoStr(179);
+  }
+  renderRevChart(filter);
+}
+
+function renderRevChart(filter) {
+  const color = hashColor(session.username);
+  let days;
+  // Nếu filter là 6m → dùng historyData (group by tháng)
+  if(filter==='6m') {
+    const labels = historyData.map(h=>{ const [y,m]=h.month.split('-'); return `T${parseInt(m)}/${y.slice(2)}`; });
+    const data   = historyData.map(h=>+h.doanh_thu);
+    const total  = data.reduce((s,v)=>s+v,0);
+    const avg    = data.length>0?total/data.length:0;
+    updateRevMetrics(total, data.length>0?Math.round(total/data.length*30):0, filter, historyData.length);
+    renderRevChartRaw(labels, data, Array(data.length).fill(+avg.toFixed(1)), color, '6 tháng gần nhất');
+    return;
+  }
+
+  days = filterDaysByRange(allDays, filter);
+  if(days.length===0 && allDays.length>0) days = allDays; // fallback
+
+  const sorted = [...days].sort((a,b)=>a.date.localeCompare(b.date));
+  const labels = sorted.map(d=>{
+    const parts = d.date.split('-');
+    return `${parts[2]}/${parts[1]}`;
+  });
+  const data   = sorted.map(d=>+d.doanh_thu);
+  const total  = data.reduce((s,v)=>s+v,0);
+  const avg    = data.length>0?total/data.length:0;
+  const avgArr = Array(data.length).fill(+avg.toFixed(1));
+
+  updateRevMetrics(total, sorted.length, filter, sorted.length);
+  renderRevChartRaw(labels, data, avgArr, color,
+    filter==='month'?`Tháng ${currentMonthStr().split('-')[1]}/${currentMonthStr().split('-')[0]}`:`${sorted.length} ngày`
+  );
+}
+
+function renderRevChartRaw(labels, data, avgData, color, title) {
+  document.getElementById('revChartTitle').textContent = `Doanh thu — ${title}`;
+  const opts = {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}tr`}}},
+    scales:{
+      y:{ticks:{color:'#555b72',font:{size:11},callback:v=>v.toFixed(1)+'tr'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+      x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:14},grid:{display:false},border:{display:false}}
+    }
+  };
   if(chartRev2Inst) chartRev2Inst.destroy();
   chartRev2Inst = new Chart(document.getElementById('portalChartRev2'),{
-    type:'bar', data:{labels, datasets:[{
-      data:koc.history, backgroundColor:color+'55', borderColor:color,
-      borderWidth:1.5, borderRadius:6
-    }]}, options:opts
+    type:'bar',
+    data:{labels, datasets:[
+      { label:'Doanh thu', data, backgroundColor:color+'66', borderColor:color, borderWidth:1.5, borderRadius:4, order:2 },
+      { label:'TB ngày',   data:avgData, type:'line', borderColor:'#f59e0b', borderDash:[4,3], borderWidth:1.5, pointRadius:0, tension:0, fill:false, order:1 }
+    ]}, options:opts
+  });
+}
+
+function updateRevMetrics(total, days, filter, count) {
+  const koc = portalData || {};
+  const avg = count>0?(total/count):0;
+  const pct = koc.muc_tieu_rev>0?Math.round(total/koc.muc_tieu_rev*100):0;
+  document.getElementById('portalRevMetrics').innerHTML=`
+    <div class="metric"><div class="metric-accent" style="background:${hashColor(session.username)}"></div><div class="metric-label">Tổng doanh thu</div><div class="metric-value">${total.toFixed(1)}tr</div><div class="metric-change ${pct>=100?'change-up':'change-neu'}">${pct}% mục tiêu</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Trung bình / ngày</div><div class="metric-value">${avg.toFixed(1)}tr</div><div class="metric-change change-neu">${count} ngày</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div><div class="metric-label">Hoa hồng (ước)</div><div class="metric-value">${(total*0.1).toFixed(1)}tr</div><div class="metric-change change-neu">10% doanh thu</div></div>
+  `;
+  document.getElementById('revSummaryRow').innerHTML=`
+    <div class="summary-item"><div class="summary-val">${total.toFixed(1)}tr</div><div class="summary-lbl">Tổng</div></div>
+    <div class="summary-item"><div class="summary-val">${avg.toFixed(1)}tr</div><div class="summary-lbl">TB/ngày</div></div>
+    <div class="summary-item"><div class="summary-val">${count}</div><div class="summary-lbl">Ngày có data</div></div>
+    <div class="summary-item"><div class="summary-val">${pct}%</div><div class="summary-lbl">Mục tiêu</div></div>
+  `;
+}
+
+/* ── Lead chart with filter ── */
+function setLeadFilter(filter, btn) {
+  currentLeadFilter = filter;
+  if(btn){
+    document.querySelectorAll('#pportal-leads .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  renderLeadChart(filter);
+}
+
+function renderLeadChart(filter) {
+  const days = filterDaysByRange(allDays, filter);
+  const sorted = [...days].sort((a,b)=>a.date.localeCompare(b.date));
+  const labels = sorted.map(d=>{ const p=d.date.split('-'); return `${p[2]}/${p[1]}`; });
+  const leadsData = sorted.map(d=>+d.leads);
+  const totalLeads = leadsData.reduce((s,v)=>s+v,0);
+  const totalChot  = sorted.reduce((s,d)=>s+(+d.lead_chot||0),0);
+  const totalCl    = sorted.reduce((s,d)=>s+(+(d.lead_cl||0)),0);
+  const conv = totalLeads>0?(totalChot/totalLeads*100).toFixed(1):'0.0';
+
+  document.getElementById('portalLeadMetrics').innerHTML=`
+    <div class="metric"><div class="metric-accent" style="background:#4f7cff"></div><div class="metric-label">Tổng lead</div><div class="metric-value">${totalLeads}</div><div class="metric-change change-neu">${sorted.length} ngày</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Lead chất lượng</div><div class="metric-value">${totalCl}</div><div class="metric-change change-neu">${totalLeads>0?Math.round(totalCl/totalLeads*100):0}% tổng lead</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div><div class="metric-label">Lead đã chốt</div><div class="metric-value">${totalChot}</div><div class="metric-change change-neu">Conv: ${conv}%</div></div>
+  `;
+
+  // Bar chart theo ngày
+  if(chartLeadBarInst) chartLeadBarInst.destroy();
+  chartLeadBarInst = new Chart(document.getElementById('portalChartLeadBar'),{
+    type:'bar',
+    data:{labels, datasets:[{
+      label:'Lead', data:leadsData,
+      backgroundColor:'#4f7cff55', borderColor:'#4f7cff',
+      borderWidth:1.5, borderRadius:4
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{y:{ticks:{color:'#555b72',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+              x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:12},grid:{display:false},border:{display:false}}}}
   });
 
+  // Doughnut phân bổ
+  const moi = Math.max(0, totalLeads - totalCl);
+  const chua = Math.max(0, totalCl - totalChot);
   if(chartLeadInst) chartLeadInst.destroy();
   chartLeadInst = new Chart(document.getElementById('portalChartLead'),{
     type:'doughnut',
-    data:{ labels:['Lead mới','Lead chất lượng','Đã chốt'],
-           datasets:[{data:[koc.leads-koc.lead_chat_luong, koc.lead_chat_luong-koc.lead_chot, koc.lead_chot],
-             backgroundColor:['#4f7cff44','#22c55e55','#22c55e'],
-             borderColor:['#4f7cff','#22c55e','#16a34a'], borderWidth:1.5}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
-      plugins:{legend:{position:'bottom',labels:{color:'#8b90a7',font:{size:11},padding:16,boxWidth:10}}}}
+    data:{ labels:['Lead mới','Đang xử lý','Đã chốt'],
+           datasets:[{data:[moi,chua,totalChot],
+             backgroundColor:['#4f7cff44','#f59e0b55','#22c55e'],
+             borderColor:['#4f7cff','#f59e0b','#22c55e'], borderWidth:1.5}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
+      plugins:{legend:{position:'bottom',labels:{color:'#8b90a7',font:{size:11},padding:12,boxWidth:10}},
+               tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}`}}}}
   });
 }
 
