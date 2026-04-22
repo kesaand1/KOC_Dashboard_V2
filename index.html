@@ -1,109 +1,461 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KOC Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #ffffff; --bg2: #f5f5f4; --bg3: #efefed;
-    --text: #1a1a1a; --text2: #6b7280; --text3: #9ca3af;
-    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.2);
-    --radius: 8px; --radius-lg: 12px;
-    --blue: #1B4DFF; --green: #16a34a; --amber: #f59e0b; --red: #dc2626;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1c1e; --bg2: #2c2c2e; --bg3: #3a3a3c;
-      --text: #f5f5f5; --text2: #a1a1aa; --text3: #71717a;
-      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.2);
-    }
-  }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+:root {
+  --bg:       #0f1117;
+  --bg2:      #181b24;
+  --bg3:      #1e2130;
+  --bg4:      #252838;
+  --text:     #f0f2f8;
+  --text2:    #8b90a7;
+  --text3:    #555b72;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --blue:     #4f7cff;
+  --blue2:    #3a63e8;
+  --blue-g:   linear-gradient(135deg,#4f7cff,#7c5cff);
+  --green:    #22c55e;
+  --amber:    #f59e0b;
+  --red:      #ef4444;
+  --purple:   #a78bfa;
+  --radius:   10px;
+  --radius-lg:16px;
+  --radius-xl:22px;
+  --shadow:   0 8px 32px rgba(0,0,0,0.4);
+  --shadow-sm:0 2px 12px rgba(0,0,0,0.3);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Be Vietnam Pro',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; font-size:14px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
 
-  .screen { display: none; }
-  .screen.active { display: block; }
+/* ── Screens ── */
+.screen { display:none; }
+.screen.active { display:block; }
 
-  /* ── Login ── */
-  .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-  .login-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 400px; }
-  .logo-badge { background: var(--blue); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.06em; }
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; }
-  .field input, .field select {
-    width: 100%; padding: 10px 12px; font-size: 14px;
-    border: 0.5px solid var(--border2); border-radius: var(--radius);
-    background: var(--bg); color: var(--text); outline: none; font-family: inherit;
-  }
-  .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(27,77,255,0.12); }
-  .btn { width: 100%; padding: 11px; background: var(--blue); color: #fff; font-size: 14px; font-weight: 600; font-family: inherit; border: none; border-radius: var(--radius); cursor: pointer; margin-top: 6px; }
-  .btn:hover { opacity: 0.9; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-sm { padding: 6px 14px; font-size: 12px; font-weight: 500; background: none; border: 0.5px solid var(--border2); border-radius: var(--radius); cursor: pointer; color: var(--text); font-family: inherit; }
-  .btn-sm:hover { background: var(--bg2); }
-  .error { font-size: 12px; color: #b91c1c; background: #fee2e2; border: 0.5px solid #fca5a5; border-radius: var(--radius); padding: 8px 12px; margin-bottom: 12px; display: none; }
-  .success { font-size: 12px; color: #15803d; background: #dcfce7; border: 0.5px solid #86efac; border-radius: var(--radius); padding: 8px 12px; margin-bottom: 12px; display: none; }
-  .hint { background: var(--bg2); border-radius: var(--radius); padding: 10px 12px; margin-top: 1rem; font-size: 12px; color: var(--text2); line-height: 1.7; }
+/* ══════════════════════════════════════════
+   LOGIN PAGE
+══════════════════════════════════════════ */
+.login-page {
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  overflow:hidden;
+}
+@media(max-width:768px){ .login-page { grid-template-columns:1fr; } }
 
-  .api-box { background: var(--bg2); border-radius: var(--radius); padding: 12px; margin-bottom: 1.25rem; }
-  .api-row { display: flex; gap: 8px; }
-  .api-row input { flex: 1; padding: 8px 12px; font-size: 12px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); outline: none; font-family: inherit; }
-  .api-row input:focus { border-color: var(--blue); }
-  .api-status { font-size: 11px; color: var(--text2); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
-  .dot.ok { background: var(--green); } .dot.err { background: var(--red); }
+.login-left {
+  background: linear-gradient(145deg, #0f1421 0%, #141929 50%, #0d1520 100%);
+  padding:3rem;
+  display:flex; flex-direction:column; justify-content:space-between;
+  position:relative; overflow:hidden;
+}
+.login-left::before {
+  content:'';
+  position:absolute; top:-100px; left:-100px;
+  width:500px; height:500px;
+  background:radial-gradient(circle, rgba(79,124,255,0.15) 0%, transparent 70%);
+  pointer-events:none;
+}
+.login-left::after {
+  content:'';
+  position:absolute; bottom:-80px; right:-80px;
+  width:400px; height:400px;
+  background:radial-gradient(circle, rgba(124,92,255,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+@media(max-width:768px){ .login-left { display:none; } }
 
-  /* ── App shell ── */
-  .app { max-width: 900px; margin: 0 auto; padding: 1rem; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 0.5px solid var(--border); margin-bottom: 1.25rem; }
-  .user-pill { display: flex; align-items: center; gap: 8px; background: var(--bg2); border-radius: 20px; padding: 5px 12px 5px 6px; }
-  .avatar { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.login-brand { position:relative; z-index:1; }
+.login-brand-logo {
+  display:inline-flex; align-items:center; gap:10px; margin-bottom:2.5rem;
+}
+.brand-icon {
+  width:40px; height:40px; border-radius:10px;
+  background:var(--blue-g);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Sora',sans-serif; font-size:14px; font-weight:700; color:#fff;
+}
+.brand-name { font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:var(--text); }
 
-  /* ── Metrics ── */
-  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; margin-bottom: 1.25rem; }
-  .metric { background: var(--bg2); border-radius: var(--radius); padding: 14px 16px; }
-  .metric-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
-  .metric-value { font-size: 22px; font-weight: 600; color: var(--text); }
-  .metric-sub { font-size: 11px; margin-top: 4px; color: var(--green); }
+.login-hero-title {
+  font-family:'Sora',sans-serif;
+  font-size:clamp(28px,3vw,40px);
+  font-weight:700; line-height:1.25;
+  color:var(--text); margin-bottom:1rem;
+}
+.login-hero-title span { color:var(--blue); }
+.login-hero-sub { font-size:15px; color:var(--text2); line-height:1.7; max-width:380px; }
 
-  /* ── Cards ── */
-  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
-  .card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+.login-stats { display:flex; gap:2rem; position:relative; z-index:1; }
+.login-stat-item { }
+.login-stat-num { font-family:'Sora',sans-serif; font-size:24px; font-weight:700; color:var(--text); }
+.login-stat-label { font-size:12px; color:var(--text2); }
 
-  /* ── Tabs ── */
-  .tabs { display: flex; gap: 4px; border-bottom: 0.5px solid var(--border); margin-bottom: 1.25rem; }
-  .tab { font-size: 13px; font-weight: 500; padding: 6px 14px 10px; cursor: pointer; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
-  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
-  .tab:hover:not(.active) { color: var(--text); }
-  .atab { display: none; } .atab.active { display: block; }
+.login-right {
+  background:var(--bg2);
+  display:flex; align-items:center; justify-content:center;
+  padding:2rem;
+}
+.login-form-wrap {
+  width:100%; max-width:420px;
+}
+.login-form-logo {
+  display:flex; align-items:center; gap:10px; margin-bottom:2.5rem;
+}
+.login-form-logo .brand-icon { width:36px; height:36px; font-size:12px; }
+.login-form-logo .brand-name { font-size:16px; }
 
-  /* ── Table ── */
-  table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-  th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; padding: 0 8px 10px; border-bottom: 0.5px solid var(--border); }
-  td { padding: 10px 8px; border-bottom: 0.5px solid var(--border); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--bg2); }
+.login-heading { font-family:'Sora',sans-serif; font-size:26px; font-weight:700; margin-bottom:6px; }
+.login-subheading { font-size:13px; color:var(--text2); margin-bottom:2rem; }
 
-  /* ── Badges ── */
-  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
-  .b-green { background: #dcfce7; color: #15803d; }
-  .b-amber { background: #fef3c7; color: #b45309; }
-  .b-blue  { background: #dbeafe; color: #1d4ed8; }
-  .b-red   { background: #fee2e2; color: #b91c1c; }
+.form-group { margin-bottom:16px; }
+.form-label { display:block; font-size:12px; font-weight:600; color:var(--text2); margin-bottom:7px; letter-spacing:0.04em; text-transform:uppercase; }
+.form-input {
+  width:100%; padding:12px 16px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--radius); color:var(--text);
+  font-size:14px; font-family:inherit; outline:none;
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(79,124,255,0.15);
+}
+.form-input::placeholder { color:var(--text3); }
 
-  /* ── Progress ── */
-  .prog-list { display: flex; flex-direction: column; gap: 10px; }
-  .prog-item { display: grid; grid-template-columns: 1fr 3fr 40px; align-items: center; gap: 10px; font-size: 12px; }
-  .prog-label { color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .prog-bg { background: var(--bg3); border-radius: 4px; height: 6px; }
-  .prog-fill { border-radius: 4px; height: 6px; transition: width 0.4s; }
-  .prog-pct { font-size: 12px; font-weight: 600; text-align: right; color: var(--text); }
+.btn-login {
+  width:100%; padding:13px;
+  background:var(--blue-g);
+  border:none; border-radius:var(--radius);
+  color:#fff; font-size:15px; font-weight:600;
+  font-family:inherit; cursor:pointer;
+  transition:opacity 0.2s, transform 0.1s;
+  margin-top:8px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-login:hover { opacity:0.9; }
+.btn-login:active { transform:scale(0.99); }
+.btn-login:disabled { opacity:0.5; cursor:not-allowed; }
 
-  /* ── Spinner ── */
-  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border2); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+.error-box {
+  background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25);
+  border-radius:var(--radius); padding:10px 14px;
+  font-size:13px; color:#fca5a5; margin-bottom:14px; display:none;
+}
+.success-box {
+  background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.25);
+  border-radius:var(--radius); padding:10px 14px;
+  font-size:13px; color:#86efac; margin-bottom:14px; display:none;
+}
+
+/* ══════════════════════════════════════════
+   APP SHELL
+══════════════════════════════════════════ */
+.app { display:flex; min-height:100vh; }
+
+/* Sidebar */
+.sidebar {
+  width:240px; flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  padding:1.5rem 0;
+  position:fixed; top:0; left:0; bottom:0; z-index:100;
+  transition:transform 0.3s;
+}
+@media(max-width:900px){
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+}
+
+.sidebar-brand {
+  display:flex; align-items:center; gap:10px;
+  padding:0 1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:1rem;
+}
+.sidebar-brand .brand-icon { width:34px; height:34px; font-size:12px; }
+.sidebar-brand .brand-name { font-size:15px; }
+
+.sidebar-section { padding:0 0.75rem; margin-bottom:0.5rem; }
+.sidebar-section-label {
+  font-size:10px; font-weight:700; color:var(--text3);
+  letter-spacing:0.08em; text-transform:uppercase;
+  padding:0 0.5rem; margin-bottom:4px;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:var(--radius);
+  font-size:13px; font-weight:500; color:var(--text2);
+  cursor:pointer; transition:all 0.15s;
+  margin-bottom:2px;
+}
+.nav-item:hover { background:var(--bg3); color:var(--text); }
+.nav-item.active { background:rgba(79,124,255,0.15); color:var(--blue); }
+.nav-icon {
+  width:18px; height:18px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.nav-icon svg { width:16px; height:16px; }
+
+.sidebar-footer {
+  margin-top:auto;
+  padding:1rem 1.25rem 0;
+  border-top:1px solid var(--border);
+}
+.user-card {
+  display:flex; align-items:center; gap:10px;
+  padding:10px; border-radius:var(--radius);
+  background:var(--bg3);
+}
+.user-avatar {
+  width:34px; height:34px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:#fff; flex-shrink:0;
+}
+.user-info { flex:1; min-width:0; }
+.user-name { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-role { font-size:11px; color:var(--text2); }
+.btn-logout-sm {
+  width:28px; height:28px; border-radius:8px;
+  background:transparent; border:1px solid var(--border2);
+  color:var(--text2); cursor:pointer; display:flex;
+  align-items:center; justify-content:center;
+  transition:all 0.15s; flex-shrink:0;
+}
+.btn-logout-sm:hover { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.3); color:#fca5a5; }
+
+/* Main content */
+.main {
+  flex:1; margin-left:240px;
+  display:flex; flex-direction:column; min-height:100vh;
+}
+@media(max-width:900px){ .main { margin-left:0; } }
+
+/* Mobile topbar */
+.mobile-topbar {
+  display:none; align-items:center; justify-content:space-between;
+  padding:1rem 1.25rem;
+  background:var(--bg2); border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:50;
+}
+@media(max-width:900px){ .mobile-topbar { display:flex; } }
+.menu-btn {
+  width:36px; height:36px; border-radius:var(--radius);
+  background:var(--bg3); border:1px solid var(--border2);
+  color:var(--text); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.mobile-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.6); z-index:99;
+}
+.mobile-overlay.show { display:block; }
+
+/* Page content */
+.page { padding:1.75rem; display:none; }
+.page.active { display:block; }
+@media(max-width:600px){ .page { padding:1rem; } }
+
+.page-header { margin-bottom:1.5rem; }
+.page-title { font-family:'Sora',sans-serif; font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.page-sub { font-size:13px; color:var(--text2); }
+
+/* ── Metrics grid ── */
+.metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:1.5rem; }
+@media(max-width:480px){ .metrics { grid-template-columns:1fr 1fr; } }
+
+.metric {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:1.25rem;
+  position:relative; overflow:hidden;
+  transition:border-color 0.2s, transform 0.2s;
+}
+.metric:hover { border-color:var(--border2); transform:translateY(-1px); }
+.metric-accent {
+  position:absolute; top:0; left:0; right:0; height:2px;
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+}
+.metric-label { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
+.metric-value { font-family:'Sora',sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; margin-bottom:6px; }
+.metric-change { font-size:12px; font-weight:500; display:flex; align-items:center; gap:4px; }
+.change-up { color:var(--green); }
+.change-dn { color:var(--red); }
+.change-neu { color:var(--text2); }
+
+/* ── Cards ── */
+.card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:1.25rem;
+  margin-bottom:1.25rem;
+}
+.card-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:1rem; gap:8px; flex-wrap:wrap;
+}
+.card-title { font-size:14px; font-weight:600; color:var(--text); }
+
+/* ── Charts row ── */
+.chart-row { display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:1.25rem; }
+@media(max-width:900px){ .chart-row { grid-template-columns:1fr; } }
+
+/* ── Table ── */
+.table-wrap { overflow-x:auto; border-radius:var(--radius); }
+table { width:100%; border-collapse:collapse; font-size:13px; min-width:500px; }
+th {
+  text-align:left; font-size:11px; font-weight:700;
+  color:var(--text2); text-transform:uppercase; letter-spacing:0.05em;
+  padding:10px 12px; border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+td { padding:12px 12px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--bg3); }
+
+/* ── Progress bars ── */
+.prog-list { display:flex; flex-direction:column; gap:12px; }
+.prog-item { display:grid; grid-template-columns:120px 1fr 42px; align-items:center; gap:12px; }
+@media(max-width:480px){ .prog-item { grid-template-columns:90px 1fr 36px; gap:8px; } }
+.prog-label { font-size:12px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.prog-bg { background:var(--bg4); border-radius:6px; height:7px; overflow:hidden; }
+.prog-fill { height:7px; border-radius:6px; transition:width 0.6s cubic-bezier(0.4,0,0.2,1); }
+.prog-pct { font-size:12px; font-weight:600; color:var(--text); text-align:right; }
+
+/* ── Badges ── */
+.badge { display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+.b-green  { background:rgba(34,197,94,0.12);  color:#4ade80; }
+.b-amber  { background:rgba(245,158,11,0.12); color:#fbbf24; }
+.b-blue   { background:rgba(79,124,255,0.15); color:#93b4ff; }
+.b-red    { background:rgba(239,68,68,0.12);  color:#fca5a5; }
+.b-purple { background:rgba(167,139,250,0.12);color:#c4b5fd; }
+
+/* ── Avatar ── */
+.avatar {
+  border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-weight:700; color:#fff; flex-shrink:0;
+}
+.av-sm { width:30px; height:30px; font-size:11px; }
+.av-md { width:38px; height:38px; font-size:13px; }
+.av-lg { width:48px; height:48px; font-size:16px; }
+
+/* ── Buttons ── */
+.btn-primary {
+  padding:10px 20px; background:var(--blue-g); border:none;
+  border-radius:var(--radius); color:#fff; font-size:13px;
+  font-weight:600; font-family:inherit; cursor:pointer;
+  transition:opacity 0.2s; white-space:nowrap;
+}
+.btn-primary:hover { opacity:0.88; }
+.btn-primary:disabled { opacity:0.45; cursor:not-allowed; }
+
+.btn-ghost {
+  padding:8px 14px; background:transparent;
+  border:1px solid var(--border2); border-radius:var(--radius);
+  color:var(--text2); font-size:12px; font-weight:500;
+  font-family:inherit; cursor:pointer; transition:all 0.15s;
+  white-space:nowrap;
+}
+.btn-ghost:hover { background:var(--bg3); color:var(--text); }
+
+.btn-danger {
+  padding:6px 12px; background:transparent;
+  border:1px solid rgba(239,68,68,0.3); border-radius:var(--radius);
+  color:#fca5a5; font-size:11px; font-weight:600;
+  font-family:inherit; cursor:pointer; transition:all 0.15s;
+}
+.btn-danger:hover { background:rgba(239,68,68,0.1); }
+
+.btn-success {
+  padding:6px 12px; background:transparent;
+  border:1px solid rgba(34,197,94,0.3); border-radius:var(--radius);
+  color:#4ade80; font-size:11px; font-weight:600;
+  font-family:inherit; cursor:pointer; transition:all 0.15s;
+}
+.btn-success:hover { background:rgba(34,197,94,0.1); }
+
+/* ── Tabs ── */
+.tabs { display:flex; gap:2px; border-bottom:1px solid var(--border); margin-bottom:1.25rem; overflow-x:auto; }
+.tab {
+  padding:8px 16px 12px; font-size:13px; font-weight:500;
+  color:var(--text2); cursor:pointer; border-bottom:2px solid transparent;
+  margin-bottom:-1px; white-space:nowrap; transition:all 0.15s;
+}
+.tab.active { color:var(--blue); border-bottom-color:var(--blue); }
+.tab:hover:not(.active) { color:var(--text); }
+.atab { display:none; }
+.atab.active { display:block; }
+
+/* ── Form fields ── */
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+.field input, .field select {
+  width:100%; padding:10px 14px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--radius); color:var(--text);
+  font-size:13px; font-family:inherit; outline:none;
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus, .field select:focus {
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(79,124,255,0.12);
+}
+.field select option { background:var(--bg3); }
+
+/* ── Spinner ── */
+.spinner {
+  display:inline-block; width:14px; height:14px;
+  border:2px solid rgba(255,255,255,0.2);
+  border-top-color:#fff; border-radius:50%;
+  animation:spin 0.65s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── KOC profile row ── */
+.koc-row { display:flex; align-items:center; gap:10px; }
+.koc-name { font-weight:600; font-size:13px; color:var(--text); }
+.koc-sub  { font-size:11px; color:var(--text2); }
+
+/* ── Portal welcome ── */
+.welcome-banner {
+  background:linear-gradient(135deg, rgba(79,124,255,0.15), rgba(124,92,255,0.1));
+  border:1px solid rgba(79,124,255,0.2);
+  border-radius:var(--radius-xl);
+  padding:1.5rem; margin-bottom:1.5rem;
+  display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;
+}
+.welcome-avatar { width:52px; height:52px; border-radius:14px; font-size:18px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.welcome-name { font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:var(--text); }
+.welcome-sub { font-size:13px; color:var(--text2); margin-top:2px; }
+.welcome-badge { margin-left:auto; background:rgba(79,124,255,0.2); border:1px solid rgba(79,124,255,0.3); border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600; color:var(--blue); white-space:nowrap; }
+
+/* ── Stat highlight ── */
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:10px; margin:1rem 0; }
+.stat-box { background:var(--bg4); border-radius:var(--radius); padding:12px; text-align:center; }
+.stat-box-num { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:var(--text); }
+.stat-box-label { font-size:10px; color:var(--text2); margin-top:2px; text-transform:uppercase; letter-spacing:0.04em; }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.page.active > * { animation:fadeUp 0.3s ease both; }
+.page.active > *:nth-child(2) { animation-delay:0.05s; }
+.page.active > *:nth-child(3) { animation-delay:0.1s; }
+.page.active > *:nth-child(4) { animation-delay:0.15s; }
 </style>
 </head>
 <body>
@@ -111,124 +463,291 @@
 <!-- ══ LOGIN ══ -->
 <div class="screen active" id="screen-login">
   <div class="login-page">
-    <div class="login-card">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.75rem;">
-        <span class="logo-badge">KOC</span>
-        <span style="font-size:13px;color:var(--text2)">Portal</span>
+    <div class="login-left">
+      <div class="login-brand">
+        <div class="login-brand-logo">
+          <div class="brand-icon">KOC</div>
+          <span class="brand-name">KOC Portal</span>
+        </div>
+        <div class="login-hero-title">
+          Quản lý <span>KOC</span><br>thông minh hơn
+        </div>
+        <div class="login-hero-sub">
+          Theo dõi doanh thu, leads và hiệu suất của từng KOC theo thời gian thực — mọi lúc, mọi nơi.
+        </div>
       </div>
+      <div class="login-stats">
+        <div class="login-stat-item">
+          <div class="login-stat-num">8+</div>
+          <div class="login-stat-label">KOC đang hoạt động</div>
+        </div>
+        <div class="login-stat-item">
+          <div class="login-stat-num">4</div>
+          <div class="login-stat-label">Nền tảng</div>
+        </div>
+        <div class="login-stat-item">
+          <div class="login-stat-num">Real-time</div>
+          <div class="login-stat-label">Cập nhật từ Sheets</div>
+        </div>
+      </div>
+    </div>
 
-
-
-      <div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px;">Đăng nhập</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:1.25rem;">Nhập tài khoản KOC của bạn</div>
-      <div class="error" id="loginErr"></div>
-      <div class="field"><label>Tên đăng nhập</label><input type="text" id="loginUser" placeholder="vd: lananh.koc" /></div>
-      <div class="field"><label>Mật khẩu</label><input type="password" id="loginPass" placeholder="••••••••" /></div>
-      <button class="btn" id="btnLogin" onclick="doLogin()">Đăng nhập</button>
-
+    <div class="login-right">
+      <div class="login-form-wrap">
+        <div class="login-form-logo">
+          <div class="brand-icon">KOC</div>
+          <span class="brand-name">KOC Portal</span>
+        </div>
+        <div class="login-heading">Chào mừng trở lại</div>
+        <div class="login-subheading">Đăng nhập để truy cập dashboard của bạn</div>
+        <div class="error-box" id="loginErr"></div>
+        <div class="form-group">
+          <label class="form-label">Tên đăng nhập</label>
+          <input class="form-input" type="text" id="loginUser" placeholder="vd: lananh.koc" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu</label>
+          <input class="form-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <button class="btn-login" id="btnLogin" onclick="doLogin()">
+          <span id="btnLoginText">Đăng nhập</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ══ PORTAL KOC ══ -->
+<!-- ══ KOC PORTAL ══ -->
 <div class="screen" id="screen-portal">
   <div class="app">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:8px;"><span class="logo-badge">KOC</span><span style="font-size:14px;font-weight:600;">Portal cá nhân</span></div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <div class="user-pill"><div class="avatar" id="portalAvatar" style="background:var(--blue)">LA</div><span style="font-size:12px;font-weight:500;" id="portalName">Lan Anh</span></div>
-        <button class="btn-sm" onclick="doLogout()">Đăng xuất</button>
+    <div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+
+    <nav class="sidebar" id="sidebarPortal">
+      <div class="sidebar-brand">
+        <div class="brand-icon">KOC</div>
+        <span class="brand-name">KOC Portal</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Menu</div>
+        <div class="nav-item active" onclick="switchPortalPage('dashboard')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+          Dashboard
+        </div>
+        <div class="nav-item" onclick="switchPortalPage('revenue')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+          Doanh thu
+        </div>
+        <div class="nav-item" onclick="switchPortalPage('leads')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          Leads
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar avatar av-sm" id="portalSidebarAvatar" style="background:#4f7cff"></div>
+          <div class="user-info">
+            <div class="user-name" id="portalSidebarName">—</div>
+            <div class="user-role">KOC</div>
+          </div>
+          <button class="btn-logout-sm" onclick="doLogout()" title="Đăng xuất">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="mobile-topbar">
+        <button class="menu-btn" onclick="openSidebar('sidebarPortal')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="brand-icon" style="width:28px;height:28px;font-size:10px;">KOC</div>
+          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">KOC Portal</span>
+        </div>
+        <div style="width:36px;"></div>
+      </div>
+
+      <!-- Dashboard page -->
+      <div class="page active" id="pportal-dashboard">
+        <div class="welcome-banner" id="portalWelcome">
+          <div class="welcome-avatar" id="portalWelcomeAvatar" style="background:#4f7cff">LA</div>
+          <div>
+            <div class="welcome-name" id="portalWelcomeName">Xin chào!</div>
+            <div class="welcome-sub" id="portalWelcomeSub">Đây là tổng quan hiệu suất của bạn</div>
+          </div>
+          <div class="welcome-badge" id="portalPlatformBadge">Tiktok</div>
+        </div>
+        <div class="metrics" id="portalMetrics"></div>
+        <div class="chart-row">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Doanh thu 6 tháng</span></div>
+            <div style="position:relative;height:200px;"><canvas id="portalChartRev" role="img" aria-label="Doanh thu 6 tháng"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">Tiến độ mục tiêu</span></div>
+            <div class="prog-list" id="portalProgress" style="padding-top:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue page -->
+      <div class="page" id="pportal-revenue">
+        <div class="page-header">
+          <div class="page-title">Doanh thu</div>
+          <div class="page-sub">Chi tiết hiệu suất doanh thu của bạn</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Biểu đồ doanh thu</span></div>
+          <div style="position:relative;height:260px;"><canvas id="portalChartRev2" role="img" aria-label="Doanh thu"></canvas></div>
+        </div>
+        <div class="metrics" id="portalRevMetrics"></div>
+      </div>
+
+      <!-- Leads page -->
+      <div class="page" id="pportal-leads">
+        <div class="page-header">
+          <div class="page-title">Leads</div>
+          <div class="page-sub">Theo dõi lead phát sinh và tỷ lệ chốt</div>
+        </div>
+        <div class="metrics" id="portalLeadMetrics"></div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Phân tích lead</span></div>
+          <div style="position:relative;height:220px;"><canvas id="portalChartLead" role="img" aria-label="Lead phân tích"></canvas></div>
+        </div>
       </div>
     </div>
-    <div class="metrics" id="portalMetrics"></div>
-    <div class="card"><div class="card-title">Tiến độ mục tiêu tháng này</div><div class="prog-list" id="portalProgress"></div></div>
-    <div class="card"><div class="card-title">Lịch sử doanh thu 6 tháng</div><div style="position:relative;height:180px;"><canvas id="portalChart" role="img" aria-label="Lịch sử doanh thu"></canvas></div></div>
   </div>
 </div>
 
 <!-- ══ ADMIN ══ -->
 <div class="screen" id="screen-admin">
   <div class="app">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:8px;"><span class="logo-badge">KOC</span><span style="font-size:14px;font-weight:600;">Quản trị hệ thống</span></div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <div class="user-pill"><div class="avatar" style="background:#7c3aed">AD</div><span style="font-size:12px;font-weight:500;">Admin</span></div>
-        <button class="btn-sm" onclick="doLogout()">Đăng xuất</button>
-      </div>
-    </div>
-    <div class="tabs">
-      <div class="tab active" onclick="switchATab('accounts')">Tài khoản KOC</div>
-      <div class="tab" onclick="switchATab('add')">Thêm tài khoản</div>
-      <div class="tab" onclick="switchATab('reset')">Đặt lại mật khẩu</div>
-    </div>
+    <div class="mobile-overlay" id="mobileOverlayAdmin" onclick="closeSidebar()"></div>
 
-    <div class="atab active" id="atab-accounts">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span class="card-title" style="margin:0">Danh sách KOC</span>
-          <button class="btn-sm" onclick="loadAdminData()">Làm mới</button>
+    <nav class="sidebar" id="sidebarAdmin">
+      <div class="sidebar-brand">
+        <div class="brand-icon">KOC</div>
+        <span class="brand-name">Admin Panel</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Quản trị</div>
+        <div class="nav-item active" onclick="switchATab('accounts')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
+          Tài khoản KOC
         </div>
-        <div id="adminLoading" style="display:none;font-size:13px;color:var(--text2);padding:1rem 0;"><span class="spinner"></span>Đang tải từ Google Sheets...</div>
-        <table><thead><tr>
-          <th style="width:26%">KOC</th><th style="width:20%">Tài khoản</th>
-          <th style="width:14%">Platform</th><th style="width:14%">Doanh thu</th>
-          <th style="width:13%">Trạng thái</th><th style="width:13%">Thao tác</th>
-        </tr></thead><tbody id="adminTableBody"></tbody></table>
-      </div>
-    </div>
-
-    <div class="atab" id="atab-add">
-      <div class="card" style="max-width:420px;">
-        <div class="card-title">Thêm tài khoản KOC mới</div>
-        <div class="error" id="addErr"></div>
-        <div class="success" id="addSuccess">Tạo tài khoản thành công!</div>
-        <div class="field"><label>Họ và tên</label><input type="text" id="newName" placeholder="Nguyễn Văn A" /></div>
-        <div class="field"><label>Tên đăng nhập</label><input type="text" id="newUser" placeholder="vd: vana.koc" /></div>
-        <div class="field"><label>Mật khẩu</label><input type="password" id="newPass" placeholder="Tối thiểu 6 ký tự" /></div>
-        <div class="field"><label>Platform</label>
-          <select id="newPlat"><option>Tiktok</option><option>Instagram</option><option>Youtube</option><option>Facebook</option></select>
+        <div class="nav-item" onclick="switchATab('add')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+          Thêm tài khoản
         </div>
-        <button class="btn" id="btnAdd" onclick="addAccount()">Tạo tài khoản</button>
+        <div class="nav-item" onclick="switchATab('reset')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          Đặt lại mật khẩu
+        </div>
       </div>
-    </div>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar avatar av-sm" style="background:#a78bfa;">AD</div>
+          <div class="user-info">
+            <div class="user-name">Admin</div>
+            <div class="user-role">Quản trị viên</div>
+          </div>
+          <button class="btn-logout-sm" onclick="doLogout()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
 
-    <div class="atab" id="atab-reset">
-      <div class="card" style="max-width:420px;">
-        <div class="card-title">Đặt lại mật khẩu KOC</div>
-        <div class="error" id="resetErr"></div>
-        <div class="success" id="resetSuccess">Đặt lại mật khẩu thành công!</div>
-        <div class="field"><label>Tên đăng nhập KOC</label><input type="text" id="resetUser" placeholder="vd: lananh.koc" /></div>
-        <div class="field"><label>Mật khẩu mới</label><input type="password" id="resetPass" placeholder="Tối thiểu 6 ký tự" /></div>
-        <button class="btn" id="btnReset" onclick="doReset()">Xác nhận đặt lại</button>
+    <div class="main">
+      <div class="mobile-topbar">
+        <button class="menu-btn" onclick="openSidebar('sidebarAdmin')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="brand-icon" style="width:28px;height:28px;font-size:10px;">KOC</div>
+          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Admin Panel</span>
+        </div>
+        <div style="width:36px;"></div>
+      </div>
+
+      <div class="atab active page" id="atab-accounts" style="display:block;">
+        <div class="page-header">
+          <div class="page-title">Tài khoản KOC</div>
+          <div class="page-sub">Quản lý danh sách tài khoản</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Danh sách KOC</span>
+            <button class="btn-ghost" onclick="loadAdminData()">Làm mới</button>
+          </div>
+          <div id="adminLoading" style="display:none;padding:1.5rem 0;text-align:center;color:var(--text2);font-size:13px;">
+            <span class="spinner" style="vertical-align:middle;margin-right:8px;"></span>Đang tải...
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th style="width:30%">KOC</th>
+                <th style="width:18%">Tài khoản</th>
+                <th style="width:14%">Platform</th>
+                <th style="width:14%">Doanh thu</th>
+                <th style="width:12%">Trạng thái</th>
+                <th style="width:12%">Thao tác</th>
+              </tr></thead>
+              <tbody id="adminTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="atab page" id="atab-add">
+        <div class="page-header">
+          <div class="page-title">Thêm tài khoản</div>
+          <div class="page-sub">Tạo tài khoản mới cho KOC</div>
+        </div>
+        <div class="card" style="max-width:480px;">
+          <div class="error-box" id="addErr"></div>
+          <div class="success-box" id="addSuccess">Tạo tài khoản thành công!</div>
+          <div class="field"><label>Họ và tên</label><input type="text" id="newName" placeholder="Nguyễn Văn A"/></div>
+          <div class="field"><label>Tên đăng nhập</label><input type="text" id="newUser" placeholder="vd: vana.koc"/></div>
+          <div class="field"><label>Mật khẩu</label><input type="password" id="newPass" placeholder="Tối thiểu 6 ký tự"/></div>
+          <div class="field"><label>Platform</label>
+            <select id="newPlat"><option>Tiktok</option><option>Instagram</option><option>Youtube</option><option>Facebook</option></select>
+          </div>
+          <button class="btn-primary" id="btnAdd" onclick="addAccount()">Tạo tài khoản</button>
+        </div>
+      </div>
+
+      <div class="atab page" id="atab-reset">
+        <div class="page-header">
+          <div class="page-title">Đặt lại mật khẩu</div>
+          <div class="page-sub">Reset mật khẩu cho KOC</div>
+        </div>
+        <div class="card" style="max-width:480px;">
+          <div class="error-box" id="resetErr"></div>
+          <div class="success-box" id="resetSuccess">Đặt lại mật khẩu thành công!</div>
+          <div class="field"><label>Tên đăng nhập KOC</label><input type="text" id="resetUser" placeholder="vd: lananh.koc"/></div>
+          <div class="field"><label>Mật khẩu mới</label><input type="password" id="resetPass" placeholder="Tối thiểu 6 ký tự"/></div>
+          <button class="btn-primary" id="btnReset" onclick="doReset()">Xác nhận đặt lại</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const AC = ['#1B4DFF','#16a34a','#f59e0b','#7c3aed','#0891b2','#ea580c'];
-const aC = i => AC[i % AC.length];
-const PB = { Tiktok:'b-red', Instagram:'b-blue', Youtube:'b-red', Facebook:'b-blue' };
+const apiUrl = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
 
-let session = null, portalChartInst = null;
-const apiUrl = 'https://script.google.com/macros/s/AKfycbwbPQVIXR9d5cyYVTXS0VtYTHLsmn_pdSm31VCO5XprKy38HUKM5ta51_Pm2SNHenwN/exec';
+const AC = ['#4f7cff','#22c55e','#f59e0b','#a78bfa','#06b6d4','#f97316'];
+const aC = i => AC[Math.abs(i) % AC.length];
+const hashColor = s => aC(s.split('').reduce((a,c)=>a+c.charCodeAt(0),0));
+const PB = { Tiktok:'b-red', Instagram:'b-purple', Youtube:'b-red', Facebook:'b-blue' };
 
-const DEMO = {
-  accounts: [
-    { username:'lananh.koc',   password:'koc123',   role:'koc',   status:'active',   full_name:'Nguyễn Lan Anh', platform:'Tiktok' },
-    { username:'minhkhoa.koc', password:'koc123',   role:'koc',   status:'active',   full_name:'Trần Minh Khoa', platform:'Youtube' },
-    { username:'quocbao.koc',  password:'koc123',   role:'koc',   status:'inactive', full_name:'Lê Quốc Bảo',   platform:'Facebook' },
-    { username:'admin',        password:'admin123', role:'admin', status:'active',   full_name:'Admin',          platform:'—' },
-  ],
-  kocData: {
-    'lananh.koc':   { doanh_thu:142, don_hang:318, hoa_hong:14.2, leads:85,  lead_chat_luong:62, lead_chot:41, muc_tieu_rev:160, muc_tieu_lead:100, history:[98,115,128,135,130,142] },
-    'minhkhoa.koc': { doanh_thu:198, don_hang:445, hoa_hong:19.8, leads:112, lead_chat_luong:78, lead_chot:55, muc_tieu_rev:200, muc_tieu_lead:120, history:[140,155,162,170,180,198] },
-    'quocbao.koc':  { doanh_thu:115, don_hang:258, hoa_hong:11.5, leads:68,  lead_chat_luong:45, lead_chot:30, muc_tieu_rev:130, muc_tieu_lead:80,  history:[90,95,100,105,110,115] },
-  }
-};
+let session = null, portalData = null;
+let chartRevInst = null, chartRev2Inst = null, chartLeadInst = null;
 
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
@@ -239,127 +758,222 @@ async function callApi(params) {
   } catch { return null; }
 }
 
+/* ── Login ── */
 async function doLogin() {
   const u = document.getElementById('loginUser').value.trim();
   const p = document.getElementById('loginPass').value;
   const err = document.getElementById('loginErr');
   err.style.display = 'none';
-  if (!u || !p) { err.textContent = 'Vui lòng nhập đầy đủ.'; err.style.display = 'block'; return; }
+  if (!u || !p) { err.textContent='Vui lòng nhập đầy đủ.'; err.style.display='block'; return; }
   const btn = document.getElementById('btnLogin');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Đang đăng nhập...';
+  const txt = document.getElementById('btnLoginText');
+  btn.disabled = true;
+  txt.innerHTML = '<span class="spinner"></span> Đang đăng nhập...';
 
   let result = await callApi({ action:'login', username:u, password:p });
-  if (!result) result = { ok:false, error:'Không kết nối được server. Thử lại sau.' };
+  if (!result) result = { ok:false, error:'Không kết nối được server.' };
 
-  btn.disabled = false; btn.textContent = 'Đăng nhập';
-  if (!result.ok) { err.textContent = result.error; err.style.display = 'block'; return; }
+  btn.disabled = false; txt.textContent = 'Đăng nhập';
+  if (!result.ok) { err.textContent=result.error; err.style.display='block'; return; }
   session = result.user;
-  if (session.role === 'admin') { loadAdminData(); showScreen('screen-admin'); }
+  if (session.role==='admin') { loadAdminData(); showScreen('screen-admin'); }
   else { await loadPortalData(); showScreen('screen-portal'); }
 }
 
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+/* ── Portal data ── */
 async function loadPortalData() {
   let koc = null;
   const r = await callApi({ action:'getKocData', username:session.username });
   if (r && r.ok) koc = r.koc;
   if (!koc) koc = { doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_chat_luong:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,history:[0,0,0,0,0,0] };
+  portalData = koc;
 
-  const idx = Math.abs(session.username.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % 6;
+  const color = hashColor(session.username);
   const initials = session.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('portalAvatar').textContent = initials;
-  document.getElementById('portalAvatar').style.background = aC(Math.max(idx,0));
-  document.getElementById('portalName').textContent = session.full_name.split(' ').pop();
+
+  ['portalSidebarAvatar','portalWelcomeAvatar'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.textContent = initials; el.style.background = color;
+  });
+  document.getElementById('portalSidebarName').textContent = session.full_name.split(' ').pop();
+  document.getElementById('portalWelcomeName').textContent = 'Xin chào, ' + session.full_name.split(' ').pop() + '!';
+  document.getElementById('portalWelcomeSub').textContent = `Tháng này bạn đạt ${koc.doanh_thu.toFixed(1)}tr doanh thu`;
+  document.getElementById('portalPlatformBadge').textContent = session.platform || 'KOC';
 
   const conv = koc.leads>0 ? (koc.lead_chot/koc.leads*100).toFixed(1) : '0.0';
   document.getElementById('portalMetrics').innerHTML = `
-    <div class="metric"><div class="metric-label">Doanh thu</div><div class="metric-value">${(+koc.doanh_thu).toFixed(1)}tr</div><div class="metric-sub">tháng này</div></div>
-    <div class="metric"><div class="metric-label">Đơn hàng</div><div class="metric-value">${koc.don_hang}</div><div class="metric-sub">đơn</div></div>
-    <div class="metric"><div class="metric-label">Lead phát sinh</div><div class="metric-value">${koc.leads}</div><div class="metric-sub">Conv: ${conv}%</div></div>
-    <div class="metric"><div class="metric-label">Hoa hồng</div><div class="metric-value">${(+koc.hoa_hong).toFixed(1)}tr</div><div class="metric-sub">tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:${color}"></div><div class="metric-label">Doanh thu</div><div class="metric-value">${koc.doanh_thu.toFixed(1)}tr</div><div class="metric-change change-up">↑ tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Đơn hàng</div><div class="metric-value">${koc.don_hang}</div><div class="metric-change change-neu">đơn</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div><div class="metric-label">Lead phát sinh</div><div class="metric-value">${koc.leads}</div><div class="metric-change change-neu">Conv: ${conv}%</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div><div class="metric-label">Hoa hồng</div><div class="metric-value">${koc.hoa_hong.toFixed(1)}tr</div><div class="metric-change change-up">↑ tháng này</div></div>
   `;
 
-  const bar = p => p>=100?'#16a34a':p>=70?'#1B4DFF':'#f59e0b';
-  const rp=Math.round(koc.doanh_thu/koc.muc_tieu_rev*100), lp=Math.round(koc.leads/koc.muc_tieu_lead*100), cp=Math.round(koc.lead_chot/koc.muc_tieu_lead*100);
+  const bar = p => p>=100?'#22c55e':p>=70?'#4f7cff':'#f59e0b';
+  const rp=Math.round(koc.doanh_thu/koc.muc_tieu_rev*100);
+  const lp=Math.round(koc.leads/koc.muc_tieu_lead*100);
+  const cp=Math.round(koc.lead_chot/koc.muc_tieu_lead*100);
   document.getElementById('portalProgress').innerHTML = [
     {label:'Doanh thu',pct:rp},{label:'Lead phát sinh',pct:lp},{label:'Lead đã chốt',pct:cp}
   ].map(r=>`<div class="prog-item"><span class="prog-label">${r.label}</span><div class="prog-bg"><div class="prog-fill" style="width:${Math.min(r.pct,100)}%;background:${bar(r.pct)}"></div></div><span class="prog-pct">${r.pct}%</span></div>`).join('');
 
-  if (portalChartInst) portalChartInst.destroy();
-  portalChartInst = new Chart(document.getElementById('portalChart'),{
-    type:'line',
-    data:{labels:['T11','T12','T1','T2','T3','T4'],datasets:[{label:'Doanh thu',data:koc.history,borderColor:aC(Math.max(idx,0)),backgroundColor:'transparent',tension:0.4,pointRadius:4,borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'M',font:{size:10}},grid:{color:'rgba(128,128,128,0.1)'}},x:{ticks:{font:{size:10}},grid:{display:false}}}}
+  renderPortalCharts(koc, color);
+
+  document.getElementById('portalRevMetrics').innerHTML = `
+    <div class="metric"><div class="metric-accent" style="background:${color}"></div><div class="metric-label">Doanh thu tháng</div><div class="metric-value">${koc.doanh_thu.toFixed(1)}tr</div><div class="metric-change change-neu">Mục tiêu: ${koc.muc_tieu_rev}tr</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Đơn hàng</div><div class="metric-value">${koc.don_hang}</div><div class="metric-change change-neu">tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div><div class="metric-label">Hoa hồng</div><div class="metric-value">${koc.hoa_hong.toFixed(1)}tr</div><div class="metric-change change-neu">10% doanh thu</div></div>
+  `;
+  document.getElementById('portalLeadMetrics').innerHTML = `
+    <div class="metric"><div class="metric-accent" style="background:#4f7cff"></div><div class="metric-label">Tổng lead</div><div class="metric-value">${koc.leads}</div><div class="metric-change change-neu">Mục tiêu: ${koc.muc_tieu_lead}</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Lead chất lượng</div><div class="metric-value">${koc.lead_chat_luong}</div><div class="metric-change change-neu">${koc.leads>0?Math.round(koc.lead_chat_luong/koc.leads*100):0}% tổng lead</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div><div class="metric-label">Lead đã chốt</div><div class="metric-value">${koc.lead_chot}</div><div class="metric-change change-neu">Conv: ${conv}%</div></div>
+  `;
+}
+
+function renderPortalCharts(koc, color) {
+  const labels = ['T11','T12','T1','T2','T3','T4'];
+  const opts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    scales:{ y:{ticks:{color:'#555b72',font:{size:11},callback:v=>v+'M'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+             x:{ticks:{color:'#555b72',font:{size:11}},grid:{display:false},border:{display:false}} } };
+
+  if(chartRevInst) chartRevInst.destroy();
+  chartRevInst = new Chart(document.getElementById('portalChartRev'),{
+    type:'line', data:{labels, datasets:[{
+      data:koc.history, borderColor:color, backgroundColor:color+'22',
+      fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:color, borderWidth:2
+    }]}, options:opts
+  });
+
+  if(chartRev2Inst) chartRev2Inst.destroy();
+  chartRev2Inst = new Chart(document.getElementById('portalChartRev2'),{
+    type:'bar', data:{labels, datasets:[{
+      data:koc.history, backgroundColor:color+'55', borderColor:color,
+      borderWidth:1.5, borderRadius:6
+    }]}, options:opts
+  });
+
+  if(chartLeadInst) chartLeadInst.destroy();
+  chartLeadInst = new Chart(document.getElementById('portalChartLead'),{
+    type:'doughnut',
+    data:{ labels:['Lead mới','Lead chất lượng','Đã chốt'],
+           datasets:[{data:[koc.leads-koc.lead_chat_luong, koc.lead_chat_luong-koc.lead_chot, koc.lead_chot],
+             backgroundColor:['#4f7cff44','#22c55e55','#22c55e'],
+             borderColor:['#4f7cff','#22c55e','#16a34a'], borderWidth:1.5}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
+      plugins:{legend:{position:'bottom',labels:{color:'#8b90a7',font:{size:11},padding:16,boxWidth:10}}}}
   });
 }
 
-async function loadAdminData() {
-  document.getElementById('adminLoading').style.display='block';
-  let kocs = null;
-  const r = await callApi({action:'getAllKoc',role:'admin'});
-  if (r && r.ok) kocs = r.kocs;
-  if (!kocs) kocs = [];
-  document.getElementById('adminTableBody').innerHTML=kocs.map((a,i)=>{
-    const init=a.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    return `<tr>
-      <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="background:${aC(i)};width:26px;height:26px;font-size:10px;">${init}</div><span style="font-weight:500">${a.full_name}</span></div></td>
-      <td style="color:var(--text2)">${a.username}</td>
-      <td><span class="badge ${PB[a.platform]||'b-blue'}">${a.platform}</span></td>
-      <td>${(+a.doanh_thu).toFixed(1)}tr</td>
-      <td><span class="badge ${a.status==='active'?'b-green':'b-amber'}">${a.status==='active'?'Hoạt động':'Tạm khóa'}</span></td>
-      <td><button class="btn-sm" onclick="toggleStatus('${a.username}','${a.status}')">${a.status==='active'?'Khóa':'Mở'}</button></td>
-    </tr>`;
-  }).join('');
-  document.getElementById('adminLoading').style.display='none';
+function switchPortalPage(id) {
+  document.querySelectorAll('#screen-portal .nav-item').forEach((el,i)=>{
+    const ids=['dashboard','revenue','leads'];
+    el.classList.toggle('active', ids[i]===id);
+  });
+  document.querySelectorAll('#screen-portal .page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pportal-'+id).classList.add('active');
+  closeSidebar();
 }
 
-async function toggleStatus(username,cur) {
+/* ── Admin ── */
+async function loadAdminData() {
+  document.getElementById('adminLoading').style.display='block';
+  document.getElementById('adminTableBody').innerHTML='';
+  let kocs = null;
+  const r = await callApi({action:'getAllKoc',role:'admin'});
+  if(r && r.ok) kocs = r.kocs;
+  if(!kocs) kocs = [];
+  document.getElementById('adminLoading').style.display='none';
+
+  document.getElementById('adminTableBody').innerHTML = kocs.map((a,i)=>{
+    const init = a.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const color = hashColor(a.username);
+    const active = a.status==='active';
+    return `<tr>
+      <td><div class="koc-row">
+        <div class="avatar av-sm" style="background:${color}">${init}</div>
+        <div><div class="koc-name">${a.full_name}</div><div class="koc-sub">${a.username}</div></div>
+      </div></td>
+      <td style="color:var(--text2);font-size:12px">${a.username}</td>
+      <td><span class="badge ${PB[a.platform]||'b-blue'}">${a.platform}</span></td>
+      <td style="font-weight:600">${(+a.doanh_thu).toFixed(1)}tr</td>
+      <td><span class="badge ${active?'b-green':'b-amber'}">${active?'Hoạt động':'Tạm khóa'}</span></td>
+      <td>${active
+        ? `<button class="btn-danger" onclick="toggleStatus('${a.username}','${a.status}')">Khóa</button>`
+        : `<button class="btn-success" onclick="toggleStatus('${a.username}','${a.status}')">Mở</button>`
+      }</td>
+    </tr>`;
+  }).join('');
+}
+
+async function toggleStatus(username) {
   await callApi({action:'toggleStatus',role:'admin',username});
   loadAdminData();
 }
 
 async function addAccount() {
-  const name=document.getElementById('newName').value.trim(), user=document.getElementById('newUser').value.trim(), pass=document.getElementById('newPass').value, plat=document.getElementById('newPlat').value;
+  const name=document.getElementById('newName').value.trim();
+  const user=document.getElementById('newUser').value.trim();
+  const pass=document.getElementById('newPass').value;
+  const plat=document.getElementById('newPlat').value;
   const err=document.getElementById('addErr'), suc=document.getElementById('addSuccess');
   err.style.display='none'; suc.style.display='none';
-  if (!name||!user||!pass){err.textContent='Vui lòng điền đầy đủ.';err.style.display='block';return;}
-  if (pass.length<6){err.textContent='Mật khẩu tối thiểu 6 ký tự.';err.style.display='block';return;}
-  const btn=document.getElementById('btnAdd'); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Đang tạo...';
+  if(!name||!user||!pass){err.textContent='Vui lòng điền đầy đủ.';err.style.display='block';return;}
+  if(pass.length<6){err.textContent='Mật khẩu tối thiểu 6 ký tự.';err.style.display='block';return;}
+  const btn=document.getElementById('btnAdd'); btn.disabled=true; btn.textContent='Đang tạo...';
   let result = await callApi({action:'addAccount',role:'admin',full_name:name,username:user,password:pass,platform:plat});
-  if (!result) result = {ok:false, error:'Không kết nối được server'};
+  if(!result) result={ok:false,error:'Không kết nối được server'};
   btn.disabled=false; btn.textContent='Tạo tài khoản';
-  if (!result||!result.ok){err.textContent=(result&&result.error)||'Lỗi kết nối';err.style.display='block';return;}
+  if(!result.ok){err.textContent=result.error;err.style.display='block';return;}
   suc.style.display='block';
   document.getElementById('newName').value=''; document.getElementById('newUser').value=''; document.getElementById('newPass').value='';
 }
 
 async function doReset() {
-  const user=document.getElementById('resetUser').value.trim(), pass=document.getElementById('resetPass').value;
+  const user=document.getElementById('resetUser').value.trim();
+  const pass=document.getElementById('resetPass').value;
   const err=document.getElementById('resetErr'), suc=document.getElementById('resetSuccess');
   err.style.display='none'; suc.style.display='none';
-  if (!user||!pass){err.textContent='Vui lòng điền đầy đủ.';err.style.display='block';return;}
-  if (pass.length<6){err.textContent='Mật khẩu tối thiểu 6 ký tự.';err.style.display='block';return;}
-  const btn=document.getElementById('btnReset'); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Đang xử lý...';
+  if(!user||!pass){err.textContent='Vui lòng điền đầy đủ.';err.style.display='block';return;}
+  if(pass.length<6){err.textContent='Mật khẩu tối thiểu 6 ký tự.';err.style.display='block';return;}
+  const btn=document.getElementById('btnReset'); btn.disabled=true; btn.textContent='Đang xử lý...';
   let result = await callApi({action:'resetPassword',role:'admin',username:user,newPassword:pass});
-  if (!result) result = {ok:false, error:'Không kết nối được server'};
+  if(!result) result={ok:false,error:'Không kết nối được server'};
   btn.disabled=false; btn.textContent='Xác nhận đặt lại';
-  if (!result||!result.ok){err.textContent=(result&&result.error)||'Lỗi';err.style.display='block';return;}
+  if(!result.ok){err.textContent=result.error;err.style.display='block';return;}
   suc.style.display='block';
   document.getElementById('resetUser').value=''; document.getElementById('resetPass').value='';
 }
 
+function switchATab(id) {
+  document.querySelectorAll('#screen-admin .nav-item').forEach((el,i)=>{
+    const tabs=['accounts','add','reset'];
+    el.classList.toggle('active',tabs[i]===id);
+  });
+  document.querySelectorAll('.atab').forEach(t=>{t.classList.remove('active');t.style.display='none';});
+  const tab = document.getElementById('atab-'+id);
+  tab.classList.add('active'); tab.style.display='block';
+  if(id==='accounts') loadAdminData();
+  closeSidebar();
+}
+
 function doLogout() {
-  session=null;
-  document.getElementById('loginUser').value=''; document.getElementById('loginPass').value='';
+  session=null; portalData=null;
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
   document.getElementById('loginErr').style.display='none';
   showScreen('screen-login');
 }
 
-function switchATab(id) {
-  const tabs=['accounts','add','reset'];
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
-  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('atab-'+id).classList.add('active');
-  if(id==='accounts') loadAdminData();
+/* ── Mobile sidebar ── */
+function openSidebar(id) {
+  document.getElementById(id).classList.add('open');
+  document.querySelectorAll('.mobile-overlay').forEach(o=>o.classList.add('show'));
+}
+function closeSidebar() {
+  document.querySelectorAll('.sidebar').forEach(s=>s.classList.remove('open'));
+  document.querySelectorAll('.mobile-overlay').forEach(o=>o.classList.remove('show'));
 }
 </script>
 </body>
