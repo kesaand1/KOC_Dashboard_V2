@@ -117,14 +117,7 @@
         <span style="font-size:13px;color:var(--text2)">Portal</span>
       </div>
 
-      <div class="api-box">
-        <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px;">Apps Script URL</div>
-        <div class="api-row">
-          <input type="text" id="apiUrl" placeholder="https://script.google.com/macros/s/.../exec" />
-          <button class="btn-sm" onclick="testApi()">Kiểm tra</button>
-        </div>
-        <div class="api-status"><span class="dot" id="apiDot"></span><span id="apiStatusText">Chưa cấu hình</span></div>
-      </div>
+
 
       <div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px;">Đăng nhập</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:1.25rem;">Nhập tài khoản KOC của bạn</div>
@@ -132,11 +125,7 @@
       <div class="field"><label>Tên đăng nhập</label><input type="text" id="loginUser" placeholder="vd: lananh.koc" /></div>
       <div class="field"><label>Mật khẩu</label><input type="password" id="loginPass" placeholder="••••••••" /></div>
       <button class="btn" id="btnLogin" onclick="doLogin()">Đăng nhập</button>
-      <div class="hint">
-        <strong style="color:var(--text)">Demo (không cần URL):</strong><br>
-        KOC: <code>lananh.koc</code> / <code>koc123</code><br>
-        Admin: <code>admin</code> / <code>admin123</code>
-      </div>
+
     </div>
   </div>
 </div>
@@ -221,7 +210,8 @@ const AC = ['#1B4DFF','#16a34a','#f59e0b','#7c3aed','#0891b2','#ea580c'];
 const aC = i => AC[i % AC.length];
 const PB = { Tiktok:'b-red', Instagram:'b-blue', Youtube:'b-red', Facebook:'b-blue' };
 
-let session = null, apiUrl = '', portalChartInst = null;
+let session = null, portalChartInst = null;
+const apiUrl = 'https://script.google.com/macros/s/AKfycbwbPQVIXR9d5cyYVTXS0VtYTHLsmn_pdSm31VCO5XprKy38HUKM5ta51_Pm2SNHenwN/exec';
 
 const DEMO = {
   accounts: [
@@ -243,28 +233,10 @@ function showScreen(id) {
 }
 
 async function callApi(params) {
-  if (!apiUrl) return null;
   try {
     const res = await fetch(apiUrl + '?' + new URLSearchParams(params).toString());
     return await res.json();
   } catch { return null; }
-}
-
-async function testApi() {
-  const url = document.getElementById('apiUrl').value.trim();
-  if (!url) return;
-  apiUrl = url;
-  document.getElementById('apiStatusText').textContent = 'Đang kiểm tra...';
-  document.getElementById('apiDot').className = 'dot';
-  const r = await callApi({ action: 'ping' });
-  if (r && r.ok) {
-    document.getElementById('apiDot').className = 'dot ok';
-    document.getElementById('apiStatusText').textContent = 'Kết nối thành công — đang dùng Google Sheets thực';
-  } else {
-    document.getElementById('apiDot').className = 'dot err';
-    document.getElementById('apiStatusText').textContent = 'Không kết nối được — kiểm tra lại URL';
-    apiUrl = '';
-  }
 }
 
 async function doLogin() {
@@ -276,17 +248,8 @@ async function doLogin() {
   const btn = document.getElementById('btnLogin');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Đang đăng nhập...';
 
-  let result;
-  if (apiUrl) {
-    result = await callApi({ action:'login', username:u, password:p });
-    if (!result) result = { ok:false, error:'Không kết nối được API. Kiểm tra lại URL.' };
-  } else {
-    await new Promise(r => setTimeout(r, 400));
-    const acc = DEMO.accounts.find(a => a.username===u && a.password===p);
-    if (!acc) result = { ok:false, error:'Tên đăng nhập hoặc mật khẩu không đúng' };
-    else if (acc.status==='inactive') result = { ok:false, error:'Tài khoản đang bị khóa. Liên hệ admin.' };
-    else result = { ok:true, user: { username:acc.username, role:acc.role, full_name:acc.full_name, platform:acc.platform } };
-  }
+  let result = await callApi({ action:'login', username:u, password:p });
+  if (!result) result = { ok:false, error:'Không kết nối được server. Thử lại sau.' };
 
   btn.disabled = false; btn.textContent = 'Đăng nhập';
   if (!result.ok) { err.textContent = result.error; err.style.display = 'block'; return; }
@@ -296,14 +259,12 @@ async function doLogin() {
 }
 
 async function loadPortalData() {
-  let koc;
-  if (apiUrl) {
-    const r = await callApi({ action:'getKocData', username:session.username });
-    koc = r && r.ok ? r.koc : null;
-  }
-  if (!koc) koc = DEMO.kocData[session.username] || { doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_chat_luong:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,history:[0,0,0,0,0,0] };
+  let koc = null;
+  const r = await callApi({ action:'getKocData', username:session.username });
+  if (r && r.ok) koc = r.koc;
+  if (!koc) koc = { doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_chat_luong:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,history:[0,0,0,0,0,0] };
 
-  const idx = DEMO.accounts.findIndex(a=>a.username===session.username);
+  const idx = Math.abs(session.username.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % 6;
   const initials = session.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
   document.getElementById('portalAvatar').textContent = initials;
   document.getElementById('portalAvatar').style.background = aC(Math.max(idx,0));
@@ -333,9 +294,10 @@ async function loadPortalData() {
 
 async function loadAdminData() {
   document.getElementById('adminLoading').style.display='block';
-  let kocs;
-  if (apiUrl) { const r=await callApi({action:'getAllKoc',role:'admin'}); kocs=r&&r.ok?r.kocs:null; }
-  if (!kocs) kocs=DEMO.accounts.filter(a=>a.role!=='admin').map(a=>({...a,doanh_thu:(DEMO.kocData[a.username]||{}).doanh_thu||0,leads:(DEMO.kocData[a.username]||{}).leads||0}));
+  let kocs = null;
+  const r = await callApi({action:'getAllKoc',role:'admin'});
+  if (r && r.ok) kocs = r.kocs;
+  if (!kocs) kocs = [];
   document.getElementById('adminTableBody').innerHTML=kocs.map((a,i)=>{
     const init=a.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
     return `<tr>
@@ -351,8 +313,7 @@ async function loadAdminData() {
 }
 
 async function toggleStatus(username,cur) {
-  if (apiUrl) await callApi({action:'toggleStatus',role:'admin',username});
-  else { const a=DEMO.accounts.find(a=>a.username===username); if(a) a.status=cur==='active'?'inactive':'active'; }
+  await callApi({action:'toggleStatus',role:'admin',username});
   loadAdminData();
 }
 
@@ -363,9 +324,8 @@ async function addAccount() {
   if (!name||!user||!pass){err.textContent='Vui lòng điền đầy đủ.';err.style.display='block';return;}
   if (pass.length<6){err.textContent='Mật khẩu tối thiểu 6 ký tự.';err.style.display='block';return;}
   const btn=document.getElementById('btnAdd'); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Đang tạo...';
-  let result;
-  if (apiUrl) result=await callApi({action:'addAccount',role:'admin',full_name:name,username:user,password:pass,platform:plat});
-  else { if(DEMO.accounts.find(a=>a.username===user)) result={ok:false,error:'Tên đăng nhập đã tồn tại'}; else {DEMO.accounts.push({username:user,password:pass,role:'koc',status:'active',full_name:name,platform:plat});DEMO.kocData[user]={doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_chat_luong:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,history:[0,0,0,0,0,0]};result={ok:true};} }
+  let result = await callApi({action:'addAccount',role:'admin',full_name:name,username:user,password:pass,platform:plat});
+  if (!result) result = {ok:false, error:'Không kết nối được server'};
   btn.disabled=false; btn.textContent='Tạo tài khoản';
   if (!result||!result.ok){err.textContent=(result&&result.error)||'Lỗi kết nối';err.style.display='block';return;}
   suc.style.display='block';
@@ -379,9 +339,8 @@ async function doReset() {
   if (!user||!pass){err.textContent='Vui lòng điền đầy đủ.';err.style.display='block';return;}
   if (pass.length<6){err.textContent='Mật khẩu tối thiểu 6 ký tự.';err.style.display='block';return;}
   const btn=document.getElementById('btnReset'); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Đang xử lý...';
-  let result;
-  if (apiUrl) result=await callApi({action:'resetPassword',role:'admin',username:user,newPassword:pass});
-  else { const a=DEMO.accounts.find(a=>a.username===user); if(!a) result={ok:false,error:'Không tìm thấy tài khoản'}; else {a.password=pass;result={ok:true};} }
+  let result = await callApi({action:'resetPassword',role:'admin',username:user,newPassword:pass});
+  if (!result) result = {ok:false, error:'Không kết nối được server'};
   btn.disabled=false; btn.textContent='Xác nhận đặt lại';
   if (!result||!result.ok){err.textContent=(result&&result.error)||'Lỗi';err.style.display='block';return;}
   suc.style.display='block';
