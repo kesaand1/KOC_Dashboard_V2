@@ -877,6 +877,7 @@ async function doLogin() {
   btn.disabled = false; txt.textContent = 'Đăng nhập';
   if (!result.ok) { err.textContent=result.error; err.style.display='block'; return; }
   session = result.user;
+  localStorage.setItem('koc_session', JSON.stringify({ data: session, savedAt: Date.now() }));
   if (session.role==='admin') { loadAdminData(); showScreen('screen-admin'); }
   else { await loadPortalData(); showScreen('screen-portal'); }
 }
@@ -1190,6 +1191,8 @@ async function addAccount() {
   if(!result.ok){err.textContent=result.error;err.style.display='block';return;}
   suc.style.display='block';
   document.getElementById('newName').value=''; document.getElementById('newUser').value=''; document.getElementById('newPass').value='';
+  // Chuyển về tab danh sách và reload sau 1.2s để thấy thông báo thành công
+  setTimeout(() => { switchATab('accounts'); }, 1200);
 }
 
 async function doReset() {
@@ -1221,7 +1224,8 @@ function switchATab(id) {
 }
 
 function doLogout() {
-  session=null; portalData=null;
+  session=null; portalData=null; allDays=[]; historyData=[];
+  localStorage.removeItem('koc_session');
   document.getElementById('loginUser').value='';
   document.getElementById('loginPass').value='';
   document.getElementById('loginErr').style.display='none';
@@ -1237,6 +1241,50 @@ function closeSidebar() {
   document.querySelectorAll('.sidebar').forEach(s=>s.classList.remove('open'));
   document.querySelectorAll('.mobile-overlay').forEach(o=>o.classList.remove('show'));
 }
+
+/* ── Auto-restore session on page load ── */
+(async function restoreSession() {
+  try {
+    const saved = localStorage.getItem('koc_session');
+    if (!saved) return;
+
+    const { data: s, savedAt } = JSON.parse(saved);
+    if (!s || !s.username || !s.role) return;
+
+    // Session hết hạn sau 7 ngày
+    const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
+    if (Date.now() - savedAt > SESSION_TTL) {
+      localStorage.removeItem('koc_session');
+      return;
+    }
+
+    // Hiển thị loading trong khi restore
+    document.getElementById('btnLoginText').innerHTML = '<span class="spinner"></span> Đang khôi phục...';
+    document.getElementById('btnLogin').disabled = true;
+
+    // Ping server để đảm bảo API vẫn hoạt động
+    const ping = await callApi({ action: 'ping' });
+    if (!ping || !ping.ok) {
+      // Server không phản hồi - dùng lại session cache mà không verify
+      session = s;
+    } else {
+      session = s;
+    }
+
+    document.getElementById('btnLogin').disabled = false;
+    document.getElementById('btnLoginText').textContent = 'Đăng nhập';
+
+    if (session.role === 'admin') {
+      loadAdminData();
+      showScreen('screen-admin');
+    } else {
+      await loadPortalData();
+      showScreen('screen-portal');
+    }
+  } catch(e) {
+    localStorage.removeItem('koc_session');
+  }
+})();
 </script>
 </body>
 </html>
