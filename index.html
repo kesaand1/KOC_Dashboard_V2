@@ -964,7 +964,12 @@ async function loadPortalData() {
   portalData = koc;
   allDays = koc.days || [];
   historyData  = r2 && r2.ok ? r2.history  : [];
-  allLeadRows  = r3 && r3.ok ? r3.leads   : [];
+  // Tự động convert VNĐ → triệu VNĐ nếu giá trị > 1000
+  allLeadRows = (r3 && r3.ok ? r3.leads : []).map(r => ({
+    ...r,
+    hoa_hong: r.hoa_hong > 1000 ? Math.round(r.hoa_hong/1000000*100)/100 : r.hoa_hong,
+    thuong:   r.thuong   > 1000 ? Math.round(r.thuong  /1000000*100)/100 : r.thuong,
+  }));
 
   const color = hashColor(session.username);
   const initials = session.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
@@ -1141,7 +1146,7 @@ function updateRevMetrics(total, days, filter, count) {
   const avg = count>0?(total/count):0;
 
   // Tính tổng hoa hồng và thưởng từ allLeadRows trong khoảng thời gian
-  let totalHoaHong = 0, totalThuong = 0;
+  let totalHoaHong = 0;
   if(allLeadRows.length > 0) {
     let filtered;
     if(filter==='custom') {
@@ -1160,7 +1165,6 @@ function updateRevMetrics(total, days, filter, count) {
       filtered = allLeadRows.filter(r=>r.date>=from && r.date<=today);
     }
     totalHoaHong = Math.round(filtered.reduce((s,r)=>s+(+r.hoa_hong||0),0)*100)/100;
-    totalThuong  = Math.round(filtered.reduce((s,r)=>s+(+r.thuong||0),0)*100)/100;
   }
 
   document.getElementById('portalRevMetrics').innerHTML=`
@@ -1168,10 +1172,6 @@ function updateRevMetrics(total, days, filter, count) {
       <div class="metric-label">Hoa hồng (dự kiến)</div>
       <div class="metric-value">${totalHoaHong.toFixed(1)}tr</div>
       <div class="metric-change change-up">${count} ngày</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div>
-      <div class="metric-label">Thưởng</div>
-      <div class="metric-value">${totalThuong.toFixed(1)}tr</div>
-      <div class="metric-change change-neu">trong kỳ</div></div>
     <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
       <div class="metric-label">Trung bình hoa hồng / ngày</div>
       <div class="metric-value">${count>0?(totalHoaHong/count).toFixed(1):'0.0'}tr</div>
@@ -1179,9 +1179,9 @@ function updateRevMetrics(total, days, filter, count) {
   `;
   document.getElementById('revSummaryRow').innerHTML=`
     <div class="summary-item"><div class="summary-val">${totalHoaHong.toFixed(1)}tr</div><div class="summary-lbl">Hoa hồng</div></div>
-    <div class="summary-item"><div class="summary-val">${totalThuong.toFixed(1)}tr</div><div class="summary-lbl">Thưởng</div></div>
+    <div class="summary-item"><div class="summary-val">${count>0?(totalHoaHong/count).toFixed(1):'0.0'}tr</div><div class="summary-lbl">TB/ngày</div></div>
     <div class="summary-item"><div class="summary-val">${count}</div><div class="summary-lbl">Ngày có data</div></div>
-    <div class="summary-item"><div class="summary-val">${(totalHoaHong+totalThuong).toFixed(1)}tr</div><div class="summary-lbl">Tổng thu nhập</div></div>
+    <div class="summary-item"><div class="summary-val">${count>0?Math.round(totalHoaHong/(portalData.muc_tieu_rev||1)*100):0}%</div><div class="summary-lbl">Mục tiêu</div></div>
   `;
 }
 
