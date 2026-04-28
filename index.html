@@ -640,7 +640,7 @@ tr:hover td { background:var(--bg3); }
       <div class="page" id="pportal-revenue">
         <div class="page-header">
           <div class="page-title">Doanh thu</div>
-          <div class="page-sub" id="revPageSub">Chi tiết hiệu suất doanh thu của bạn</div>
+          <div class="page-sub" id="revPageSub">Theo dõi hoa hồng và thưởng theo thời gian</div>
         </div>
         <div class="filter-bar">
           <div class="filter-group">
@@ -664,7 +664,7 @@ tr:hover td { background:var(--bg3); }
             <span class="card-title" id="revChartTitle">Doanh thu theo ngày</span>
             <div style="display:flex;gap:8px;align-items:center;">
               <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
-                <span style="width:10px;height:3px;border-radius:2px;background:var(--blue);display:inline-block;"></span>Doanh thu
+                <span style="width:10px;height:3px;border-radius:2px;background:var(--blue);display:inline-block;"></span>Hoa hồng
               </div>
               <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
                 <span style="width:10px;height:3px;border-radius:2px;background:var(--amber);display:inline-block;border-top:2px dashed var(--amber);"></span>TB ngày
@@ -870,7 +870,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbxfnX1A0FUUiAj8ZUjx9keJ5PyLm-O99ud7kY2M1jML3J2jtGcqYZPCkaiZGpgdcwql7g/exec';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbwIIxGQT3xTKtJGw2lfY5NWNbVvN2R_a1_XicmW7I3bQyfRV1cjKHhXa6dwMaehKO5EXg/exec';
 
 const AC = ['#4f7cff','#22c55e','#f59e0b','#a78bfa','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -1074,7 +1074,7 @@ function renderRevChart(filter) {
 }
 
 function renderRevChartRaw(labels, data, avgData, color, title) {
-  document.getElementById('revChartTitle').textContent = `Doanh thu — ${title}`;
+  document.getElementById('revChartTitle').textContent = `Hoa hồng — ${title}`;
   const opts = {
     responsive:true, maintainAspectRatio:false,
     interaction:{mode:'index',intersect:false},
@@ -1088,8 +1088,8 @@ function renderRevChartRaw(labels, data, avgData, color, title) {
   chartRev2Inst = new Chart(document.getElementById('portalChartRev2'),{
     type:'bar',
     data:{labels, datasets:[
-      { label:'Doanh thu', data, backgroundColor:color+'66', borderColor:color, borderWidth:1.5, borderRadius:4, order:2 },
-      { label:'TB ngày',   data:avgData, type:'line', borderColor:'#f59e0b', borderDash:[4,3], borderWidth:1.5, pointRadius:0, tension:0, fill:false, order:1 }
+      { label:'Hoa hồng', data, backgroundColor:color+'66', borderColor:color, borderWidth:1.5, borderRadius:4, order:2, yAxisID:'y' },
+      { label:'TB ngày',   data:avgData, type:'line', borderColor:'#f59e0b', borderDash:[5,4], borderWidth:2, pointRadius:0, tension:0, fill:false, order:1, yAxisID:'y' }
     ]}, options:opts
   });
 }
@@ -1097,17 +1097,49 @@ function renderRevChartRaw(labels, data, avgData, color, title) {
 function updateRevMetrics(total, days, filter, count) {
   const koc = portalData || {};
   const avg = count>0?(total/count):0;
-  const pct = koc.muc_tieu_rev>0?Math.round(total/koc.muc_tieu_rev*100):0;
+
+  // Tính tổng hoa hồng và thưởng từ allLeadRows trong khoảng thời gian
+  let totalHoaHong = 0, totalThuong = 0;
+  if(allLeadRows.length > 0) {
+    let filtered;
+    if(filter==='custom') {
+      const from = document.getElementById('revDateFrom').value;
+      const to   = document.getElementById('revDateTo').value;
+      filtered = from && to ? allLeadRows.filter(r=>r.date>=from && r.date<=to) : allLeadRows;
+    } else {
+      const today = todayStr();
+      let from;
+      if(filter==='7d')      from = daysAgoStr(6);
+      else if(filter==='14d')   from = daysAgoStr(13);
+      else if(filter==='30d')   from = daysAgoStr(29);
+      else if(filter==='month') from = currentMonthStr()+'-01';
+      else if(filter==='6m')    from = daysAgoStr(179);
+      else from = daysAgoStr(6);
+      filtered = allLeadRows.filter(r=>r.date>=from && r.date<=today);
+    }
+    totalHoaHong = Math.round(filtered.reduce((s,r)=>s+(+r.hoa_hong||0),0)*100)/100;
+    totalThuong  = Math.round(filtered.reduce((s,r)=>s+(+r.thuong||0),0)*100)/100;
+  }
+
   document.getElementById('portalRevMetrics').innerHTML=`
-    <div class="metric"><div class="metric-accent" style="background:${hashColor(session.username)}"></div><div class="metric-label">Tổng doanh thu</div><div class="metric-value">${total.toFixed(1)}tr</div><div class="metric-change ${pct>=100?'change-up':'change-neu'}">${pct}% mục tiêu</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Trung bình / ngày</div><div class="metric-value">${avg.toFixed(1)}tr</div><div class="metric-change change-neu">${count} ngày</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div><div class="metric-label">Hoa hồng (ước)</div><div class="metric-value">${(total*0.1).toFixed(1)}tr</div><div class="metric-change change-neu">10% doanh thu</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div>
+      <div class="metric-label">Hoa hồng (dự kiến)</div>
+      <div class="metric-value">${totalHoaHong.toFixed(1)}tr</div>
+      <div class="metric-change change-up">${count} ngày</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div>
+      <div class="metric-label">Thưởng</div>
+      <div class="metric-value">${totalThuong.toFixed(1)}tr</div>
+      <div class="metric-change change-neu">trong kỳ</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
+      <div class="metric-label">Trung bình hoa hồng / ngày</div>
+      <div class="metric-value">${count>0?(totalHoaHong/count).toFixed(1):'0.0'}tr</div>
+      <div class="metric-change change-neu">${count} ngày</div></div>
   `;
   document.getElementById('revSummaryRow').innerHTML=`
-    <div class="summary-item"><div class="summary-val">${total.toFixed(1)}tr</div><div class="summary-lbl">Tổng</div></div>
-    <div class="summary-item"><div class="summary-val">${avg.toFixed(1)}tr</div><div class="summary-lbl">TB/ngày</div></div>
+    <div class="summary-item"><div class="summary-val">${totalHoaHong.toFixed(1)}tr</div><div class="summary-lbl">Hoa hồng</div></div>
+    <div class="summary-item"><div class="summary-val">${totalThuong.toFixed(1)}tr</div><div class="summary-lbl">Thưởng</div></div>
     <div class="summary-item"><div class="summary-val">${count}</div><div class="summary-lbl">Ngày có data</div></div>
-    <div class="summary-item"><div class="summary-val">${pct}%</div><div class="summary-lbl">Mục tiêu</div></div>
+    <div class="summary-item"><div class="summary-val">${(totalHoaHong+totalThuong).toFixed(1)}tr</div><div class="summary-lbl">Tổng thu nhập</div></div>
   `;
 }
 
