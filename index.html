@@ -870,7 +870,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbwyVPDbT2FylCmqcTbYXD3BDQM0VevmhM4HXIqrq1i6clhn9QLO4_lac3cRtxZCXIclTg/exec';
+const apiUrl = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
 
 const AC = ['#4f7cff','#22c55e','#f59e0b','#a78bfa','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -994,7 +994,6 @@ async function loadPortalData() {
   });
   document.getElementById('portalSidebarName').textContent = session.full_name.split(' ').pop();
   document.getElementById('portalWelcomeName').textContent = 'Xin chào, '+session.full_name.split(' ').pop()+'!';
-  document.getElementById('portalWelcomeSub').textContent = `Hoa hồng tháng này: ${fmtVND(totalHHThang)}`;
   document.getElementById('portalPlatformBadge').textContent = session.platform || 'KOC';
 
   const conv = koc.leads>0?(koc.lead_chot/koc.leads*100).toFixed(1):'0.0';
@@ -1002,6 +1001,7 @@ async function loadPortalData() {
   const monthNow = currentMonthStr();
   const monthLeads = allLeadRows.filter(r=>r.date&&r.date.startsWith(monthNow));
   const totalHHThang = Math.round(monthLeads.reduce((s,r)=>s+(+r.hoa_hong||0),0)*100)/100;
+  document.getElementById('portalWelcomeSub').textContent = `Hoa hồng tháng này: ${fmtVND(totalHHThang)}`;
 
   const totalDonHang  = monthLeads.reduce((s,r)=>s+(+r.don_hang||0),0);
   const totalHopLe    = monthLeads.reduce((s,r)=>s+(+r.lead_hop_le||0),0);
