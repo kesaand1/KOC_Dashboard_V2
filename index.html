@@ -685,7 +685,7 @@ tr:hover td { background:var(--bg3); }
       <div class="page" id="pportal-leads">
         <div class="page-header">
           <div class="page-title">Leads</div>
-          <div class="page-sub">Theo dõi lead phát sinh và tỷ lệ chốt</div>
+          <div class="page-sub" id="leadPageSub">Theo dõi lead phát sinh theo ngày</div>
         </div>
         <div class="filter-bar">
           <div class="filter-group">
@@ -695,23 +695,58 @@ tr:hover td { background:var(--bg3); }
             <div class="filter-sep"></div>
             <button class="filter-btn" onclick="setLeadFilter('month',this)">Tháng này</button>
           </div>
+          <div class="date-range">
+            <span>Từ</span>
+            <input type="date" id="leadDateFrom" onchange="setLeadFilter('custom',null)"/>
+            <span>đến</span>
+            <input type="date" id="leadDateTo" onchange="setLeadFilter('custom',null)"/>
+          </div>
         </div>
+
+        <!-- 4 metric cards -->
         <div class="metrics" id="portalLeadMetrics" style="margin-bottom:1.25rem;"></div>
-        <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
-          <div class="card" style="margin-bottom:0;">
-            <div class="card-head"><span class="card-title">Lead theo ngày</span></div>
-            <div class="chart-wrap">
-              <div style="position:relative;height:220px;">
-                <canvas id="portalChartLeadBar" role="img" aria-label="Lead theo ngày"></canvas>
+
+        <!-- Chart + table -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" id="leadChartTitle">Lead theo ngày</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+                <span style="width:10px;height:10px;border-radius:2px;background:#4f7cff;display:inline-block;"></span>Tổng lead
               </div>
-              <div class="chart-loading" id="leadChartLoading"><span class="spinner" style="border-top-color:var(--green);margin-right:8px;"></span>Đang tải...</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+                <span style="width:10px;height:10px;border-radius:2px;background:#22c55e;display:inline-block;"></span>Lead hợp lệ
+              </div>
             </div>
           </div>
-          <div class="card" style="margin-bottom:0;">
-            <div class="card-head"><span class="card-title">Phân bổ lead</span></div>
-            <div style="position:relative;height:220px;">
-              <canvas id="portalChartLead" role="img" aria-label="Phân bổ lead"></canvas>
+          <div class="chart-wrap">
+            <div style="position:relative;height:240px;">
+              <canvas id="portalChartLeadBar" role="img" aria-label="Lead theo ngày"></canvas>
             </div>
+            <div class="chart-loading" id="leadChartLoading">
+              <span class="spinner" style="border-top-color:var(--green);margin-right:8px;"></span>Đang tải...
+            </div>
+          </div>
+          <div class="summary-row" id="leadSummaryRow"></div>
+        </div>
+
+        <!-- Detail table -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Chi tiết từng ngày</span>
+            <span style="font-size:11px;color:var(--text2)" id="leadTableCount"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th style="width:18%">Ngày tạo</th>
+                <th style="width:20%">Tổng lead</th>
+                <th style="width:20%">Lead hợp lệ</th>
+                <th style="width:20%">Đơn hàng</th>
+                <th style="width:22%">Tỷ lệ hợp lệ</th>
+              </tr></thead>
+              <tbody id="leadTableBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -835,7 +870,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbx2QFJKmVp-CaklvY5zwM2-j8Lib5A-lmG5N7L4U5REdcKooFAbBjDz289cQBRrKxF3Dw/exec';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbzgPUDSiUB5McFrr8d4xWGAudU7V6DEn7i7cb4eiHZYpaFr6QKJlNgkhIaCgVSWDA-34Q/exec';
 
 const AC = ['#4f7cff','#22c55e','#f59e0b','#a78bfa','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -845,7 +880,8 @@ const PB = { Tiktok:'b-red', Instagram:'b-purple', Youtube:'b-red', Facebook:'b-
 let session = null, portalData = null, historyData = [];
 let chartRevInst = null, chartRev2Inst = null, chartLeadInst = null, chartLeadBarInst = null;
 let currentRevFilter = '7d', currentLeadFilter = '7d';
-let allDays = []; // tất cả dữ liệu ngày của KOC hiện tại
+let allDays = [];      // dữ liệu ngày từ KOC_Report
+let allLeadRows = []; // dữ liệu lead từ sheet Leads riêng
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -918,15 +954,17 @@ function filterDaysByRange(days, filter) {
 /* ── Portal data ── */
 async function loadPortalData() {
   // Load tháng hiện tại + history song song
-  const [r1, r2] = await Promise.all([
+  const [r1, r2, r3] = await Promise.all([
     callApi({ action:'getKocData', username:session.username }),
-    callApi({ action:'getKocHistory', username:session.username, months:6 })
+    callApi({ action:'getKocHistory', username:session.username, months:6 }),
+    callApi({ action:'getLeadData', username:session.username })
   ]);
 
   let koc = r1 && r1.ok ? r1.koc : { doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_cl:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,days:[] };
   portalData = koc;
   allDays = koc.days || [];
-  historyData = r2 && r2.ok ? r2.history : [];
+  historyData  = r2 && r2.ok ? r2.history  : [];
+  allLeadRows  = r3 && r3.ok ? r3.leads   : [];
 
   const color = hashColor(session.username);
   const initials = session.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
@@ -1080,53 +1118,124 @@ function setLeadFilter(filter, btn) {
     document.querySelectorAll('#pportal-leads .filter-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
   }
+  if(filter!=='custom'){
+    const today = todayStr();
+    document.getElementById('leadDateTo').value = today;
+    if(filter==='7d')    document.getElementById('leadDateFrom').value = daysAgoStr(6);
+    else if(filter==='14d') document.getElementById('leadDateFrom').value = daysAgoStr(13);
+    else if(filter==='30d') document.getElementById('leadDateFrom').value = daysAgoStr(29);
+    else if(filter==='month') document.getElementById('leadDateFrom').value = currentMonthStr()+'-01';
+  }
   renderLeadChart(filter);
 }
 
 function renderLeadChart(filter) {
-  const days = filterDaysByRange(allDays, filter);
-  const sorted = [...days].sort((a,b)=>a.date.localeCompare(b.date));
-  const labels = sorted.map(d=>{ const p=d.date.split('-'); return `${p[2]}/${p[1]}`; });
-  const leadsData = sorted.map(d=>+d.leads);
-  const totalLeads = leadsData.reduce((s,v)=>s+v,0);
-  const totalChot  = sorted.reduce((s,d)=>s+(+d.lead_chot||0),0);
-  const totalCl    = sorted.reduce((s,d)=>s+(+(d.lead_cl||0)),0);
-  const conv = totalLeads>0?(totalChot/totalLeads*100).toFixed(1):'0.0';
+  // Dữ liệu lead đọc từ allLeadRows (sheet Leads riêng)
+  // hoặc fallback sang allDays nếu chưa có sheet Leads
+  let rows = allLeadRows.length > 0 ? allLeadRows : allDays.map(d=>({
+    date: d.date, tong_lead: d.leads||0, lead_hop_le: d.lead_cl||0, don_hang: d.don_hang||0
+  }));
 
+  // Filter theo khoảng thời gian
+  let filtered;
+  if(filter==='custom'){
+    const from = document.getElementById('leadDateFrom').value;
+    const to   = document.getElementById('leadDateTo').value;
+    filtered = from && to ? rows.filter(r=>r.date>=from && r.date<=to) : rows;
+  } else {
+    const today = todayStr();
+    let from;
+    if(filter==='7d')    from = daysAgoStr(6);
+    else if(filter==='14d') from = daysAgoStr(13);
+    else if(filter==='30d') from = daysAgoStr(29);
+    else if(filter==='month') from = currentMonthStr()+'-01';
+    else from = daysAgoStr(6);
+    filtered = rows.filter(r=>r.date>=from && r.date<=today);
+  }
+
+  const sorted = [...filtered].sort((a,b)=>a.date.localeCompare(b.date));
+  const totalLead   = sorted.reduce((s,r)=>s+(+r.tong_lead||0),0);
+  const totalHopLe  = sorted.reduce((s,r)=>s+(+r.lead_hop_le||0),0);
+  const totalDon    = sorted.reduce((s,r)=>s+(+r.don_hang||0),0);
+  const pctHopLe    = totalLead>0?Math.round(totalHopLe/totalLead*100):0;
+
+  // 4 metric cards
   document.getElementById('portalLeadMetrics').innerHTML=`
-    <div class="metric"><div class="metric-accent" style="background:#4f7cff"></div><div class="metric-label">Tổng lead</div><div class="metric-value">${totalLeads}</div><div class="metric-change change-neu">${sorted.length} ngày</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Lead chất lượng</div><div class="metric-value">${totalCl}</div><div class="metric-change change-neu">${totalLeads>0?Math.round(totalCl/totalLeads*100):0}% tổng lead</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div><div class="metric-label">Lead đã chốt</div><div class="metric-value">${totalChot}</div><div class="metric-change change-neu">Conv: ${conv}%</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#4f7cff"></div>
+      <div class="metric-label">Tổng lead</div>
+      <div class="metric-value">${totalLead}</div>
+      <div class="metric-change change-neu">${sorted.length} ngày</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
+      <div class="metric-label">Lead hợp lệ</div>
+      <div class="metric-value">${totalHopLe}</div>
+      <div class="metric-change change-neu">${pctHopLe}% tổng lead</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div>
+      <div class="metric-label">Đơn hàng</div>
+      <div class="metric-value">${totalDon}</div>
+      <div class="metric-change change-neu">từ lead hợp lệ</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div>
+      <div class="metric-label">Tỷ lệ hợp lệ</div>
+      <div class="metric-value">${pctHopLe}%</div>
+      <div class="metric-change ${pctHopLe>=60?'change-up':'change-neu'}">${totalLead>0?'lead → hợp lệ':'-'}</div></div>
   `;
 
-  // Bar chart theo ngày
+  // Chart title
+  const fromEl = document.getElementById('leadDateFrom').value;
+  const toEl   = document.getElementById('leadDateTo').value;
+  document.getElementById('leadChartTitle').textContent = `Lead theo ngày${fromEl&&toEl?' ('+fromEl+' → '+toEl+')':''}`;
+
+  // Biểu đồ grouped bar
+  const labels    = sorted.map(d=>{ const p=d.date.split('-'); return `${p[2]}/${p[1]}`; });
+  const leadData  = sorted.map(r=>+r.tong_lead||0);
+  const hopLeData = sorted.map(r=>+r.lead_hop_le||0);
+
   if(chartLeadBarInst) chartLeadBarInst.destroy();
   chartLeadBarInst = new Chart(document.getElementById('portalChartLeadBar'),{
     type:'bar',
-    data:{labels, datasets:[{
-      label:'Lead', data:leadsData,
-      backgroundColor:'#4f7cff55', borderColor:'#4f7cff',
-      borderWidth:1.5, borderRadius:4
-    }]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{y:{ticks:{color:'#555b72',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
-              x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:12},grid:{display:false},border:{display:false}}}}
+    data:{labels, datasets:[
+      { label:'Tổng lead',  data:leadData,  backgroundColor:'#4f7cff55', borderColor:'#4f7cff', borderWidth:1.5, borderRadius:4 },
+      { label:'Lead hợp lệ', data:hopLeData, backgroundColor:'#22c55e55', borderColor:'#22c55e', borderWidth:1.5, borderRadius:4 }
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y}`}}},
+      scales:{
+        y:{ticks:{color:'#555b72',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+        x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:14},grid:{display:false},border:{display:false}}
+      }
+    }
   });
 
-  // Doughnut phân bổ
-  const moi = Math.max(0, totalLeads - totalCl);
-  const chua = Math.max(0, totalCl - totalChot);
-  if(chartLeadInst) chartLeadInst.destroy();
-  chartLeadInst = new Chart(document.getElementById('portalChartLead'),{
-    type:'doughnut',
-    data:{ labels:['Lead mới','Đang xử lý','Đã chốt'],
-           datasets:[{data:[moi,chua,totalChot],
-             backgroundColor:['#4f7cff44','#f59e0b55','#22c55e'],
-             borderColor:['#4f7cff','#f59e0b','#22c55e'], borderWidth:1.5}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
-      plugins:{legend:{position:'bottom',labels:{color:'#8b90a7',font:{size:11},padding:12,boxWidth:10}},
-               tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}`}}}}
-  });
+  // Summary row
+  document.getElementById('leadSummaryRow').innerHTML=`
+    <div class="summary-item"><div class="summary-val">${totalLead}</div><div class="summary-lbl">Tổng lead</div></div>
+    <div class="summary-item"><div class="summary-val">${totalHopLe}</div><div class="summary-lbl">Lead hợp lệ</div></div>
+    <div class="summary-item"><div class="summary-val">${totalDon}</div><div class="summary-lbl">Đơn hàng</div></div>
+    <div class="summary-item"><div class="summary-val">${pctHopLe}%</div><div class="summary-lbl">Tỷ lệ hợp lệ</div></div>
+  `;
+
+  // Detail table
+  document.getElementById('leadTableCount').textContent = sorted.length + ' bản ghi';
+  document.getElementById('leadTableBody').innerHTML = [...sorted].reverse().map(r=>{
+    const pct = r.tong_lead>0?Math.round(r.lead_hop_le/r.tong_lead*100):0;
+    const parts = r.date.split('-');
+    const dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return `<tr>
+      <td style="font-weight:500">${dateStr}</td>
+      <td>${+r.tong_lead||0}</td>
+      <td><span style="color:#22c55e;font-weight:600">${+r.lead_hop_le||0}</span></td>
+      <td>${+r.don_hang||0}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;background:var(--bg4);border-radius:4px;height:6px;">
+            <div style="width:${Math.min(pct,100)}%;background:${pct>=60?'#22c55e':'#f59e0b'};border-radius:4px;height:6px;"></div>
+          </div>
+          <span style="font-size:12px;font-weight:600;min-width:32px;text-align:right">${pct}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
 function switchPortalPage(id) {
