@@ -870,7 +870,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbwyVPDbT2FylCmqcTbYXD3BDQM0VevmhM4HXIqrq1i6clhn9QLO4_lac3cRtxZCXIclTg/exec';
 
 const AC = ['#4f7cff','#22c55e','#f59e0b','#a78bfa','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -1062,20 +1062,22 @@ function renderDashboardChart(color) {
 /* ── Revenue chart with filter ── */
 function setRevFilter(filter, btn) {
   currentRevFilter = filter;
-  // Update active button
   if (btn) {
     document.querySelectorAll('#pportal-revenue .filter-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
   }
-  // Set date inputs if preset filter
   if(filter!=='custom') {
     const today = todayStr();
-    document.getElementById('revDateTo').value = today;
-    if(filter==='7d')    document.getElementById('revDateFrom').value = daysAgoStr(6);
-    else if(filter==='14d') document.getElementById('revDateFrom').value = daysAgoStr(13);
-    else if(filter==='30d') document.getElementById('revDateFrom').value = daysAgoStr(29);
-    else if(filter==='month') document.getElementById('revDateFrom').value = currentMonthStr()+'-01';
-    else if(filter==='6m') document.getElementById('revDateFrom').value = daysAgoStr(179);
+    const toEl   = document.getElementById('revDateTo');
+    const fromEl = document.getElementById('revDateFrom');
+    if(toEl)   toEl.value = today;
+    if(fromEl) {
+      if(filter==='7d')     fromEl.value = daysAgoStr(6);
+      else if(filter==='14d')  fromEl.value = daysAgoStr(13);
+      else if(filter==='30d')  fromEl.value = daysAgoStr(29);
+      else if(filter==='month') fromEl.value = currentMonthStr()+'-01';
+      else if(filter==='6m')   fromEl.value = daysAgoStr(179);
+    }
   }
   renderRevChart(filter);
 }
@@ -1123,8 +1125,10 @@ function renderRevChart(filter) {
   const today = todayStr();
   let from;
   if(filter==='custom') {
-    from = document.getElementById('revDateFrom').value;
-    const to = document.getElementById('revDateTo').value;
+    const fromEl2 = document.getElementById('revDateFrom');
+    const toEl2   = document.getElementById('revDateTo');
+    from = fromEl2 ? fromEl2.value : '';
+    const to = toEl2 ? toEl2.value : '';
     filtered = hasLeadData
       ? (from&&to ? allLeadRows.filter(r=>r.date>=from&&r.date<=to) : allLeadRows)
       : (from&&to ? filterDaysByRange(allDays,'custom') : allDays);
@@ -1229,11 +1233,15 @@ function setLeadFilter(filter, btn) {
   }
   if(filter!=='custom'){
     const today = todayStr();
-    document.getElementById('leadDateTo').value = today;
-    if(filter==='7d')    document.getElementById('leadDateFrom').value = daysAgoStr(6);
-    else if(filter==='14d') document.getElementById('leadDateFrom').value = daysAgoStr(13);
-    else if(filter==='30d') document.getElementById('leadDateFrom').value = daysAgoStr(29);
-    else if(filter==='month') document.getElementById('leadDateFrom').value = currentMonthStr()+'-01';
+    const toEl   = document.getElementById('leadDateTo');
+    const fromEl = document.getElementById('leadDateFrom');
+    if(toEl)   toEl.value = today;
+    if(fromEl) {
+      if(filter==='7d')     fromEl.value = daysAgoStr(6);
+      else if(filter==='14d')  fromEl.value = daysAgoStr(13);
+      else if(filter==='30d')  fromEl.value = daysAgoStr(29);
+      else if(filter==='month') fromEl.value = currentMonthStr()+'-01';
+    }
   }
   renderLeadChart(filter);
 }
@@ -1248,8 +1256,10 @@ function renderLeadChart(filter) {
   // Filter theo khoảng thời gian
   let filtered;
   if(filter==='custom'){
-    const from = document.getElementById('leadDateFrom').value;
-    const to   = document.getElementById('leadDateTo').value;
+    const lfEl = document.getElementById('leadDateFrom');
+    const ltEl = document.getElementById('leadDateTo');
+    const from = lfEl ? lfEl.value : '';
+    const to   = ltEl ? ltEl.value : '';
     filtered = from && to ? rows.filter(r=>r.date>=from && r.date<=to) : rows;
   } else {
     const today = todayStr();
