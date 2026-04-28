@@ -870,7 +870,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbwIIxGQT3xTKtJGw2lfY5NWNbVvN2R_a1_XicmW7I3bQyfRV1cjKHhXa6dwMaehKO5EXg/exec';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbyfXugJ3xY3FV48AWb1nUGGZ2CFAB7ftT8gLfz79fKEgq6fvoNREg1MZcabsKfa0GMRTQ/exec';
 
 const AC = ['#4f7cff','#22c55e','#f59e0b','#a78bfa','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -1042,34 +1042,76 @@ function setRevFilter(filter, btn) {
 
 function renderRevChart(filter) {
   const color = hashColor(session.username);
-  let days;
-  // Nếu filter là 6m → dùng historyData (group by tháng)
+
+  // Luôn dùng allLeadRows (cột hoa_hong từ sheet Leads)
+  // Fallback sang allDays nếu chưa có sheet Leads
+  const hasLeadData = allLeadRows.length > 0;
+
+  // Filter 6 tháng → group by tháng
   if(filter==='6m') {
-    const labels = historyData.map(h=>{ const [y,m]=h.month.split('-'); return `T${parseInt(m)}/${y.slice(2)}`; });
-    const data   = historyData.map(h=>+h.doanh_thu);
-    const total  = data.reduce((s,v)=>s+v,0);
+    let monthData;
+    if(hasLeadData) {
+      const byMonth = {};
+      allLeadRows.forEach(r => {
+        const m = r.date ? r.date.slice(0,7) : '';
+        if(!m) return;
+        if(!byMonth[m]) byMonth[m] = { hoa_hong:0, thuong:0 };
+        byMonth[m].hoa_hong += +r.hoa_hong || 0;
+        byMonth[m].thuong   += +r.thuong   || 0;
+      });
+      monthData = Object.entries(byMonth).sort().slice(-6).map(([m,v]) => ({
+        label: `T${parseInt(m.split('-')[1])}/${m.split('-')[0].slice(2)}`,
+        hoa_hong: Math.round(v.hoa_hong*100)/100
+      }));
+    } else {
+      monthData = historyData.map(h => ({
+        label: `T${parseInt(h.month.split('-')[1])}/${h.month.split('-')[0].slice(2)}`,
+        hoa_hong: +h.doanh_thu
+      }));
+    }
+    const labels = monthData.map(m=>m.label);
+    const data   = monthData.map(m=>m.hoa_hong);
+    const total  = Math.round(data.reduce((s,v)=>s+v,0)*100)/100;
     const avg    = data.length>0?total/data.length:0;
-    updateRevMetrics(total, data.length>0?Math.round(total/data.length*30):0, filter, historyData.length);
-    renderRevChartRaw(labels, data, Array(data.length).fill(+avg.toFixed(1)), color, '6 tháng gần nhất');
+    updateRevMetrics(total, data.length, filter, data.length);
+    renderRevChartRaw(labels, data, Array(data.length).fill(+avg.toFixed(2)), color, '6 tháng gần nhất');
     return;
   }
 
-  days = filterDaysByRange(allDays, filter);
-  if(days.length===0 && allDays.length>0) days = allDays; // fallback
+  // Filter theo khoảng thời gian
+  let filtered;
+  const today = todayStr();
+  let from;
+  if(filter==='custom') {
+    from = document.getElementById('revDateFrom').value;
+    const to = document.getElementById('revDateTo').value;
+    filtered = hasLeadData
+      ? (from&&to ? allLeadRows.filter(r=>r.date>=from&&r.date<=to) : allLeadRows)
+      : (from&&to ? filterDaysByRange(allDays,'custom') : allDays);
+  } else {
+    if(filter==='7d')      from = daysAgoStr(6);
+    else if(filter==='14d')   from = daysAgoStr(13);
+    else if(filter==='30d')   from = daysAgoStr(29);
+    else if(filter==='month') from = currentMonthStr()+'-01';
+    else from = daysAgoStr(6);
+    filtered = hasLeadData
+      ? allLeadRows.filter(r=>r.date>=from && r.date<=today)
+      : filterDaysByRange(allDays, filter);
+  }
 
-  const sorted = [...days].sort((a,b)=>a.date.localeCompare(b.date));
-  const labels = sorted.map(d=>{
-    const parts = d.date.split('-');
-    return `${parts[2]}/${parts[1]}`;
-  });
-  const data   = sorted.map(d=>+d.doanh_thu);
-  const total  = data.reduce((s,v)=>s+v,0);
-  const avg    = data.length>0?total/data.length:0;
-  const avgArr = Array(data.length).fill(+avg.toFixed(1));
+  const sorted = [...filtered].sort((a,b)=>a.date.localeCompare(b.date));
+  const labels  = sorted.map(d=>{ const p=d.date.split('-'); return `${p[2]}/${p[1]}`; });
+  // Vẽ biểu đồ theo cột hoa_hong (cột G sheet Leads)
+  const data    = sorted.map(r=>+(hasLeadData ? r.hoa_hong : r.doanh_thu)||0);
+  const total   = Math.round(data.reduce((s,v)=>s+v,0)*100)/100;
+  const avg     = data.length>0?total/data.length:0;
+  const avgArr  = Array(data.length).fill(+avg.toFixed(2));
 
   updateRevMetrics(total, sorted.length, filter, sorted.length);
   renderRevChartRaw(labels, data, avgArr, color,
-    filter==='month'?`Tháng ${currentMonthStr().split('-')[1]}/${currentMonthStr().split('-')[0]}`:`${sorted.length} ngày`
+    filter==='month'
+      ? `Tháng ${currentMonthStr().split('-')[1]}/${currentMonthStr().split('-')[0]}`
+      : `${sorted.length} ngày`
   );
 }
 
