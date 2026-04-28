@@ -921,6 +921,20 @@ async function doLogin() {
 document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
 /* ── Helpers ── */
+/* ── Format số tiền VNĐ ── */
+function fmtVND(val) {
+  // val là đơn vị triệu VNĐ (vd: 14.2 = 14.2 triệu)
+  const vnd = Math.round(val * 1000000);
+  if (vnd >= 1000000000) {
+    return (vnd/1000000000).toFixed(2).replace(/\.?0+$/,'') + ' tỷ';
+  } else if (vnd >= 1000000) {
+    return new Intl.NumberFormat('vi-VN').format(Math.round(vnd/1000)*1000) + ' đ';
+  } else if (vnd > 0) {
+    return new Intl.NumberFormat('vi-VN').format(vnd) + ' đ';
+  }
+  return '0 đ';
+}
+
 function todayStr() {
   return new Date().toISOString().slice(0,10);
 }
@@ -980,23 +994,44 @@ async function loadPortalData() {
   });
   document.getElementById('portalSidebarName').textContent = session.full_name.split(' ').pop();
   document.getElementById('portalWelcomeName').textContent = 'Xin chào, '+session.full_name.split(' ').pop()+'!';
-  document.getElementById('portalWelcomeSub').textContent = `Tháng này đạt ${(+koc.doanh_thu).toFixed(1)}tr / mục tiêu ${koc.muc_tieu_rev}tr`;
+  document.getElementById('portalWelcomeSub').textContent = `Hoa hồng tháng này: ${fmtVND(totalHHThang)}`;
   document.getElementById('portalPlatformBadge').textContent = session.platform || 'KOC';
 
   const conv = koc.leads>0?(koc.lead_chot/koc.leads*100).toFixed(1):'0.0';
+  // Tính hoa hồng tháng này từ allLeadRows
+  const monthNow = currentMonthStr();
+  const monthLeads = allLeadRows.filter(r=>r.date&&r.date.startsWith(monthNow));
+  const totalHHThang = Math.round(monthLeads.reduce((s,r)=>s+(+r.hoa_hong||0),0)*100)/100;
+
+  const totalDonHang  = monthLeads.reduce((s,r)=>s+(+r.don_hang||0),0);
+  const totalHopLe    = monthLeads.reduce((s,r)=>s+(+r.lead_hop_le||0),0);
+  const totalLeadM    = monthLeads.reduce((s,r)=>s+(+r.tong_lead||0),0);
+
   document.getElementById('portalMetrics').innerHTML = `
-    <div class="metric"><div class="metric-accent" style="background:${color}"></div><div class="metric-label">Doanh thu</div><div class="metric-value">${(+koc.doanh_thu).toFixed(1)}tr</div><div class="metric-change change-up">↑ tháng này</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div><div class="metric-label">Đơn hàng</div><div class="metric-value">${koc.don_hang}</div><div class="metric-change change-neu">đơn</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div><div class="metric-label">Lead phát sinh</div><div class="metric-value">${koc.leads}</div><div class="metric-change change-neu">Conv: ${conv}%</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div><div class="metric-label">Hoa hồng</div><div class="metric-value">${(+koc.hoa_hong).toFixed(1)}tr</div><div class="metric-change change-up">↑ tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div>
+      <div class="metric-label">Hoa hồng</div>
+      <div class="metric-value" style="font-size:18px">${fmtVND(totalHHThang)}</div>
+      <div class="metric-change change-up">↑ tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
+      <div class="metric-label">Đơn hàng</div>
+      <div class="metric-value">${totalDonHang}</div>
+      <div class="metric-change change-neu">đơn tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#f59e0b"></div>
+      <div class="metric-label">Lead phát sinh</div>
+      <div class="metric-value">${totalLeadM > 0 ? totalLeadM : koc.leads}</div>
+      <div class="metric-change change-neu">tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#4f7cff"></div>
+      <div class="metric-label">Lead hợp lệ</div>
+      <div class="metric-value">${totalHopLe}</div>
+      <div class="metric-change change-neu">${totalLeadM>0?Math.round(totalHopLe/totalLeadM*100):0}% tổng lead</div></div>
   `;
 
   const bar = p=>p>=100?'#22c55e':p>=70?'#4f7cff':'#f59e0b';
-  const rp=Math.round(koc.doanh_thu/(koc.muc_tieu_rev||1)*100);
-  const lp=Math.round(koc.leads/(koc.muc_tieu_lead||1)*100);
-  const cp=Math.round(koc.lead_chot/(koc.muc_tieu_lead||1)*100);
+  const hp=Math.round(totalHHThang/(koc.muc_tieu_rev||1)*100); // hoa hồng vs mục tiêu
+  const lp=Math.round((totalLeadM||koc.leads)/(koc.muc_tieu_lead||1)*100);
+  const hlp=Math.round(totalHopLe/((koc.muc_tieu_lead||1))*100);
   document.getElementById('portalProgress').innerHTML=[
-    {label:'Doanh thu',pct:rp},{label:'Lead phát sinh',pct:lp},{label:'Lead đã chốt',pct:cp}
+    {label:'Hoa hồng',pct:hp},{label:'Lead phát sinh',pct:lp},{label:'Lead hợp lệ',pct:hlp}
   ].map(r=>`<div class="prog-item"><span class="prog-label">${r.label}</span><div class="prog-bg"><div class="prog-fill" style="width:${Math.min(r.pct,100)}%;background:${bar(r.pct)}"></div></div><span class="prog-pct">${r.pct}%</span></div>`).join('');
 
   renderDashboardChart(color);
@@ -1125,9 +1160,9 @@ function renderRevChartRaw(labels, data, avgData, color, title) {
   const opts = {
     responsive:true, maintainAspectRatio:false,
     interaction:{mode:'index',intersect:false},
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}tr`}}},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtVND(ctx.parsed.y)}`}}},
     scales:{
-      y:{ticks:{color:'#555b72',font:{size:11},callback:v=>v.toFixed(1)+'tr'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+      y:{ticks:{color:'#555b72',font:{size:10},callback:v=>new Intl.NumberFormat('vi-VN',{notation:'compact',maximumFractionDigits:1}).format(Math.round(v*1000000))},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
       x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:14},grid:{display:false},border:{display:false}}
     }
   };
@@ -1170,16 +1205,16 @@ function updateRevMetrics(total, days, filter, count) {
   document.getElementById('portalRevMetrics').innerHTML=`
     <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div>
       <div class="metric-label">Hoa hồng (dự kiến)</div>
-      <div class="metric-value">${totalHoaHong.toFixed(1)}tr</div>
+      <div class="metric-value" style="font-size:18px">${fmtVND(totalHoaHong)}</div>
       <div class="metric-change change-up">${count} ngày</div></div>
     <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
       <div class="metric-label">Trung bình hoa hồng / ngày</div>
-      <div class="metric-value">${count>0?(totalHoaHong/count).toFixed(1):'0.0'}tr</div>
+      <div class="metric-value" style="font-size:18px">${fmtVND(count>0?totalHoaHong/count:0)}</div>
       <div class="metric-change change-neu">${count} ngày</div></div>
   `;
   document.getElementById('revSummaryRow').innerHTML=`
-    <div class="summary-item"><div class="summary-val">${totalHoaHong.toFixed(1)}tr</div><div class="summary-lbl">Hoa hồng</div></div>
-    <div class="summary-item"><div class="summary-val">${count>0?(totalHoaHong/count).toFixed(1):'0.0'}tr</div><div class="summary-lbl">TB/ngày</div></div>
+    <div class="summary-item"><div class="summary-val" style="font-size:15px">${fmtVND(totalHoaHong)}</div><div class="summary-lbl">Tổng hoa hồng</div></div>
+    <div class="summary-item"><div class="summary-val" style="font-size:15px">${fmtVND(count>0?totalHoaHong/count:0)}</div><div class="summary-lbl">TB/ngày</div></div>
     <div class="summary-item"><div class="summary-val">${count}</div><div class="summary-lbl">Ngày có data</div></div>
     <div class="summary-item"><div class="summary-val">${count>0?Math.round(totalHoaHong/(portalData.muc_tieu_rev||1)*100):0}%</div><div class="summary-lbl">Mục tiêu</div></div>
   `;
@@ -1343,7 +1378,7 @@ async function loadAdminData() {
       </div></td>
       <td style="color:var(--text2);font-size:12px">${a.username}</td>
       <td><span class="badge ${PB[a.platform]||'b-blue'}">${a.platform}</span></td>
-      <td style="font-weight:600">${(+a.doanh_thu).toFixed(1)}tr</td>
+      <td style="font-weight:600">${fmtVND(+a.doanh_thu)}</td>
       <td><span class="badge ${active?'b-green':'b-amber'}">${active?'Hoạt động':'Tạm khóa'}</span></td>
       <td>${active
         ? `<button class="btn-danger" onclick="toggleStatus('${a.username}','${a.status}')">Khóa</button>`
