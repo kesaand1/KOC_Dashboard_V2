@@ -644,11 +644,11 @@ tr:hover td { background:var(--bg3); }
         </div>
         <div class="filter-bar">
           <div class="filter-group">
-            <button class="filter-btn active" onclick="setRevFilter('7d',this)">7 ngày</button>
+            <button class="filter-btn" onclick="setRevFilter('7d',this)">7 ngày</button>
             <button class="filter-btn" onclick="setRevFilter('14d',this)">14 ngày</button>
             <button class="filter-btn" onclick="setRevFilter('30d',this)">30 ngày</button>
             <div class="filter-sep"></div>
-            <button class="filter-btn" onclick="setRevFilter('month',this)">Tháng này</button>
+            <button class="filter-btn active" onclick="setRevFilter('month',this)">Tháng này</button>
             <button class="filter-btn" onclick="setRevFilter('6m',this)">6 tháng</button>
           </div>
           <div class="date-range">
@@ -689,11 +689,11 @@ tr:hover td { background:var(--bg3); }
         </div>
         <div class="filter-bar">
           <div class="filter-group">
-            <button class="filter-btn active" onclick="setLeadFilter('7d',this)">7 ngày</button>
+            <button class="filter-btn" onclick="setLeadFilter('7d',this)">7 ngày</button>
             <button class="filter-btn" onclick="setLeadFilter('14d',this)">14 ngày</button>
             <button class="filter-btn" onclick="setLeadFilter('30d',this)">30 ngày</button>
             <div class="filter-sep"></div>
-            <button class="filter-btn" onclick="setLeadFilter('month',this)">Tháng này</button>
+            <button class="filter-btn active" onclick="setLeadFilter('month',this)">Tháng này</button>
           </div>
           <div class="date-range">
             <span>Từ</span>
@@ -879,7 +879,7 @@ const PB = { Tiktok:'b-red', Instagram:'b-purple', Youtube:'b-red', Facebook:'b-
 
 let session = null, portalData = null, historyData = [];
 let chartRevInst = null, chartRev2Inst = null, chartLeadInst = null, chartLeadBarInst = null;
-let currentRevFilter = '7d', currentLeadFilter = '7d';
+let currentRevFilter = 'month', currentLeadFilter = 'month';
 let allDays = [];      // dữ liệu ngày từ KOC_Report
 let allLeadRows = []; // dữ liệu lead từ sheet Leads riêng
 
