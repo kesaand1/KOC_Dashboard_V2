@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KOC Portal</title>
+<title>Edupia Affiliate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -424,6 +424,35 @@ tr:hover td { background:var(--bg3); }
 @keyframes spin { to { transform:rotate(360deg); } }
 
 
+/* ── Login benefits ── */
+.login-benefits {
+  display:flex; flex-direction:column; gap:16px;
+  margin:2rem 0 2rem;
+}
+.login-benefit-item {
+  display:flex; align-items:flex-start; gap:14px;
+  background:rgba(255,255,255,0.04);
+  border:0.5px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius-lg);
+  padding:14px 16px;
+  transition:background 0.2s;
+}
+.login-benefit-item:hover { background:rgba(255,255,255,0.07); }
+.benefit-icon {
+  font-size:22px; flex-shrink:0;
+  width:40px; height:40px;
+  background:rgba(79,124,255,0.15);
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+}
+.benefit-title {
+  font-size:13px; font-weight:600; color:var(--text);
+  margin-bottom:3px;
+}
+.benefit-desc {
+  font-size:12px; color:var(--text2); line-height:1.5;
+}
+
 /* ── Time filter bar ── */
 .filter-bar {
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
@@ -511,28 +540,67 @@ tr:hover td { background:var(--bg3); }
     <div class="login-left">
       <div class="login-brand">
         <div class="login-brand-logo">
-          <div class="brand-icon">KOC</div>
-          <span class="brand-name">KOC Portal</span>
+          <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+  <img src="./Logo.png" alt="Edupia"
+       style="height:34px;width:auto;object-fit:contain;flex-shrink:0;"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+  <div style="display:none;align-items:center;justify-content:center;height:34px;padding:0 10px;background:linear-gradient(135deg,#e85d04,#f59e0b);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.3px;white-space:nowrap;">edupia</div>
+</div>
+          <span class="brand-name">Edupia Affiliate</span>
         </div>
         <div class="login-hero-title">
-          Quản lý <span>KOC</span><br>thông minh hơn
+          Tăng thu nhập<br>cùng <span>Edupia Affiliate</span>
         </div>
         <div class="login-hero-sub">
-          Theo dõi doanh thu, leads và hiệu suất của từng KOC theo thời gian thực — mọi lúc, mọi nơi.
+          Nền tảng affiliate hàng đầu trong lĩnh vực giáo dục — hoa hồng hấp dẫn, minh bạch và được cập nhật theo thời gian thực.
+        </div>
+
+        <!-- Benefits list -->
+        <div class="login-benefits">
+          <div class="login-benefit-item">
+            <div class="benefit-icon">💰</div>
+            <div>
+              <div class="benefit-title">Hoa hồng minh bạch</div>
+              <div class="benefit-desc">Xem chi tiết hoa hồng từng ngày, không bỏ sót bất kỳ đơn hàng nào</div>
+            </div>
+          </div>
+          <div class="login-benefit-item">
+            <div class="benefit-icon">💹</div>
+            <div>
+              <div class="benefit-title">Theo dõi doanh thu hiệu quả</div>
+              <div class="benefit-desc">Nắm bắt doanh thu từng ngày, từng đơn hàng — không bỏ lỡ bất kỳ khoản thu nào</div>
+            </div>
+          </div>
+          <div class="login-benefit-item">
+            <div class="benefit-icon">📚</div>
+            <div>
+              <div class="benefit-title">Hướng dẫn cách làm chi tiết</div>
+              <div class="benefit-desc">Tài liệu và hướng dẫn bán hàng đầy đủ giúp bạn tối ưu hiệu suất ngay từ đầu</div>
+            </div>
+          </div>
+          <div class="login-benefit-item">
+            <div class="benefit-icon">🎧</div>
+            <div>
+              <div class="benefit-title">Hỗ trợ 24/7</div>
+              <div class="benefit-desc">Đội ngũ hỗ trợ luôn sẵn sàng giải đáp mọi thắc mắc về hoa hồng và chiến dịch</div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- Trust indicators -->
       <div class="login-stats">
         <div class="login-stat-item">
-          <div class="login-stat-num">8+</div>
-          <div class="login-stat-label">KOC đang hoạt động</div>
-        </div>
-        <div class="login-stat-item">
-          <div class="login-stat-num">4</div>
-          <div class="login-stat-label">Nền tảng</div>
+          <div class="login-stat-num">100%</div>
+          <div class="login-stat-label">Minh bạch hoa hồng</div>
         </div>
         <div class="login-stat-item">
           <div class="login-stat-num">Real-time</div>
-          <div class="login-stat-label">Cập nhật từ Sheets</div>
+          <div class="login-stat-label">Cập nhật tức thì</div>
+        </div>
+        <div class="login-stat-item">
+          <div class="login-stat-num">Bảo mật</div>
+          <div class="login-stat-label">Dữ liệu riêng tư</div>
         </div>
       </div>
     </div>
@@ -540,15 +608,20 @@ tr:hover td { background:var(--bg3); }
     <div class="login-right">
       <div class="login-form-wrap">
         <div class="login-form-logo">
-          <div class="brand-icon">KOC</div>
-          <span class="brand-name">KOC Portal</span>
+          <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+  <img src="./Logo.png" alt="Edupia"
+       style="height:34px;width:auto;object-fit:contain;flex-shrink:0;"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+  <div style="display:none;align-items:center;justify-content:center;height:34px;padding:0 10px;background:linear-gradient(135deg,#e85d04,#f59e0b);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.3px;white-space:nowrap;">edupia</div>
+</div>
+          <span class="brand-name">Edupia Affiliate</span>
         </div>
         <div class="login-heading">Chào mừng trở lại</div>
         <div class="login-subheading">Đăng nhập để truy cập dashboard của bạn</div>
         <div class="error-box" id="loginErr"></div>
         <div class="form-group">
           <label class="form-label">Tên đăng nhập</label>
-          <input class="form-input" type="text" id="loginUser" placeholder="vd: lananh.koc" autocomplete="username" />
+          <input class="form-input" type="text" id="loginUser" placeholder="vd: lananh.affiliate" autocomplete="username" />
         </div>
         <div class="form-group">
           <label class="form-label">Mật khẩu</label>
@@ -569,8 +642,13 @@ tr:hover td { background:var(--bg3); }
 
     <nav class="sidebar" id="sidebarPortal">
       <div class="sidebar-brand">
-        <div class="brand-icon">KOC</div>
-        <span class="brand-name">KOC Portal</span>
+        <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+  <img src="./Logo.png" alt="Edupia"
+       style="height:34px;width:auto;object-fit:contain;flex-shrink:0;"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+  <div style="display:none;align-items:center;justify-content:center;height:34px;padding:0 10px;background:linear-gradient(135deg,#e85d04,#f59e0b);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.3px;white-space:nowrap;">edupia</div>
+</div>
+        <span class="brand-name">Edupia Affiliate</span>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-label">Menu</div>
@@ -608,7 +686,7 @@ tr:hover td { background:var(--bg3); }
         </button>
         <div style="display:flex;align-items:center;gap:8px;">
           <div class="brand-icon" style="width:28px;height:28px;font-size:10px;">KOC</div>
-          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">KOC Portal</span>
+          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Edupia Affiliate</span>
         </div>
         <div style="width:36px;"></div>
       </div>
@@ -761,8 +839,13 @@ tr:hover td { background:var(--bg3); }
 
     <nav class="sidebar" id="sidebarAdmin">
       <div class="sidebar-brand">
-        <div class="brand-icon">KOC</div>
-        <span class="brand-name">Admin Panel</span>
+        <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+  <img src="./Logo.png" alt="Edupia"
+       style="height:34px;width:auto;object-fit:contain;flex-shrink:0;"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+  <div style="display:none;align-items:center;justify-content:center;height:34px;padding:0 10px;background:linear-gradient(135deg,#e85d04,#f59e0b);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.3px;white-space:nowrap;">edupia</div>
+</div>
+        <span class="brand-name">Edupia Affiliate — Admin</span>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-label">Quản trị</div>
@@ -800,7 +883,7 @@ tr:hover td { background:var(--bg3); }
         </button>
         <div style="display:flex;align-items:center;gap:8px;">
           <div class="brand-icon" style="width:28px;height:28px;font-size:10px;">KOC</div>
-          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Admin Panel</span>
+          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Edupia Affiliate — Admin</span>
         </div>
         <div style="width:36px;"></div>
       </div>
@@ -860,7 +943,7 @@ tr:hover td { background:var(--bg3); }
         <div class="card" style="max-width:480px;">
           <div class="error-box" id="resetErr"></div>
           <div class="success-box" id="resetSuccess">Đặt lại mật khẩu thành công!</div>
-          <div class="field"><label>Tên đăng nhập KOC</label><input type="text" id="resetUser" placeholder="vd: lananh.koc"/></div>
+          <div class="field"><label>Tên đăng nhập KOC</label><input type="text" id="resetUser" placeholder="vd: lananh.affiliate"/></div>
           <div class="field"><label>Mật khẩu mới</label><input type="password" id="resetPass" placeholder="Tối thiểu 6 ký tự"/></div>
           <button class="btn-primary" id="btnReset" onclick="doReset()">Xác nhận đặt lại</button>
         </div>
