@@ -652,10 +652,6 @@ tr:hover td { background:var(--bg3); }
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-label">Menu</div>
-        <div class="nav-item" onclick="switchPortalPage('intro')">
-          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
-          Chương trình
-        </div>
         <div class="nav-item active" onclick="switchPortalPage('dashboard')">
           <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
           Dashboard
@@ -667,6 +663,10 @@ tr:hover td { background:var(--bg3); }
         <div class="nav-item" onclick="switchPortalPage('leads')">
           <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
           Leads
+        </div>
+        <div class="nav-item" onclick="switchPortalPage('intro')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          Thông tin
         </div>
       </div>
       <div class="sidebar-footer">
@@ -726,7 +726,7 @@ tr:hover td { background:var(--bg3); }
         .faq-q:hover{background:var(--bg3);}
         .faq-icon{color:var(--text2);font-size:20px;font-weight:300;transition:transform .2s;flex-shrink:0;}
         .faq-a{padding:0 16px;max-height:0;overflow:hidden;transition:all .3s;font-size:13px;color:var(--text2);line-height:1.7;}
-        .faq-item.open .faq-a{padding:0 16px 14px;max-height:200px;}
+        .faq-item.open .faq-a{padding:0 16px 14px;max-height:600px;}
         .faq-item.open .faq-icon{transform:rotate(45deg);}
         .intro-cta{background:linear-gradient(135deg,#e85d04,#f48c06);border-radius:var(--radius-xl);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;}
         .cta-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;}
@@ -1606,7 +1606,7 @@ function renderLeadChart(filter) {
 
 function switchPortalPage(id) {
   document.querySelectorAll('#screen-portal .nav-item').forEach((el,i)=>{
-    const ids=['intro','dashboard','revenue','leads'];
+    const ids=['dashboard','revenue','leads','intro'];
     el.classList.toggle('active', ids[i]===id);
   });
   document.querySelectorAll('#screen-portal .page').forEach(p=>p.classList.remove('active'));
