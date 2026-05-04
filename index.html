@@ -753,18 +753,56 @@ tr:hover td { background:var(--bg3); }
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:1.25rem;">
           <div class="card" style="margin-bottom:0">
-            <div class="card-head"><span class="card-title">Mức hoa hồng theo sản phẩm</span></div>
+            <div class="card-head"><span class="card-title">Cách tính doanh thu</span></div>
             <div style="overflow-x:auto;">
               <table class="comm-table">
-                <thead><tr><th>Sản phẩm</th><th>Hoa hồng</th><th>Ghi chú</th></tr></thead>
+                <thead><tr><th>Hành động</th><th>Hoa hồng</th><th>Ghi chú</th></tr></thead>
                 <tbody>
-                  <tr><td>Khóa học Tiếng Anh trẻ em</td><td><span class="comm-rate">15%</span></td><td><span class="badge b-green">Phổ biến nhất</span></td></tr>
-                  <tr><td>Khóa học Toán tư duy</td><td><span class="comm-rate">12%</span></td><td></td></tr>
-                  <tr><td>Khóa học IELTS</td><td><span class="comm-rate">18%</span></td><td><span class="badge b-blue">Giá trị cao</span></td></tr>
-                  <tr><td>Gói học phí năm</td><td><span class="comm-rate">20%</span></td><td><span class="badge b-green">Mới</span></td></tr>
-                  <tr><td>Tài liệu & sách điện tử</td><td><span class="comm-rate">10%</span></td><td></td></tr>
+                  <tr>
+                    <td><div style="font-weight:500">📣 Đăng bài đầu tiên lên Facebook</div></td>
+                    <td><span class="comm-rate">100.000 ₫</span></td>
+                    <td><span class="badge b-green">Dễ dàng nhất</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:500">✅ Lead phát sinh hợp lệ</div></td>
+                    <td><span class="comm-rate">50.000 ₫</span></td>
+                    <td><span class="badge b-blue">Phổ biến nhất</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:500">🛒 Đơn hàng hợp lệ</div></td>
+                    <td><span class="comm-rate">500.000 ₫</span></td>
+                    <td><span class="badge b-amber" style="background:rgba(245,158,11,0.15);color:#fbbf24;">Giá trị cao</span></td>
+                  </tr>
                 </tbody>
               </table>
+            </div>
+            <!-- Ví dụ cụ thể -->
+            <div style="margin-top:14px;background:linear-gradient(135deg,rgba(232,93,4,0.08),rgba(244,140,6,0.05));border:1px solid rgba(232,93,4,0.2);border-radius:var(--radius-lg);padding:14px 16px;">
+              <div style="font-size:12px;font-weight:700;color:#f48c06;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">💡 Ví dụ cụ thể</div>
+              <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+                Tháng 5 bạn đăng bài review khóa học Edupia. Từ bài viết này có <strong style="color:var(--text)">30 lead hợp lệ</strong> và <strong style="color:var(--text)">10 đơn hàng</strong> phát sinh.
+              </div>
+              <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;">
+                <div style="background:var(--bg3);border-radius:var(--radius);padding:6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;">Đăng bài</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--text)">100.000 ₫</span>
+                </div>
+                <span style="color:var(--text3);font-size:18px;font-weight:300;">+</span>
+                <div style="background:var(--bg3);border-radius:var(--radius);padding:6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;">30 leads × 50.000</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--text)">1.500.000 ₫</span>
+                </div>
+                <span style="color:var(--text3);font-size:18px;font-weight:300;">+</span>
+                <div style="background:var(--bg3);border-radius:var(--radius);padding:6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;">10 đơn × 500.000</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--text)">5.000.000 ₫</span>
+                </div>
+                <span style="color:var(--text3);font-size:18px;font-weight:300;">=</span>
+                <div style="background:linear-gradient(135deg,rgba(232,93,4,0.2),rgba(244,140,6,0.15));border:1px solid rgba(232,93,4,0.3);border-radius:var(--radius);padding:6px 16px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:#f48c06;text-transform:uppercase;letter-spacing:.04em;font-weight:700;">Tổng thu nhập</span>
+                  <span style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#f48c06;">6.600.000 ₫</span>
+                </div>
+              </div>
             </div>
           </div>
           <div class="card" style="margin-bottom:0">
