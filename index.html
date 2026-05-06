@@ -18,13 +18,13 @@
   --text3:    #555b72;
   --border:   rgba(255,255,255,0.07);
   --border2:  rgba(255,255,255,0.13);
-  --blue:     #4f7cff;
-  --blue2:    #3a63e8;
-  --blue-g:   linear-gradient(135deg,#4f7cff,#7c5cff);
+  --blue:     #1a6fa8;
+  --blue2:    #1558a0;
+  --blue-g:   linear-gradient(135deg,#1a6fa8,#00b5c8);
   --green:    #22c55e;
   --amber:    #f59e0b;
   --red:      #ef4444;
-  --purple:   #a78bfa;
+  --purple:   #00b5c8;
   --radius:   10px;
   --radius-lg:16px;
   --radius-xl:22px;
@@ -65,7 +65,7 @@ body {
   content:'';
   position:absolute; top:-100px; left:-100px;
   width:500px; height:500px;
-  background:radial-gradient(circle, rgba(79,124,255,0.15) 0%, transparent 70%);
+  background:radial-gradient(circle, rgba(26,111,168,0.15) 0%, transparent 70%);
   pointer-events:none;
 }
 .login-left::after {
@@ -131,7 +131,7 @@ body {
 }
 .form-input:focus {
   border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(79,124,255,0.15);
+  box-shadow:0 0 0 3px rgba(26,111,168,0.15);
 }
 .form-input::placeholder { color:var(--text3); }
 
@@ -203,7 +203,7 @@ body {
   margin-bottom:2px;
 }
 .nav-item:hover { background:var(--bg3); color:var(--text); }
-.nav-item.active { background:rgba(79,124,255,0.15); color:var(--blue); }
+.nav-item.active { background:rgba(26,111,168,0.15); color:var(--blue); }
 .nav-icon {
   width:18px; height:18px; flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
@@ -338,9 +338,9 @@ tr:hover td { background:var(--bg3); }
 .badge { display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; white-space:nowrap; }
 .b-green  { background:rgba(34,197,94,0.12);  color:#4ade80; }
 .b-amber  { background:rgba(245,158,11,0.12); color:#fbbf24; }
-.b-blue   { background:rgba(79,124,255,0.15); color:#93b4ff; }
+.b-blue   { background:rgba(26,111,168,0.15); color:#7dd8e8; }
 .b-red    { background:rgba(239,68,68,0.12);  color:#fca5a5; }
-.b-purple { background:rgba(167,139,250,0.12);color:#c4b5fd; }
+.b-purple { background:rgba(167,139,250,0.12);color:#7dd8e8; }
 
 /* ── Avatar ── */
 .avatar {
@@ -410,7 +410,7 @@ tr:hover td { background:var(--bg3); }
 }
 .field input:focus, .field select:focus {
   border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(79,124,255,0.12);
+  box-shadow:0 0 0 3px rgba(26,111,168,0.12);
 }
 .field select option { background:var(--bg3); }
 
@@ -441,7 +441,7 @@ tr:hover td { background:var(--bg3); }
 .benefit-icon {
   font-size:22px; flex-shrink:0;
   width:40px; height:40px;
-  background:rgba(79,124,255,0.15);
+  background:rgba(26,111,168,0.15);
   border-radius:10px;
   display:flex; align-items:center; justify-content:center;
 }
@@ -504,8 +504,8 @@ tr:hover td { background:var(--bg3); }
 
 /* ── Portal welcome ── */
 .welcome-banner {
-  background:linear-gradient(135deg, rgba(79,124,255,0.15), rgba(124,92,255,0.1));
-  border:1px solid rgba(79,124,255,0.2);
+  background:linear-gradient(135deg, rgba(26,111,168,0.15), rgba(124,92,255,0.1));
+  border:1px solid rgba(26,111,168,0.2);
   border-radius:var(--radius-xl);
   padding:1.5rem; margin-bottom:1.5rem;
   display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;
@@ -513,7 +513,7 @@ tr:hover td { background:var(--bg3); }
 .welcome-avatar { width:52px; height:52px; border-radius:14px; font-size:18px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .welcome-name { font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:var(--text); }
 .welcome-sub { font-size:13px; color:var(--text2); margin-top:2px; }
-.welcome-badge { margin-left:auto; background:rgba(79,124,255,0.2); border:1px solid rgba(79,124,255,0.3); border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600; color:var(--blue); white-space:nowrap; }
+.welcome-badge { margin-left:auto; background:rgba(26,111,168,0.2); border:1px solid rgba(26,111,168,0.3); border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600; color:var(--blue); white-space:nowrap; }
 
 /* ── Stat highlight ── */
 .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:10px; margin:1rem 0; }
@@ -664,14 +664,14 @@ tr:hover td { background:var(--bg3); }
           <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
           Leads
         </div>
-        <div class="nav-item" onclick="switchPortalPage('intro')" style="margin-top:8px;background:linear-gradient(135deg,rgba(232,93,4,0.2),rgba(244,140,6,0.1));border:1px solid rgba(232,93,4,0.35);color:#f48c06;">
-          <span class="nav-icon" style="color:#f48c06;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <div class="nav-item" onclick="switchPortalPage('intro')" style="margin-top:8px;background:linear-gradient(135deg,rgba(26,111,168,0.2),rgba(0,181,200,0.1));border:1px solid rgba(0,181,200,0.4);color:#00b5c8;">
+          <span class="nav-icon" style="color:#00b5c8;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
           <span style="font-weight:700;">Thông tin chương trình</span>
         </div>
       </div>
       <div class="sidebar-footer">
         <div class="user-card">
-          <div class="user-avatar avatar av-sm" id="portalSidebarAvatar" style="background:#4f7cff"></div>
+          <div class="user-avatar avatar av-sm" id="portalSidebarAvatar" style="background:#1a6fa8"></div>
           <div class="user-info">
             <div class="user-name" id="portalSidebarName">—</div>
             <div class="user-role">KOC</div>
@@ -699,7 +699,7 @@ tr:hover td { background:var(--bg3); }
       <!-- Intro page -->
       <div class="page" id="pportal-intro">
         <style>
-        .intro-hero{background:linear-gradient(135deg,rgba(232,93,4,0.12),rgba(79,124,255,0.08));border:1px solid rgba(232,93,4,0.2);border-radius:var(--radius-xl);padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
+        .intro-hero{background:linear-gradient(135deg,rgba(232,93,4,0.12),rgba(26,111,168,0.08));border:1px solid rgba(232,93,4,0.2);border-radius:var(--radius-xl);padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
         .intro-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(232,93,4,0.12),transparent 70%);pointer-events:none;}
         .intro-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(232,93,4,0.15);border:1px solid rgba(232,93,4,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#f48c06;text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;}
         .intro-title{font-family:'Sora',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:700;color:var(--text);line-height:1.3;margin-bottom:.75rem;}
@@ -707,7 +707,7 @@ tr:hover td { background:var(--bg3); }
         .intro-desc{font-size:14px;color:var(--text2);line-height:1.8;max-width:600px;}
         .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:0;}
         .step-box{background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;}
-        .step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#e85d04,#f48c06);color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+        .step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1a6fa8,#00b5c8);color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
         .step-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;}
         .step-desc{font-size:12px;color:var(--text2);line-height:1.6;}
         .comm-table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -771,7 +771,7 @@ tr:hover td { background:var(--bg3); }
                   <tr>
                     <td><div style="font-weight:500">✅ Từ lead thứ 4 hợp lệ</div></td>
                     <td><span class="comm-rate">50.000 ₫</span></td>
-                    <td><span class="badge b-purple" style="background:rgba(167,139,250,0.15);color:#c4b5fd;">Thu nhập đều</span></td>
+                    <td><span class="badge b-purple" style="background:rgba(167,139,250,0.15);color:#7dd8e8;">Thu nhập đều</span></td>
                   </tr>
                   <tr>
                     <td><div style="font-weight:500">🛒 Đơn hàng hợp lệ</div></td>
@@ -868,7 +868,7 @@ tr:hover td { background:var(--bg3); }
       <!-- Dashboard page -->
       <div class="page active" id="pportal-dashboard">
         <div class="welcome-banner" id="portalWelcome">
-          <div class="welcome-avatar" id="portalWelcomeAvatar" style="background:#4f7cff">LA</div>
+          <div class="welcome-avatar" id="portalWelcomeAvatar" style="background:#1a6fa8">LA</div>
           <div>
             <div class="welcome-name" id="portalWelcomeName">Xin chào!</div>
             <div class="welcome-sub" id="portalWelcomeSub">Đây là tổng quan hiệu suất của bạn</div>
@@ -964,7 +964,7 @@ tr:hover td { background:var(--bg3); }
             <span class="card-title" id="leadChartTitle">Lead theo ngày</span>
             <div style="display:flex;gap:8px;align-items:center;">
               <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
-                <span style="width:10px;height:10px;border-radius:2px;background:#4f7cff;display:inline-block;"></span>Tổng lead
+                <span style="width:10px;height:10px;border-radius:2px;background:#1a6fa8;display:inline-block;"></span>Tổng lead
               </div>
               <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
                 <span style="width:10px;height:10px;border-radius:2px;background:#22c55e;display:inline-block;"></span>Lead hợp lệ
@@ -1038,7 +1038,7 @@ tr:hover td { background:var(--bg3); }
       </div>
       <div class="sidebar-footer">
         <div class="user-card">
-          <div class="user-avatar avatar av-sm" style="background:#a78bfa;">AD</div>
+          <div class="user-avatar avatar av-sm" style="background:#00b5c8;">AD</div>
           <div class="user-info">
             <div class="user-name">Admin</div>
             <div class="user-role">Quản trị viên</div>
@@ -1129,7 +1129,7 @@ tr:hover td { background:var(--bg3); }
 <script>
 const apiUrl = 'https://script.google.com/macros/s/AKfycbwyVPDbT2FylCmqcTbYXD3BDQM0VevmhM4HXIqrq1i6clhn9QLO4_lac3cRtxZCXIclTg/exec';
 
-const AC = ['#4f7cff','#22c55e','#f59e0b','#a78bfa','#06b6d4','#f97316'];
+const AC = ['#1a6fa8','#22c55e','#f59e0b','#00b5c8','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
 const hashColor = s => aC(s.split('').reduce((a,c)=>a+c.charCodeAt(0),0));
 const PB = { Tiktok:'b-red', Instagram:'b-purple', Youtube:'b-red', Facebook:'b-blue' };
@@ -1265,7 +1265,7 @@ async function loadPortalData() {
   const totalLeadM    = monthLeads.reduce((s,r)=>s+(+r.tong_lead||0),0);
 
   document.getElementById('portalMetrics').innerHTML = `
-    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div>
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
       <div class="metric-label">Hoa hồng</div>
       <div class="metric-value" style="font-size:18px">${fmtVND(totalHHThang)}</div>
       <div class="metric-change change-up">↑ tháng này</div></div>
@@ -1277,13 +1277,13 @@ async function loadPortalData() {
       <div class="metric-label">Lead phát sinh</div>
       <div class="metric-value">${totalLeadM > 0 ? totalLeadM : koc.leads}</div>
       <div class="metric-change change-neu">tháng này</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#4f7cff"></div>
+    <div class="metric"><div class="metric-accent" style="background:#1a6fa8"></div>
       <div class="metric-label">Lead hợp lệ</div>
       <div class="metric-value">${totalHopLe}</div>
       <div class="metric-change change-neu">${totalLeadM>0?Math.round(totalHopLe/totalLeadM*100):0}% tổng lead</div></div>
   `;
 
-  const bar = p=>p>=100?'#22c55e':p>=70?'#4f7cff':'#f59e0b';
+  const bar = p=>p>=100?'#22c55e':p>=70?'#1a6fa8':'#f59e0b';
   const hp=Math.round(totalHHThang/(koc.muc_tieu_rev||1)*100); // hoa hồng vs mục tiêu
   const lp=Math.round((totalLeadM||koc.leads)/(koc.muc_tieu_lead||1)*100);
   const hlp=Math.round(totalHopLe/((koc.muc_tieu_lead||1))*100);
@@ -1464,7 +1464,7 @@ function updateRevMetrics(total, days, filter, count) {
   }
 
   document.getElementById('portalRevMetrics').innerHTML=`
-    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div>
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
       <div class="metric-label">Hoa hồng (dự kiến)</div>
       <div class="metric-value" style="font-size:18px">${fmtVND(totalHoaHong)}</div>
       <div class="metric-change change-up">${count} ngày</div></div>
@@ -1537,7 +1537,7 @@ function renderLeadChart(filter) {
 
   // 4 metric cards
   document.getElementById('portalLeadMetrics').innerHTML=`
-    <div class="metric"><div class="metric-accent" style="background:#4f7cff"></div>
+    <div class="metric"><div class="metric-accent" style="background:#1a6fa8"></div>
       <div class="metric-label">Tổng lead</div>
       <div class="metric-value">${totalLead}</div>
       <div class="metric-change change-neu">${sorted.length} ngày</div></div>
@@ -1549,7 +1549,7 @@ function renderLeadChart(filter) {
       <div class="metric-label">Đơn hàng</div>
       <div class="metric-value">${totalDon}</div>
       <div class="metric-change change-neu">từ lead hợp lệ</div></div>
-    <div class="metric"><div class="metric-accent" style="background:#a78bfa"></div>
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
       <div class="metric-label">Tỷ lệ hợp lệ</div>
       <div class="metric-value">${pctHopLe}%</div>
       <div class="metric-change ${pctHopLe>=60?'change-up':'change-neu'}">${totalLead>0?'lead → hợp lệ':'-'}</div></div>
@@ -1569,7 +1569,7 @@ function renderLeadChart(filter) {
   chartLeadBarInst = new Chart(document.getElementById('portalChartLeadBar'),{
     type:'bar',
     data:{labels, datasets:[
-      { label:'Tổng lead',  data:leadData,  backgroundColor:'#4f7cff55', borderColor:'#4f7cff', borderWidth:1.5, borderRadius:4 },
+      { label:'Tổng lead',  data:leadData,  backgroundColor:'#1a6fa855', borderColor:'#1a6fa8', borderWidth:1.5, borderRadius:4 },
       { label:'Lead hợp lệ', data:hopLeData, backgroundColor:'#22c55e55', borderColor:'#22c55e', borderWidth:1.5, borderRadius:4 }
     ]},
     options:{
