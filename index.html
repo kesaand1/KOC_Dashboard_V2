@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <title>Edupia Affiliate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
@@ -1379,9 +1382,38 @@ function showScreen(id) {
 
 async function callApi(params) {
   try {
-    const res = await fetch(apiUrl + '?' + new URLSearchParams(params).toString());
-    return await res.json();
+    const qs  = new URLSearchParams(params).toString();
+    const key = 'api_cache_' + qs;
+    // Cache các action không thay đổi thường xuyên trong 3 phút
+    const cacheable = ['getKocData','getKocHistory','getLeadData','getAllKoc'];
+    const action = params.action || '';
+    const CACHE_TTL = 3 * 60 * 1000; // 3 phút
+
+    if(cacheable.includes(action)) {
+      try {
+        const cached = sessionStorage.getItem(key);
+        if(cached) {
+          const { data, ts } = JSON.parse(cached);
+          if(Date.now() - ts < CACHE_TTL) return data;
+        }
+      } catch(e) {}
+    }
+
+    const res  = await fetch(apiUrl + '?' + qs);
+    const data = await res.json();
+
+    if(cacheable.includes(action) && data && data.ok) {
+      try { sessionStorage.setItem(key, JSON.stringify({ data, ts: Date.now() })); } catch(e) {}
+    }
+    return data;
   } catch { return null; }
+}
+
+// Xóa cache khi cần refresh data thủ công
+function clearApiCache() {
+  try {
+    Object.keys(sessionStorage).filter(k=>k.startsWith('api_cache_')).forEach(k=>sessionStorage.removeItem(k));
+  } catch(e) {}
 }
 
 /* ── Login ── */
@@ -1456,23 +1488,31 @@ function filterDaysByRange(days, filter) {
 
 /* ── Portal data ── */
 async function loadPortalData() {
-  // Load tháng hiện tại + history song song
-  const [r1, r2, r3] = await Promise.all([
-    callApi({ action:'getKocData', username:session.username }),
-    callApi({ action:'getKocHistory', username:session.username, months:6 }),
-    callApi({ action:'getLeadData', username:session.username })
-  ]);
-
+  // Bước 1: Load getKocData trước (nhanh nhất) — hiển thị dashboard ngay
+  const r1 = await callApi({ action:'getKocData', username:session.username });
   let koc = r1 && r1.ok ? r1.koc : { doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_cl:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,days:[] };
   portalData = koc;
   allDays = koc.days || [];
-  historyData  = r2 && r2.ok ? r2.history  : [];
-  // Tự động convert VNĐ → triệu VNĐ nếu giá trị > 1000
-  allLeadRows = (r3 && r3.ok ? r3.leads : []).map(r => ({
-    ...r,
-    hoa_hong: r.hoa_hong > 1000 ? Math.round(r.hoa_hong/1000000*100)/100 : r.hoa_hong,
-    thuong:   r.thuong   > 1000 ? Math.round(r.thuong  /1000000*100)/100 : r.thuong,
-  }));
+  historyData = [];
+  allLeadRows = [];
+
+  // Bước 2: Load lịch sử + leads sau khi UI đã hiển thị (lazy)
+  setTimeout(async () => {
+    const [r2, r3] = await Promise.all([
+      callApi({ action:'getKocHistory', username:session.username, months:6 }),
+      callApi({ action:'getLeadData', username:session.username })
+    ]);
+    historyData = r2 && r2.ok ? r2.history : [];
+    allLeadRows = (r3 && r3.ok ? r3.leads : []).map(r => ({
+      ...r,
+      hoa_hong: r.hoa_hong > 1000 ? Math.round(r.hoa_hong/1000000*100)/100 : r.hoa_hong,
+      thuong:   r.thuong   > 1000 ? Math.round(r.thuong  /1000000*100)/100 : r.thuong,
+    }));
+    // Cập nhật charts sau khi có đủ data
+    renderDashboardChart(hashColor(session.username));
+    renderRevChart(currentRevFilter);
+    renderLeadChart(currentLeadFilter);
+  }, 200);
 
   const color = hashColor(session.username);
   const initials = session.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
