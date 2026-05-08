@@ -872,99 +872,98 @@ tr:hover td { background:var(--bg3); }
       <!-- About Edupia page -->
       <div class="page" id="pportal-about">
         <style>
-        .about-hero{background:linear-gradient(135deg,#1a6fa8 0%,#1558a0 50%,#00b5c8 100%);border-radius:var(--radius-xl);padding:2.5rem 2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
-        .about-hero::before{content:'';position:absolute;top:-80px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(255,255,255,0.08),transparent 70%);pointer-events:none;}
-        .about-hero::after{content:'';position:absolute;bottom:-60px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,181,200,0.2),transparent 70%);pointer-events:none;}
-        .about-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem;}
-        .about-hero-title{font-family:'Sora',sans-serif;font-size:clamp(22px,3vw,32px);font-weight:700;color:#fff;line-height:1.25;margin-bottom:1rem;position:relative;z-index:1;}
-        .about-hero-desc{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.8;max-width:620px;position:relative;z-index:1;}
-        .about-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem;}
-        .about-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-align:center;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;}
-        .about-stat:hover{transform:translateY(-2px);border-color:rgba(26,111,168,0.4);}
-        .about-stat-accent{position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--radius-lg) var(--radius-lg);}
-        .about-stat-num{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;margin-bottom:6px;line-height:1;}
-        .about-stat-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;}
-        .about-mission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:1.5rem;}
-        .about-mission-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;transition:border-color .2s;}
-        .about-mission-card:hover{border-color:rgba(0,181,200,0.35);}
-        .about-mission-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;}
-        .about-mission-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;}
-        .about-mission-desc{font-size:12px;color:var(--text2);line-height:1.7;}
-        .about-timeline{display:flex;flex-direction:column;gap:0;}
-        .about-tl-item{display:flex;gap:16px;padding-bottom:24px;position:relative;}
-        .about-tl-item:last-child{padding-bottom:0;}
-        .about-tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:48px;}
-        .about-tl-dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#1a6fa8,#00b5c8);flex-shrink:0;z-index:1;box-shadow:0 0 0 3px rgba(26,111,168,0.2);}
-        .about-tl-line{width:2px;flex:1;background:linear-gradient(to bottom,rgba(26,111,168,0.4),rgba(0,181,200,0.1));margin-top:4px;}
-        .about-tl-item:last-child .about-tl-line{display:none;}
-        .about-tl-year{font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:#00b5c8;margin-bottom:2px;}
-        .about-tl-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
-        .about-tl-desc{font-size:12px;color:var(--text2);line-height:1.6;}
-        .about-why{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
-        .about-why-item{display:flex;gap:10px;align-items:flex-start;background:var(--bg3);border-radius:var(--radius);padding:12px;}
-        .about-why-icon{font-size:18px;flex-shrink:0;}
-        .about-why-text{font-size:12px;color:var(--text2);line-height:1.6;}
-        .about-why-text strong{color:var(--text);display:block;margin-bottom:2px;font-size:13px;}
+        /* ══ About page visual styles ══ */
+        .ab-hero{border-radius:var(--radius-xl);padding:2rem 2rem 2.5rem;margin-bottom:1.5rem;background:linear-gradient(135deg,#1558a0 0%,#1a6fa8 60%,#00b5c8 100%);position:relative;overflow:hidden;}
+        .ab-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent 70%);pointer-events:none;}
+        .ab-hero::after{content:'';position:absolute;bottom:-50px;left:40%;width:180px;height:180px;background:radial-gradient(circle,rgba(0,181,200,0.18),transparent 70%);pointer-events:none;}
+        .ab-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.28);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;}
+        .ab-hero-title{font-family:"Sora",sans-serif;font-size:clamp(20px,3vw,30px);font-weight:700;color:#fff;line-height:1.25;margin-bottom:10px;position:relative;z-index:1;}
+        .ab-hero-desc{font-size:13px;color:rgba(255,255,255,.82);line-height:1.7;max-width:580px;margin-bottom:1.5rem;position:relative;z-index:1;}
+
+        /* Big stat cards inside hero */
+        .ab-stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;position:relative;z-index:1;}
+        .ab-stat-card{background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);border-radius:var(--radius-lg);padding:1rem;text-align:center;}
+        .ab-stat-icon{font-size:22px;margin-bottom:6px;}
+        .ab-stat-num{font-family:"Sora",sans-serif;font-size:22px;font-weight:700;color:#fff;line-height:1;}
+        .ab-stat-lbl{font-size:10px;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+
+        /* Mission — horizontal cards with large icon left */
+        .ab-mission-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:0;}
+        .ab-mission{display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;transition:transform .2s,border-color .2s;}
+        .ab-mission:hover{transform:translateY(-2px);border-color:rgba(0,181,200,0.3);}
+        .ab-mission-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+        .ab-mission-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+        .ab-mission-desc{font-size:11px;color:var(--text2);line-height:1.6;}
         </style>
 
-        <!-- Hero -->
-        <div class="about-hero">
-          <div class="about-tag">🏫 Về Educa Corporation</div>
-          <div class="about-hero-title">Vị thế số 1 EdTech Việt Nam<br>&amp; Hành trình kiến tạo tương lai</div>
-          <div class="about-hero-desc">Educa Corporation không ngừng ứng dụng công nghệ giáo dục hiện đại nhằm xóa nhòa khoảng cách học tập, mang tiêu chuẩn quốc tế đến với mọi trẻ em Việt Nam.</div>
+        <!-- Hero with stats inside -->
+        <div class="ab-hero">
+          <div class="ab-tag">🏫 Về Educa Corporation</div>
+          <div class="ab-hero-title">Vị thế số 1 EdTech Việt Nam<br>&amp; Hành trình kiến tạo tương lai</div>
+          <div class="ab-hero-desc">Ứng dụng công nghệ giáo dục hiện đại — xóa nhòa khoảng cách học tập, mang tiêu chuẩn quốc tế đến mọi trẻ em Việt Nam.</div>
+          <div class="ab-stat-row">
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">👨‍🎓</div>
+              <div class="ab-stat-num">10M+</div>
+              <div class="ab-stat-lbl">Học sinh</div>
+            </div>
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">🏆</div>
+              <div class="ab-stat-num">Top 5</div>
+              <div class="ab-stat-lbl">EdTech ĐNA</div>
+            </div>
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">📈</div>
+              <div class="ab-stat-num">95%</div>
+              <div class="ab-stat-lbl">Cải thiện điểm</div>
+            </div>
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">📅</div>
+              <div class="ab-stat-num">2014</div>
+              <div class="ab-stat-lbl">Thành lập</div>
+            </div>
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">📍</div>
+              <div class="ab-stat-num">34</div>
+              <div class="ab-stat-lbl">Tỉnh thành</div>
+            </div>
+          </div>
         </div>
 
-        <!-- Stats -->
-        <div class="about-stats">
-          <div class="about-stat">
-            <div class="about-stat-accent" style="background:linear-gradient(90deg,#1a6fa8,#00b5c8)"></div>
-            <div class="about-stat-num" style="color:#1a6fa8">10 Triệu+</div>
-            <div class="about-stat-label">Học sinh theo học</div>
-          </div>
-          <div class="about-stat">
-            <div class="about-stat-accent" style="background:linear-gradient(90deg,#00b5c8,#22c55e)"></div>
-            <div class="about-stat-num" style="color:#00b5c8">Top 5</div>
-            <div class="about-stat-label">EdTech Đông Nam Á</div>
-          </div>
-          <div class="about-stat">
-            <div class="about-stat-accent" style="background:linear-gradient(90deg,#22c55e,#16a34a)"></div>
-            <div class="about-stat-num" style="color:#22c55e">95%</div>
-            <div class="about-stat-label">Cải thiện điểm số</div>
-          </div>
-          <div class="about-stat">
-            <div class="about-stat-accent" style="background:linear-gradient(90deg,#1558a0,#1a6fa8)"></div>
-            <div class="about-stat-num" style="color:#1558a0">2014</div>
-            <div class="about-stat-label">Năm thành lập</div>
-          </div>
-        </div>
-
-        <!-- Mission cards -->
-        <div class="card">
+        <!-- Sứ mệnh — horizontal icon cards -->
+        <div class="card" style="margin-bottom:1.25rem;">
           <div class="card-head"><span class="card-title">Sứ mệnh & Giá trị cốt lõi</span></div>
-          <div class="about-mission-grid">
-            <div class="about-mission-card">
-              <div class="about-mission-icon" style="background:rgba(26,111,168,0.12);">🎓</div>
-              <div class="about-mission-title">Giáo dục tiếp cận mọi người</div>
-              <div class="about-mission-desc">Phổ cập giáo dục chất lượng cao đến mọi trẻ em Việt Nam, không phân biệt vùng miền hay điều kiện kinh tế.</div>
+          <div class="ab-mission-row">
+            <div class="ab-mission">
+              <div class="ab-mission-icon" style="background:rgba(26,111,168,0.12);">🎓</div>
+              <div>
+                <div class="ab-mission-title">Giáo dục tiếp cận mọi người</div>
+                <div class="ab-mission-desc">Phổ cập giáo dục chất lượng cao, không phân biệt vùng miền hay điều kiện kinh tế</div>
+              </div>
             </div>
-            <div class="about-mission-card">
-              <div class="about-mission-icon" style="background:rgba(0,181,200,0.12);">💡</div>
-              <div class="about-mission-title">Công nghệ AI tiên tiến</div>
-              <div class="about-mission-desc">Ứng dụng trí tuệ nhân tạo cá nhân hóa lộ trình học tập, giúp mỗi học sinh tiến bộ theo tốc độ riêng của mình.</div>
+            <div class="ab-mission">
+              <div class="ab-mission-icon" style="background:rgba(0,181,200,0.12);">🤖</div>
+              <div>
+                <div class="ab-mission-title">Công nghệ AI tiên tiến</div>
+                <div class="ab-mission-desc">Cá nhân hóa lộ trình học — đầu tiên tại Việt Nam, mỗi học sinh tiến bộ theo tốc độ riêng</div>
+              </div>
             </div>
-            <div class="about-mission-card">
-              <div class="about-mission-icon" style="background:rgba(34,197,94,0.12);">🌏</div>
-              <div class="about-mission-title">Tiêu chuẩn quốc tế</div>
-              <div class="about-mission-desc">Chương trình học được thiết kế theo chuẩn Cambridge và các tổ chức giáo dục quốc tế hàng đầu thế giới.</div>
+            <div class="ab-mission">
+              <div class="ab-mission-icon" style="background:rgba(34,197,94,0.12);">🌏</div>
+              <div>
+                <div class="ab-mission-title">Tiêu chuẩn quốc tế</div>
+                <div class="ab-mission-desc">Chương trình chuẩn Cambridge, đáp ứng các chứng chỉ quốc tế IELTS, PET</div>
+              </div>
             </div>
-            <div class="about-mission-card">
-              <div class="about-mission-icon" style="background:rgba(21,88,160,0.12);">🤝</div>
-              <div class="about-mission-title">Đối tác tin cậy</div>
-              <div class="about-mission-desc">Hơn 10 năm đồng hành cùng phụ huynh và học sinh, xây dựng niềm tin qua chất lượng và sự minh bạch.</div>
+            <div class="ab-mission">
+              <div class="ab-mission-icon" style="background:rgba(21,88,160,0.12);">🤝</div>
+              <div>
+                <div class="ab-mission-title">Đối tác tin cậy</div>
+                <div class="ab-mission-desc">10+ năm đồng hành, xây dựng niềm tin qua chất lượng và sự minh bạch</div>
+              </div>
             </div>
           </div>
         </div>
-
 
 
         <!-- Edupia Pro Product Module -->
