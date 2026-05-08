@@ -2009,31 +2009,25 @@ function closeSidebar() {
     const saved = localStorage.getItem('koc_session');
     if (!saved) return;
 
-    const { data: s, savedAt } = JSON.parse(saved);
+    const parsed = JSON.parse(saved);
+    // Hỗ trợ cả 2 format: {data, savedAt} và trực tiếp
+    const s       = parsed.data || parsed;
+    const savedAt = parsed.savedAt || Date.now();
+
     if (!s || !s.username || !s.role) return;
 
-    // Session hết hạn sau 7 ngày
-    const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
+    // Session hết hạn sau 30 ngày
+    const SESSION_TTL = 30 * 24 * 60 * 60 * 1000;
     if (Date.now() - savedAt > SESSION_TTL) {
       localStorage.removeItem('koc_session');
       return;
     }
 
-    // Hiển thị loading trong khi restore
-    document.getElementById('btnLoginText').innerHTML = '<span class="spinner"></span> Đang khôi phục...';
-    document.getElementById('btnLogin').disabled = true;
+    // Restore ngay lập tức — không cần ping server
+    session = s;
 
-    // Ping server để đảm bảo API vẫn hoạt động
-    const ping = await callApi({ action: 'ping' });
-    if (!ping || !ping.ok) {
-      // Server không phản hồi - dùng lại session cache mà không verify
-      session = s;
-    } else {
-      session = s;
-    }
-
-    document.getElementById('btnLogin').disabled = false;
-    document.getElementById('btnLoginText').textContent = 'Đăng nhập';
+    // Cập nhật thời gian để kéo dài session thêm 30 ngày
+    localStorage.setItem('koc_session', JSON.stringify({ data: s, savedAt: Date.now() }));
 
     if (session.role === 'admin') {
       loadAdminData();
@@ -2043,6 +2037,7 @@ function closeSidebar() {
       showScreen('screen-portal');
     }
   } catch(e) {
+    // Nếu lỗi parse thì xóa session lỗi
     localStorage.removeItem('koc_session');
   }
 })();
