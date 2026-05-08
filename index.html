@@ -1004,18 +1004,75 @@ tr:hover td { background:var(--bg3); }
           .pro-outcome-pill span{font-size:22px;flex-shrink:0;}
           .pro-outcome-pill strong{font-size:13px;font-weight:700;color:var(--text);}
           /* SA section grid */
-          .pro2-sa-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem;}
-          .pro2-sa-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:13px 18px;display:flex;align-items:center;gap:14px;width:100%;transition:border-color .15s,background .15s;}
-          .pro2-sa-card:hover{border-color:rgba(0,181,200,0.4);background:var(--bg3);}
-          .pro2-sa-icon{font-size:22px;flex-shrink:0;width:32px;text-align:center;}
-          .pro2-sa-tag{font-size:11px;font-weight:700;color:#00b5c8;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;width:32px;}
-          .pro2-sa-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.3;flex:1;}
-          /* Benefit chips */
-          .pro2-ben-grid{display:flex;flex-direction:column;gap:6px;}
-          .pro2-ben{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:13px 18px;width:100%;transition:border-color .15s,background .15s;}
-          .pro2-ben:hover{border-color:rgba(0,181,200,0.4);background:var(--bg3);}
-          .pro2-ben-icon{font-size:22px;flex-shrink:0;width:32px;text-align:center;}
-          .pro2-ben-title{font-size:14px;font-weight:600;color:var(--text);flex:1;}
+          .pro2-sa-grid,.pro2-ben-grid{display:flex;flex-direction:column;gap:1px;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);margin-bottom:1rem;}
+
+          /* ── Row header ── */
+          .pro2-sa-card,.pro2-ben{background:var(--bg2);cursor:pointer;transition:background .15s;}
+          .pro2-sa-card:hover,.pro2-ben:hover{background:var(--bg3);}
+          .pro2-sa-card:not(:last-child),.pro2-ben:not(:last-child){border-bottom:1px solid var(--border);}
+          .pro2-sa-head,.pro2-ben-head{display:flex;align-items:center;gap:0;padding:0;user-select:none;}
+
+          /* Number badge */
+          .pro2-sa-tag,.pro2-ben-num{
+            min-width:56px;padding:18px 0;
+            text-align:center;
+            font-family:'Sora',sans-serif;font-size:11px;font-weight:800;
+            letter-spacing:.06em;text-transform:uppercase;
+            background:linear-gradient(135deg,#1a6fa8,#00b5c8);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            background-clip:text;
+            flex-shrink:0;border-right:1px solid var(--border);
+          }
+
+          /* Icon */
+          .pro2-sa-icon,.pro2-ben-icon{
+            width:54px;padding:18px 0;
+            text-align:center;font-size:20px;
+            flex-shrink:0;
+          }
+
+          /* Title */
+          .pro2-sa-title,.pro2-ben-title{
+            flex:1;padding:18px 16px;
+            font-size:14px;font-weight:600;color:var(--text);line-height:1.4;
+          }
+
+          /* Arrow */
+          .pro2-sa-arrow,.pro2-ben-arrow{
+            width:44px;text-align:center;
+            font-size:12px;color:var(--text3);
+            transition:transform .25s;flex-shrink:0;
+          }
+          .pro2-sa-card.open .pro2-sa-arrow,
+          .pro2-ben.open .pro2-ben-arrow{transform:rotate(180deg);}
+
+          /* Active state */
+          .pro2-sa-card.open,.pro2-ben.open{
+            background:linear-gradient(135deg,rgba(26,111,168,0.06),rgba(0,181,200,0.03));
+          }
+          .pro2-sa-card.open .pro2-sa-title,
+          .pro2-ben.open .pro2-ben-title{color:#1a6fa8;}
+
+          /* Body */
+          .pro2-sa-body,.pro2-ben-body{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+          .pro2-sa-card.open .pro2-sa-body,
+          .pro2-ben.open .pro2-ben-body{max-height:500px;}
+          .pro2-sa-body-inner,.pro2-ben-body-inner{
+            padding:4px 16px 16px 126px;
+            border-top:1px solid var(--border);
+            background:linear-gradient(135deg,rgba(26,111,168,0.04),rgba(0,181,200,0.02));
+          }
+          .pro2-sa-body-inner ul,.pro2-ben-body-inner ul{
+            list-style:none;display:flex;flex-direction:column;gap:8px;padding-top:12px;
+          }
+          .pro2-sa-body-inner ul li,.pro2-ben-body-inner ul li,.pro2-ben-body-inner p{
+            font-size:13px;color:var(--text2);line-height:1.7;
+            display:flex;gap:8px;align-items:flex-start;
+          }
+          .pro2-ben-body-inner p{display:block;padding-top:12px;}
+          .pro2-sa-body-inner ul li::before,.pro2-ben-body-inner ul li::before{
+            content:"→";color:#00b5c8;font-size:13px;flex-shrink:0;margin-top:1px;
+          }
           /* Stats bar */
           .pro2-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:1.25rem;}
           .pro2-stat{background:linear-gradient(135deg,rgba(26,111,168,0.1),rgba(0,181,200,0.06));border:1px solid rgba(26,111,168,0.2);border-radius:var(--radius-lg);padding:12px;text-align:center;}
@@ -1063,12 +1120,55 @@ tr:hover td { background:var(--bg3); }
           <!-- 6 SA — icon + title only -->
           <div class="card-head"><span class="card-title">🎯 6 Lợi thế cốt lõi (SA)</span></div>
           <div class="pro2-sa-grid">
-            <div class="pro2-sa-card"><div class="pro2-sa-icon">🏆</div><div class="pro2-sa-tag">SA1</div><div class="pro2-sa-title">Gia sư Hạng A+</div></div>
-            <div class="pro2-sa-card"><div class="pro2-sa-icon">📊</div><div class="pro2-sa-tag">SA2</div><div class="pro2-sa-title">Hệ thống MAPS</div></div>
-            <div class="pro2-sa-card"><div class="pro2-sa-icon">🎯</div><div class="pro2-sa-tag">SA3</div><div class="pro2-sa-title">Cam kết đầu ra</div></div>
-            <div class="pro2-sa-card"><div class="pro2-sa-icon">🗺️</div><div class="pro2-sa-tag">SA4</div><div class="pro2-sa-title">Lộ trình cá nhân</div></div>
-            <div class="pro2-sa-card"><div class="pro2-sa-icon">⚡</div><div class="pro2-sa-tag">SA5</div><div class="pro2-sa-title">Phương pháp EPAS</div></div>
-            <div class="pro2-sa-card"><div class="pro2-sa-icon">🤖</div><div class="pro2-sa-tag">SA6</div><div class="pro2-sa-title">App AI + CLB ngoại khóa</div></div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">🏆</div><span class="pro2-sa-tag">SA1</span><div class="pro2-sa-title">Gia sư Hạng A+</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li>Top 5% gia sư giỏi nhất thị trường, trình độ tương đương IELTS 6.5+</li>
+                <li>Kinh nghiệm dạy chuyên lứa tuổi Tiểu học & THCS từ 6 tháng trở lên</li>
+                <li>Được đào tạo tâm lý trẻ em — luôn vui vẻ, nhiệt huyết và trách nhiệm</li>
+                <li>Mô hình cố định 1 gia sư đồng hành xuyên suốt khóa học</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">📊</div><span class="pro2-sa-tag">SA2</span><div class="pro2-sa-title">Hệ thống đo lường MAPS</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li>1 bài thi tháng + 1 bài tập về nhà + 1 bài thi vận dụng nói mỗi tháng</li>
+                <li>Hội đồng chuyên môn đánh giá từng kỹ năng, phát hiện kịp thời lỗ hổng</li>
+                <li>GVCN gửi báo cáo qua Zalo, gọi điện cập nhật tiến bộ cho phụ huynh</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">🎯</div><span class="pro2-sa-tag">SA3</span><div class="pro2-sa-title">Cam kết đầu ra rõ ràng</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li>Bám sát chương trình GDPT Bộ GD&ĐT + chuẩn Cambridge quốc tế</li>
+                <li>Đạt chuẩn CEFR, quy đổi Cambridge / PET / IELTS sau khi hoàn thành</li>
+                <li><strong style="color:var(--text)">Hoàn tiền 100%</strong> nếu học sinh không tiến bộ sau cam kết</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">🗺️</div><span class="pro2-sa-tag">SA4</span><div class="pro2-sa-title">Lộ trình theo năng lực</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li>Kiểm tra đầu vào phân 4 trình độ: Giỏi (A) · Khá (B) · Trung bình (C) · Yếu (D)</li>
+                <li>Học đúng lộ trình phù hợp năng lực, không quá dễ cũng không quá khó</li>
+                <li>Định kỳ 6 tháng đánh giá lại và điều chỉnh lộ trình học</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">⚡</div><span class="pro2-sa-tag">SA5</span><div class="pro2-sa-title">Phương pháp EPAS</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li><strong style="color:var(--text)">Engage – Present – Activate – Self Learning</strong></li>
+                <li>Phương pháp tiên tiến đang được các trường Quốc tế áp dụng</li>
+                <li>Tăng tính thực hành, cải thiện kỹ năng phản xạ và giao tiếp tự nhiên</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">🤖</div><span class="pro2-sa-tag">SA6</span><div class="pro2-sa-title">App AI + CLB ngoại khóa</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li><strong style="color:#00b5c8;">AI Speak:</strong> Môi trường mô phỏng thực tế, tăng phản xạ giao tiếp tự nhiên</li>
+                <li><strong style="color:#00b5c8;">AI Practice:</strong> Ôn luyện sau giờ học, bài tập bám sát theo trình độ</li>
+                <li>Edupia Club: Kỹ năng sống · STEM · Công nghệ AI · Khám phá thế giới</li>
+              </ul></div></div>
+            </div>
           </div>
 
           <!-- 3 cam kết đầu ra -->
@@ -1081,12 +1181,30 @@ tr:hover td { background:var(--bg3); }
           <!-- 6 lợi ích SB — icon + title only -->
           <div class="card-head" style="margin-top:.5rem;"><span class="card-title">💡 6 Lợi ích học sinh nhận được (SB)</span></div>
           <div class="pro2-ben-grid">
-            <div class="pro2-ben"><span class="pro2-ben-icon">👨‍🏫</span><div class="pro2-ben-title">Gia sư giỏi, trách nhiệm, hiểu tâm lý</div></div>
-            <div class="pro2-ben"><span class="pro2-ben-icon">📈</span><div class="pro2-ben-title">Tiến bộ đảm bảo theo tháng</div></div>
-            <div class="pro2-ben"><span class="pro2-ben-icon">🌟</span><div class="pro2-ben-title">Điểm cao + Tự tin giao tiếp</div></div>
-            <div class="pro2-ben"><span class="pro2-ben-icon">🏅</span><div class="pro2-ben-title">Chuẩn đầu ra quốc tế</div></div>
-            <div class="pro2-ben"><span class="pro2-ben-icon">💡</span><div class="pro2-ben-title">Con yêu thích & tự giác học</div></div>
-            <div class="pro2-ben"><span class="pro2-ben-icon">✅</span><div class="pro2-ben-title">Uy tín số 1 — Bố mẹ yên tâm</div></div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">👨‍🏫</div><span class="pro2-ben-num">SB1</span><div class="pro2-ben-title">Gia sư giỏi, trách nhiệm, hiểu tâm lý</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>100% gia sư có chứng chỉ quốc tế IELTS 6.5+, kinh nghiệm chuyên lứa tuổi. Cố định 1 gia sư đồng hành xuyên suốt — hiểu rõ điểm mạnh, điểm yếu và tâm lý của từng học sinh.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">📈</div><span class="pro2-ben-num">SB2</span><div class="pro2-ben-title">Tiến bộ đảm bảo theo tháng</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>Hệ thống MAPS theo dõi chặt chẽ, hội đồng chuyên môn can thiệp kịp thời. Phụ huynh nhận báo cáo tiến bộ hàng tháng qua Zalo — minh bạch và rõ ràng.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">🌟</div><span class="pro2-ben-num">SB3</span><div class="pro2-ben-title">Điểm cao trên trường + Tự tin giao tiếp</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>95% học sinh tăng 1–3 điểm sau 1 học kỳ. Phát âm chuẩn, phản xạ giao tiếp tự nhiên nhờ phương pháp EPAS và luyện tập với AI Speak hàng ngày.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">🏅</div><span class="pro2-ben-num">SB4</span><div class="pro2-ben-title">Chuẩn đầu ra quốc tế</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>Hoàn thành lớp 9 đủ năng lực chinh phục IELTS 5.0–6.5. Quy đổi Cambridge/PET. Tương đương chuẩn đầu vào các trường THPT chuyên và quốc tế.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">💡</div><span class="pro2-ben-num">SB5</span><div class="pro2-ben-title">Con yêu thích & tự giác học</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>Học liệu phù hợp tâm lý lứa tuổi, phương pháp EPAS tạo hứng thú học tập tự nhiên. Gia sư nhiệt huyết giúp con duy trì động lực mà không cần ép buộc.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">✅</div><span class="pro2-ben-num">SB6</span><div class="pro2-ben-title">Uy tín số 1 — Bố mẹ yên tâm</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>Hơn 400.000 học sinh trên 34 tỉnh thành tin dùng. Lộ trình rõ ràng, báo cáo minh bạch. Cam kết hoàn tiền 100% nếu học sinh không tiến bộ theo đúng cam kết.</p></div></div>
+            </div>
           </div>
 
           <!-- Stats -->
@@ -1982,6 +2100,13 @@ function switchATab(id) {
 
 function toggleFaq(el) {
   el.parentElement.classList.toggle('open');
+}
+
+function toggleAccordion(el) {
+  // Close others in same group
+  const siblings = el.parentElement.querySelectorAll(':scope > [onclick="toggleAccordion(this)"]');
+  siblings.forEach(s => { if(s !== el) s.classList.remove('open'); });
+  el.classList.toggle('open');
 }
 
 function doLogout() {
