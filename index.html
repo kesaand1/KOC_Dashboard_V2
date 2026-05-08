@@ -965,63 +965,107 @@ tr:hover td { background:var(--bg3); }
           </div>
         </div>
 
-        <!-- 2 col: Timeline + Why Affiliate -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:1.25rem;">
-          <!-- Timeline -->
-          <div class="card" style="margin-bottom:0">
-            <div class="card-head"><span class="card-title">Hành trình phát triển</span></div>
-            <div class="about-timeline">
-              <div class="about-tl-item">
-                <div class="about-tl-left"><div class="about-tl-dot"></div><div class="about-tl-line"></div></div>
-                <div><div class="about-tl-year">2014</div><div class="about-tl-title">Thành lập Educa Corporation</div><div class="about-tl-desc">Ra mắt với sứ mệnh mang giáo dục chất lượng cao đến mọi gia đình Việt Nam</div></div>
+
+
+        <!-- Edupia Pro Product Module -->
+        <div class="card" style="margin-bottom:1.25rem;overflow:hidden;position:relative;">
+          <style>
+          .pro-header{background:linear-gradient(135deg,#1558a0 0%,#1a6fa8 50%,#00b5c8 100%);margin:-1.25rem -1.25rem 1.5rem;padding:1.75rem 1.5rem;position:relative;overflow:hidden;}
+          .pro-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent 70%);pointer-events:none;}
+          .pro-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;margin-bottom:10px;}
+          .pro-title{font-family:'Sora',sans-serif;font-size:clamp(18px,2.5vw,24px);font-weight:700;color:#fff;margin-bottom:6px;line-height:1.3;}
+          .pro-subtitle{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;max-width:580px;}
+          .pro-age-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;color:#fff;margin-top:10px;}
+          .pro-highlights{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.25rem;}
+          .pro-highlight{background:var(--bg3);border-radius:var(--radius-lg);padding:14px;border:1px solid var(--border);text-align:center;transition:border-color .2s;}
+          .pro-highlight:hover{border-color:rgba(0,181,200,0.35);}
+          .pro-highlight-icon{font-size:24px;margin-bottom:8px;}
+          .pro-highlight-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;}
+          .pro-highlight-desc{font-size:11px;color:var(--text2);line-height:1.5;}
+          .pro-model{background:linear-gradient(135deg,rgba(26,111,168,0.08),rgba(0,181,200,0.05));border:1px solid rgba(26,111,168,0.2);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.25rem;}
+          .pro-model-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+          .pro-model-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+          .pro-teacher-card{background:var(--bg2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
+          .pro-teacher-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+          .pro-teacher-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+          .pro-teacher-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
+          .pro-teacher-desc{font-size:11px;color:var(--text2);line-height:1.5;}
+          .pro-outcome{display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:var(--radius);padding:10px 14px;}
+          .pro-outcome-icon{font-size:20px;flex-shrink:0;}
+          .pro-outcome-text{font-size:12px;color:var(--text2);line-height:1.5;}
+          .pro-outcome-text strong{color:var(--text);display:block;font-size:13px;margin-bottom:2px;}
+          </style>
+
+          <!-- Header gradient -->
+          <div class="pro-header">
+            <div class="pro-badge">⭐ Sản phẩm nổi bật</div>
+            <div class="pro-title">Edupia Pro — Gia sư Tiếng Anh<br>trực tuyến chất lượng cao</div>
+            <div class="pro-subtitle">Chương trình gia sư tiếng Anh trực tuyến ứng dụng công nghệ AI cá nhân hóa — đầu tiên tại Việt Nam, tăng hiệu quả vượt trội so với gia sư thông thường.</div>
+            <div class="pro-age-badge">👦 Dành cho học sinh 6 – 15 tuổi</div>
+          </div>
+
+          <!-- 4 điểm nổi bật -->
+          <div class="pro-highlights">
+            <div class="pro-highlight">
+              <div class="pro-highlight-icon">🤖</div>
+              <div class="pro-highlight-title">AI cá nhân hóa</div>
+              <div class="pro-highlight-desc">Lộ trình học riêng cho từng học sinh, đầu tiên tại Việt Nam</div>
+            </div>
+            <div class="pro-highlight">
+              <div class="pro-highlight-icon">📋</div>
+              <div class="pro-highlight-title">Chuẩn Bộ GD&ĐT</div>
+              <div class="pro-highlight-desc">Đạt chuẩn 6 bậc năng lực ngoại ngữ của Bộ Giáo dục Việt Nam</div>
+            </div>
+            <div class="pro-highlight">
+              <div class="pro-highlight-icon">💻</div>
+              <div class="pro-highlight-title">Học trực tuyến 1-1</div>
+              <div class="pro-highlight-desc">Linh hoạt thời gian, học mọi lúc mọi nơi trên mọi thiết bị</div>
+            </div>
+            <div class="pro-highlight">
+              <div class="pro-highlight-icon">📈</div>
+              <div class="pro-highlight-title">Hiệu quả vượt trội</div>
+              <div class="pro-highlight-desc">95% học sinh cải thiện điểm số sau 3 tháng học</div>
+            </div>
+          </div>
+
+          <!-- Mô hình 1 kèm 4 -->
+          <div class="pro-model">
+            <div class="pro-model-title">
+              <span style="background:linear-gradient(135deg,#1a6fa8,#00b5c8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Sora',sans-serif;font-size:15px;">Mô hình Gia sư 1 kèm 4 độc quyền</span>
+            </div>
+            <div class="pro-model-grid">
+              <div class="pro-teacher-card">
+                <div class="pro-teacher-avatar" style="background:rgba(26,111,168,0.15);">👩‍🏫</div>
+                <div>
+                  <div class="pro-teacher-label" style="color:#1a6fa8;">Giáo viên chủ nhiệm</div>
+                  <div class="pro-teacher-name">Đồng hành xuyên suốt</div>
+                  <div class="pro-teacher-desc">Theo dõi và hỗ trợ toàn diện quá trình học tập của con, kết nối chặt chẽ với phụ huynh</div>
+                </div>
               </div>
-              <div class="about-tl-item">
-                <div class="about-tl-left"><div class="about-tl-dot"></div><div class="about-tl-line"></div></div>
-                <div><div class="about-tl-year">2017</div><div class="about-tl-title">Ra mắt Edupia — Tiếng Anh trẻ em</div><div class="about-tl-desc">Nền tảng học tiếng Anh trực tuyến đầu tiên ứng dụng AI tại Việt Nam</div></div>
-              </div>
-              <div class="about-tl-item">
-                <div class="about-tl-left"><div class="about-tl-dot"></div><div class="about-tl-line"></div></div>
-                <div><div class="about-tl-year">2020</div><div class="about-tl-title">1 triệu học sinh</div><div class="about-tl-desc">Cột mốc 1 triệu học sinh đăng ký, mở rộng sang Toán tư duy và STEM</div></div>
-              </div>
-              <div class="about-tl-item">
-                <div class="about-tl-left"><div class="about-tl-dot"></div><div class="about-tl-line"></div></div>
-                <div><div class="about-tl-year">2023</div><div class="about-tl-title">Top 5 EdTech Đông Nam Á</div><div class="about-tl-desc">Được công nhận là một trong 5 nền tảng EdTech hàng đầu khu vực</div></div>
-              </div>
-              <div class="about-tl-item">
-                <div class="about-tl-left"><div class="about-tl-dot"></div><div class="about-tl-line"></div></div>
-                <div><div class="about-tl-year">2024</div><div class="about-tl-title">Ra mắt Edupia Affiliate</div><div class="about-tl-desc">Chương trình affiliate chính thức, kết nối hàng nghìn đối tác trên toàn quốc</div></div>
+              <div class="pro-teacher-card">
+                <div class="pro-teacher-avatar" style="background:rgba(0,181,200,0.15);">👨‍💼</div>
+                <div>
+                  <div class="pro-teacher-label" style="color:#00b5c8;">Giáo viên chuyên môn</div>
+                  <div class="pro-teacher-name">Đảm bảo hiệu quả học</div>
+                  <div class="pro-teacher-desc">Chịu trách nhiệm giảng dạy trực tiếp, cam kết đầu ra cho từng học sinh</div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Why join affiliate -->
-          <div class="card" style="margin-bottom:0">
-            <div class="card-head"><span class="card-title">Tại sao chọn Edupia Affiliate?</span></div>
-            <div class="about-why">
-              <div class="about-why-item">
-                <span class="about-why-icon">🏆</span>
-                <div class="about-why-text"><strong>Thương hiệu uy tín #1</strong>Dễ thuyết phục khách hàng hơn với thương hiệu đã được 10 triệu gia đình tin dùng</div>
-              </div>
-              <div class="about-why-item">
-                <span class="about-why-icon">💰</span>
-                <div class="about-why-text"><strong>Hoa hồng cạnh tranh</strong>Mức hoa hồng hấp dẫn, thanh toán đúng hạn ngày 10 hàng tháng</div>
-              </div>
-              <div class="about-why-item">
-                <span class="about-why-icon">📈</span>
-                <div class="about-why-text"><strong>Nhu cầu thị trường lớn</strong>Hơn 10 triệu học sinh từ lớp 1-9 là thị trường tiềm năng khổng lồ</div>
-              </div>
-              <div class="about-why-item">
-                <span class="about-why-icon">🎯</span>
-                <div class="about-why-text"><strong>Tỷ lệ chốt cao</strong>Sản phẩm chất lượng, phụ huynh sẵn sàng chi trả cho giáo dục của con</div>
-              </div>
-              <div class="about-why-item">
-                <span class="about-why-icon">🛠️</span>
-                <div class="about-why-text"><strong>Hỗ trợ đầy đủ</strong>Tài liệu, script bán hàng và đội hỗ trợ 8:00-22:00 mỗi ngày</div>
-              </div>
-              <div class="about-why-item">
-                <span class="about-why-icon">📊</span>
-                <div class="about-why-text"><strong>Báo cáo minh bạch</strong>Theo dõi real-time mọi lead và hoa hồng ngay trên dashboard này</div>
-              </div>
+          <!-- Chuẩn đầu ra -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
+            <div class="pro-outcome">
+              <span class="pro-outcome-icon">🎯</span>
+              <div class="pro-outcome-text"><strong>Chuẩn đầu ra rõ ràng</strong>Đạt chuẩn Khung năng lực ngoại ngữ 6 bậc của Bộ GD&ĐT Việt Nam</div>
+            </div>
+            <div class="pro-outcome">
+              <span class="pro-outcome-icon">⏱️</span>
+              <div class="pro-outcome-text"><strong>Thấy kết quả sau 3 tháng</strong>Cam kết học sinh tiến bộ rõ rệt, phụ huynh hài lòng hoặc hoàn tiền</div>
+            </div>
+            <div class="pro-outcome">
+              <span class="pro-outcome-icon">🏅</span>
+              <div class="pro-outcome-text"><strong>Giáo viên được chứng nhận</strong>100% giáo viên có chứng chỉ quốc tế TESOL / IELTS 7.0+</div>
             </div>
           </div>
         </div>
