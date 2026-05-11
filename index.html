@@ -1278,6 +1278,32 @@ tr:hover td { background:var(--bg3); }
           </div>
           <div class="summary-row" id="revSummaryRow"></div>
         </div>
+
+        <!-- Chi tiết cấu thành doanh thu -->
+        <div class="card" id="revBreakdownCard" style="margin-top:0;">
+          <div class="card-head">
+            <span class="card-title">📋 Chi tiết cấu thành doanh thu</span>
+            <span style="font-size:11px;color:var(--text2)" id="revBreakdownPeriod"></span>
+          </div>
+          <style>
+          .rev-breakdown{display:flex;flex-direction:column;gap:0;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);}
+          .rev-brow{display:flex;align-items:center;padding:13px 16px;background:var(--bg2);border-bottom:1px solid var(--border);gap:12px;}
+          .rev-brow:last-child{border-bottom:none;}
+          .rev-brow-icon{font-size:20px;width:32px;text-align:center;flex-shrink:0;}
+          .rev-brow-label{flex:1;font-size:13px;font-weight:600;color:var(--text);}
+          .rev-brow-detail{font-size:12px;color:var(--text2);margin-right:12px;}
+          .rev-brow-amount{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#1a6fa8;white-space:nowrap;}
+          .rev-brow.total{background:linear-gradient(135deg,rgba(26,111,168,0.08),rgba(0,181,200,0.04));border-top:2px solid rgba(0,181,200,0.3);}
+          .rev-brow.total .rev-brow-label{color:#00b5c8;font-size:14px;}
+          .rev-brow.total .rev-brow-amount{font-size:18px;color:#1a6fa8;}
+          .rev-brow-bar-wrap{width:80px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-right:8px;}
+          .rev-brow-bar{height:6px;border-radius:3px;transition:width .4s;}
+          .rev-empty{text-align:center;padding:2rem;color:var(--text2);font-size:13px;}
+          </style>
+          <div class="rev-breakdown" id="revBreakdown">
+            <div class="rev-empty">Chọn khoảng thời gian để xem chi tiết</div>
+          </div>
+        </div>
       </div>
 
       <!-- Leads page -->
@@ -1474,7 +1500,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbwLV_xivT-QOhAiiPi50nRUxrFAgcwREBEZLod3xH4sloWT7d1pDhCOf-53Aco4j_j1qQ/exec';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbzhG7R3DOuTBvVKW4qN-8DkJCew6Y8HRJ--rWRyvr7_VEUgGbJ6K1i6FlOofublfd6vdg/exec';
 
 const AC = ['#1a6fa8','#22c55e','#00b5c8','#00b5c8','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -1810,7 +1836,7 @@ function renderRevChart(filter) {
     const data   = monthData.map(m=>m.hoa_hong);
     const total  = Math.round(data.reduce((s,v)=>s+v,0)*100)/100;
     const avg    = data.length>0?total/data.length:0;
-    updateRevMetrics(total, data.length, filter, data.length);
+    updateRevMetrics(total, data.length, filter, data.length, []);
     renderRevChartRaw(labels, data, Array(data.length).fill(+avg.toFixed(2)), color, '6 tháng gần nhất');
     return;
   }
@@ -1846,7 +1872,7 @@ function renderRevChart(filter) {
   const avg     = data.length>0?total/data.length:0;
   const avgArr  = Array(data.length).fill(+avg.toFixed(2));
 
-  updateRevMetrics(total, sorted.length, filter, sorted.length);
+  updateRevMetrics(total, sorted.length, filter, sorted.length, sorted);
   renderRevChartRaw(labels, data, avgArr, color,
     filter==='month'
       ? `Tháng ${currentMonthStr().split('-')[1]}/${currentMonthStr().split('-')[0]}`
@@ -1875,7 +1901,7 @@ function renderRevChartRaw(labels, data, avgData, color, title) {
   });
 }
 
-function updateRevMetrics(total, days, filter, count) {
+function updateRevMetrics(total, days, filter, count, filteredRows) {
   const koc = portalData || {};
   const avg = count>0?(total/count):0;
 
@@ -1917,6 +1943,59 @@ function updateRevMetrics(total, days, filter, count) {
     <div class="summary-item"><div class="summary-val">${count}</div><div class="summary-lbl">Ngày có data</div></div>
     <div class="summary-item"><div class="summary-val">${count>0?Math.round(totalHoaHong/(portalData.muc_tieu_rev||1)*100):0}%</div><div class="summary-lbl">Mục tiêu</div></div>
   `;
+  renderRevBreakdown(filteredRows || [], filter);
+}
+
+function renderRevBreakdown(rows, filter) {
+  const el = document.getElementById('revBreakdown');
+  const periodEl = document.getElementById('revBreakdownPeriod');
+  if(!el) return;
+  if(!rows || rows.length === 0) {
+    el.innerHTML = '<div class="rev-empty">Không có dữ liệu trong khoảng thời gian này</div>';
+    return;
+  }
+  // Tính từng loại hoa hồng từ raw VNĐ
+  const toVND = r => {
+    const raw = +r.hoa_hong_raw || 0;
+    return raw > 0 ? raw : Math.round((+r.hoa_hong||0) * 1000000);
+  };
+  const tb_vnd  = rows.reduce((s,r) => s + (+r.thuong_bai  > 1000 ? +r.thuong_bai  : (+r.thuong_bai ||0)*1000000), 0);
+  const tl_vnd  = rows.reduce((s,r) => s + (+r.thuong_lead > 1000 ? +r.thuong_lead : (+r.thuong_lead||0)*1000000), 0);
+  const total   = rows.reduce((s,r) => s + toVND(r), 0);
+  const tongLead  = rows.reduce((s,r) => s + (+r.tong_lead  ||0), 0);
+  const leadHopLe = rows.reduce((s,r) => s + (+r.lead_hop_le||0), 0);
+  const donHang   = rows.reduce((s,r) => s + (+r.don_hang   ||0), 0);
+
+  periodEl.textContent = rows.length + ' ngày có dữ liệu';
+
+  const items = [
+    { icon:'📣', label:'Thưởng lên bài', detail:'Đăng bài đầu tiên', amount:tb_vnd,  color:'#22c55e' },
+    { icon:'✅', label:'Thưởng lead hợp lệ', detail:leadHopLe+' lead hợp lệ', amount:tl_vnd, color:'#1a6fa8' },
+  ].filter(i => i.amount > 0);
+
+  const maxVal = Math.max(...items.map(i=>i.amount), 1);
+  const pct = v => Math.round(Math.min(v/maxVal,1)*100);
+
+  const rows_html = items.map(i => `
+    <div class="rev-brow">
+      <span class="rev-brow-icon">${i.icon}</span>
+      <span class="rev-brow-label">${i.label}</span>
+      <span class="rev-brow-detail">${i.detail}</span>
+      <div class="rev-brow-bar-wrap"><div class="rev-brow-bar" style="width:${pct(i.amount)}%;background:${i.color}"></div></div>
+      <span class="rev-brow-amount">${i.amount.toLocaleString('vi-VN')} ₫</span>
+    </div>`).join('');
+
+  const total_html = `
+    <div class="rev-brow total">
+      <span class="rev-brow-icon">💰</span>
+      <span class="rev-brow-label">Tổng hoa hồng</span>
+      <span class="rev-brow-detail">${rows.length} ngày</span>
+      <div class="rev-brow-bar-wrap"></div>
+      <span class="rev-brow-amount">${total.toLocaleString('vi-VN')} ₫</span>
+    </div>`;
+
+  el.innerHTML = items.length > 0 ? rows_html + total_html
+    : '<div class="rev-empty">Chưa có dữ liệu hoa hồng trong kỳ này</div>';
 }
 
 /* ── Lead chart with filter ── */
