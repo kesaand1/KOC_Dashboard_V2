@@ -1474,7 +1474,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbwyVPDbT2FylCmqcTbYXD3BDQM0VevmhM4HXIqrq1i6clhn9QLO4_lac3cRtxZCXIclTg/exec';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbwLV_xivT-QOhAiiPi50nRUxrFAgcwREBEZLod3xH4sloWT7d1pDhCOf-53Aco4j_j1qQ/exec';
 
 const AC = ['#1a6fa8','#22c55e','#00b5c8','#00b5c8','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -1497,7 +1497,7 @@ async function callApi(params) {
     const qs  = new URLSearchParams(params).toString();
     const key = 'api_cache_' + qs;
     // Cache các action không thay đổi thường xuyên trong 3 phút
-    const cacheable = ['getKocData','getKocHistory','getLeadData','getAllKoc'];
+    const cacheable = ['getKocData','getKocHistory','getAllKoc']; // getLeadData không cache để luôn lấy mới nhất
     const action = params.action || '';
     const CACHE_TTL = 3 * 60 * 1000; // 3 phút
 
@@ -1615,12 +1615,20 @@ async function loadPortalData() {
       callApi({ action:'getLeadData', username:session.username })
     ]);
     historyData = r2 && r2.ok ? r2.history : [];
+    const toMillion = v => {
+      const n = +v || 0;
+      // Nếu giá trị > 10000 → đang là đơn vị VNĐ → chia 1.000.000
+      // Nếu <= 10000 → đã là triệu rồi → giữ nguyên
+      return n > 10000 ? Math.round(n/1000000*100)/100 : n;
+    };
     allLeadRows = (r3 && r3.ok ? r3.leads : []).map(r => ({
       ...r,
-      hoa_hong: r.hoa_hong > 1000 ? Math.round(r.hoa_hong/1000000*100)/100 : r.hoa_hong,
-      thuong:   r.thuong   > 1000 ? Math.round(r.thuong  /1000000*100)/100 : r.thuong,
+      hoa_hong: toMillion(r.hoa_hong),
+      thuong:   toMillion(r.thuong),
     }));
-    // Cập nhật charts sau khi có đủ data
+    console.log('[KOC] Lead rows loaded:', allLeadRows.length, 'sample hoa_hong:', allLeadRows[0]?.hoa_hong);
+    // Cập nhật dashboard + charts sau khi có đủ data
+    renderDashboardMetrics();
     renderDashboardChart(hashColor(session.username));
     renderRevChart(currentRevFilter);
     renderLeadChart(currentLeadFilter);
@@ -1681,6 +1689,52 @@ async function loadPortalData() {
 }
 
 /* ── Dashboard chart (6 tháng) ── */
+function renderDashboardMetrics() {
+  if (!portalData) return;
+  const koc   = portalData;
+  const color = hashColor(session.username);
+  const monthNow   = currentMonthStr();
+  const monthLeads = allLeadRows.filter(r => r.date && r.date.startsWith(monthNow));
+  const totalHHThang = Math.round(monthLeads.reduce((s,r)=>s+(+r.hoa_hong||0),0)*100)/100;
+  const totalDonHang = monthLeads.reduce((s,r)=>s+(+r.don_hang||0),0);
+  const totalHopLe   = monthLeads.reduce((s,r)=>s+(+r.lead_hop_le||0),0);
+  const totalLeadM   = monthLeads.reduce((s,r)=>s+(+r.tong_lead||0),0);
+
+  document.getElementById('portalWelcomeSub').textContent =
+    totalHHThang > 0
+      ? `Hoa hồng tháng này: ${fmtVND(totalHHThang)}`
+      : 'Đây là tổng quan hiệu suất của bạn';
+
+  document.getElementById('portalMetrics').innerHTML = `
+    <div class="metric"><div class="metric-accent" style="background:${color}"></div>
+      <div class="metric-label">Hoa hồng</div>
+      <div class="metric-value" style="font-size:18px">${fmtVND(totalHHThang)}</div>
+      <div class="metric-change change-up">↑ tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
+      <div class="metric-label">Đơn hàng</div>
+      <div class="metric-value">${totalDonHang}</div>
+      <div class="metric-change change-neu">đơn tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
+      <div class="metric-label">Lead phát sinh</div>
+      <div class="metric-value">${totalLeadM > 0 ? totalLeadM : koc.leads}</div>
+      <div class="metric-change change-neu">tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#1a6fa8"></div>
+      <div class="metric-label">Lead hợp lệ</div>
+      <div class="metric-value">${totalHopLe}</div>
+      <div class="metric-change change-neu">${totalLeadM>0?Math.round(totalHopLe/totalLeadM*100):0}% tổng lead</div></div>
+  `;
+
+  const bar = p=>p>=100?'#22c55e':p>=70?'#1a6fa8':'#00b5c8';
+  const hp  = Math.round(totalHHThang / (koc.muc_tieu_rev  || 1) * 100);
+  const lp  = Math.round((totalLeadM || koc.leads) / (koc.muc_tieu_lead || 1) * 100);
+  const hlp = Math.round(totalHopLe / (koc.muc_tieu_lead || 1) * 100);
+  document.getElementById('portalProgress').innerHTML = [
+    {label:'Hoa hồng', pct:hp},
+    {label:'Lead phát sinh', pct:lp},
+    {label:'Lead hợp lệ', pct:hlp}
+  ].map(r=>`<div class="prog-item"><span class="prog-label">${r.label}</span><div class="prog-bg"><div class="prog-fill" style="width:${Math.min(r.pct,100)}%;background:${bar(r.pct)}"></div></div><span class="prog-pct">${r.pct}%</span></div>`).join('');
+}
+
 function renderDashboardChart(color) {
   const c = color || hashColor(session.username);
   const labels = historyData.map(h=>{
