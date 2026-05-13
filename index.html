@@ -676,6 +676,10 @@ tr:hover td { background:var(--bg3); }
           <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></span>
           Về Edupia
         </div>
+        <div class="nav-item" onclick="switchPortalPage('demo')" style="margin-top:4px;">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span>
+          Lớp học mẫu
+        </div>
       </div>
       <div class="sidebar-footer">
         <div class="user-card">
@@ -1210,110 +1214,68 @@ tr:hover td { background:var(--bg3); }
             <div class="pro2-stat"><div class="pro2-stat-num">IELTS 6.5+</div><div class="pro2-stat-lbl">Chuẩn gia sư</div></div>
           </div>
         </div>
-        <!-- Lớp học mẫu Module -->
-        <div class="card" style="margin-top:0;">
-          <style>
-          .demo-section{margin-bottom:1.5rem;}
-          .demo-section:last-child{margin-bottom:0;}
-          .demo-section-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-          /* Video */
-          .demo-video-wrap{position:relative;width:100%;padding-bottom:56.25%;border-radius:var(--radius-lg);overflow:hidden;background:#000;}
-          .demo-video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
-          /* Account cards */
-          .demo-acc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;}
-          .demo-acc-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;flex-direction:column;gap:10px;}
-          .demo-acc-title{font-size:12px;font-weight:700;color:#00b5c8;text-transform:uppercase;letter-spacing:.05em;}
-          .demo-acc-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-          .demo-acc-label{font-size:12px;color:var(--text2);flex-shrink:0;}
-          .demo-acc-value{font-size:13px;font-weight:600;color:var(--text);font-family:monospace;background:var(--bg2);padding:4px 10px;border-radius:6px;border:1px solid var(--border);}
-          .demo-acc-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1a6fa8;font-weight:600;text-decoration:none;background:rgba(26,111,168,0.1);padding:6px 12px;border-radius:var(--radius);border:1px solid rgba(26,111,168,0.2);}
-          .demo-acc-link:hover{background:rgba(26,111,168,0.18);}
-          .demo-acc-note{display:inline-flex;align-items:center;padding:2px 8px;background:rgba(0,181,200,0.12);color:#00b5c8;border-radius:20px;font-size:10px;font-weight:700;}
-          /* Slide ảnh feedback */
-          .demo-slide-wrap{position:relative;overflow:hidden;border-radius:var(--radius-lg);background:var(--bg3);}
-          .demo-slide-track{display:flex;gap:12px;transition:transform .4s ease;padding:4px;}
-          .demo-slide-item{flex-shrink:0;width:240px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);}
-          .demo-slide-item img{width:100%;height:180px;object-fit:cover;display:block;}
-          .demo-slide-nav{display:flex;justify-content:center;gap:8px;margin-top:10px;}
-          .demo-slide-btn{width:8px;height:8px;border-radius:50%;background:var(--border2);border:none;cursor:pointer;transition:background .2s;padding:0;}
-          .demo-slide-btn.active{background:#1a6fa8;width:20px;border-radius:4px;}
-          .demo-slide-arrows{display:flex;justify-content:space-between;margin-bottom:8px;}
-          .demo-slide-arrow{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:6px 14px;cursor:pointer;color:var(--text);font-size:14px;transition:background .15s;}
-          .demo-slide-arrow:hover{background:var(--bg3);}
-          /* Placeholder khi chưa có ảnh */
-          .demo-fb-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;background:var(--bg3);border-radius:var(--radius-lg);border:1.5px dashed var(--border2);text-align:center;gap:8px;}
-          </style>
+      <!-- Demo class page -->
+      <div class="page" id="pportal-demo">
+        <div class="page-header">
+          <div class="page-title">Lớp học mẫu</div>
+          <div class="page-sub">Trải nghiệm thực tế lớp học Edupia Pro</div>
+        </div>
 
-          <div class="card-head">
-            <span class="card-title">🎓 Lớp học mẫu</span>
+        <style>
+        .demo-section{margin-bottom:1.25rem;}
+        .demo-section-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+        .demo-video-wrap{position:relative;width:100%;padding-bottom:56.25%;border-radius:var(--radius-lg);overflow:hidden;background:#000;}
+        .demo-video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+        .demo-acc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;}
+        .demo-acc-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;flex-direction:column;gap:10px;}
+        .demo-acc-title{font-size:12px;font-weight:700;color:#00b5c8;text-transform:uppercase;letter-spacing:.05em;}
+        .demo-acc-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+        .demo-acc-label{font-size:12px;color:var(--text2);flex-shrink:0;}
+        .demo-acc-value{font-size:13px;font-weight:600;color:var(--text);font-family:monospace;background:var(--bg2);padding:4px 10px;border-radius:6px;border:1px solid var(--border);}
+        .demo-acc-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1a6fa8;font-weight:600;text-decoration:none;background:rgba(26,111,168,0.1);padding:6px 12px;border-radius:var(--radius);border:1px solid rgba(26,111,168,0.2);}
+        .demo-acc-link:hover{background:rgba(26,111,168,0.18);}
+        .demo-acc-note{display:inline-flex;align-items:center;padding:2px 8px;background:rgba(0,181,200,0.12);color:#00b5c8;border-radius:20px;font-size:10px;font-weight:700;}
+        .demo-fb-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem;background:var(--bg3);border-radius:var(--radius-lg);border:1.5px dashed var(--border2);text-align:center;gap:10px;}
+        </style>
+
+        <!-- 1. Video -->
+        <div class="demo-section">
+          <div class="demo-section-title">🎥 Video lớp học mẫu</div>
+          <div class="demo-video-wrap">
+            <iframe src="https://www.youtube.com/embed/x5zmhVxCic8?rel=0&modestbranding=1"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen title="Lớp học mẫu Edupia Pro"></iframe>
           </div>
+        </div>
 
-          <!-- 1. Video lớp học mẫu -->
-          <div class="demo-section">
-            <div class="demo-section-title">🎥 Video lớp học mẫu</div>
-            <div class="demo-video-wrap">
-              <iframe
-                src="https://www.youtube.com/embed/x5zmhVxCic8?rel=0&modestbranding=1"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                title="Lớp học mẫu Edupia Pro">
-              </iframe>
+        <!-- 2. Tài khoản học thử -->
+        <div class="demo-section">
+          <div class="demo-section-title">🔑 Tài khoản học thử</div>
+          <div class="demo-acc-grid">
+            <div class="demo-acc-card">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div class="demo-acc-title">Tài khoản học thử app Edupia</div>
+                <span class="demo-acc-note">Cấp 1</span>
+              </div>
+              <a class="demo-acc-link" href="https://edupia.vn/hoc-gia-su" target="_blank">🔗 edupia.vn/hoc-gia-su</a>
+              <div class="demo-acc-row"><span class="demo-acc-label">Username</span><span class="demo-acc-value">0985908890</span></div>
+              <div class="demo-acc-row"><span class="demo-acc-label">Mật khẩu</span><span class="demo-acc-value">edupia123</span></div>
             </div>
-          </div>
-
-          <!-- 2. Tài khoản học thử -->
-          <div class="demo-section">
-            <div class="demo-section-title">🔑 Tài khoản học thử</div>
-            <div class="demo-acc-grid">
-              <div class="demo-acc-card">
-                <div style="display:flex;align-items:center;justify-content:space-between;">
-                  <div class="demo-acc-title">Tài khoản học thử app Edupia</div>
-                  <span class="demo-acc-note">Cấp 1</span>
-                </div>
-                <a class="demo-acc-link" href="https://edupia.vn/hoc-gia-su" target="_blank">
-                  🔗 edupia.vn/hoc-gia-su
-                </a>
-                <div class="demo-acc-row">
-                  <span class="demo-acc-label">Username</span>
-                  <span class="demo-acc-value">0985908890</span>
-                </div>
-                <div class="demo-acc-row">
-                  <span class="demo-acc-label">Mật khẩu</span>
-                  <span class="demo-acc-value">edupia123</span>
-                </div>
+            <div class="demo-acc-card">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div class="demo-acc-title">Tài khoản học thử app Edupia</div>
+                <span class="demo-acc-note">Cấp 2</span>
               </div>
-              <div class="demo-acc-card">
-                <div style="display:flex;align-items:center;justify-content:space-between;">
-                  <div class="demo-acc-title">Tài khoản học thử app Edupia</div>
-                  <span class="demo-acc-note">Cấp 2</span>
-                </div>
-                <a class="demo-acc-link" href="https://edupiasecondary.vn/" target="_blank">
-                  🔗 edupiasecondary.vn
-                </a>
-                <div class="demo-acc-row">
-                  <span class="demo-acc-label">Username</span>
-                  <span class="demo-acc-value">0985908890</span>
-                </div>
-                <div class="demo-acc-row">
-                  <span class="demo-acc-label">Mật khẩu</span>
-                  <span class="demo-acc-value">edupia123</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3. Slide feedback phụ huynh -->
-          <div class="demo-section">
-            <div class="demo-section-title">💬 Feedback phụ huynh</div>
-            <div class="demo-fb-placeholder" id="feedbackSlide">
-              <span style="font-size:32px;">🖼️</span>
-              <div style="font-size:13px;font-weight:600;color:var(--text);">Thêm ảnh feedback từ Google Drive</div>
-              <div style="font-size:12px;color:var(--text2);max-width:360px;line-height:1.6;">
-                Để hiển thị ảnh feedback, hãy tải ảnh từ Google Drive về máy → upload lên GitHub cùng thư mục → cho tôi biết tên các file ảnh để nhúng vào đây.
-              </div>
+              <a class="demo-acc-link" href="https://edupiasecondary.vn/" target="_blank">🔗 edupiasecondary.vn</a>
+              <div class="demo-acc-row"><span class="demo-acc-label">Username</span><span class="demo-acc-value">0985908890</span></div>
+              <div class="demo-acc-row"><span class="demo-acc-label">Mật khẩu</span><span class="demo-acc-value">edupia123</span></div>
             </div>
           </div>
         </div>
+
+
+      </div>
+
 
       </div>
 
@@ -2238,7 +2200,7 @@ function renderLeadChart(filter) {
 
 function switchPortalPage(id) {
   document.querySelectorAll('#screen-portal .nav-item').forEach((el,i)=>{
-    const ids=['dashboard','revenue','leads','intro','about'];
+    const ids=['dashboard','revenue','leads','intro','about','demo'];
     el.classList.toggle('active', ids[i]===id);
   });
   document.querySelectorAll('#screen-portal .page').forEach(p=>p.classList.remove('active'));
