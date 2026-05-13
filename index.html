@@ -1,809 +1,2403 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edupia · KOC Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta name="version" content="202605081019"/>
+<title>Edupia Affiliate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --ink:#0F0F0F;--ink2:#3A3A3A;--ink3:#787878;
-  --rule:rgba(0,0,0,0.07);--rule2:rgba(0,0,0,0.13);
-  --cream:#FAF8F4;--white:#FFFFFF;
-  --sage:#1B7A5A;--sage2:#2EA87A;--sage3:#D8F3DC;--sage4:#0f5c40;
-  --amber:#B8843A;--amberl:#FEF3E2;
-  --blue:#1D4E89;--bluel:#EBF2FA;
-  --red:#DC2626;--redl:#FEF2F2;
-  --r:12px;--rs:7px;
-  --sh:0 1px 12px rgba(0,0,0,0.06);--sh2:0 8px 40px rgba(0,0,0,0.12)
+:root {
+  --bg:       #0f1117;
+  --bg2:      #181b24;
+  --bg3:      #1e2130;
+  --bg4:      #252838;
+  --text:     #f0f2f8;
+  --text2:    #8b90a7;
+  --text3:    #555b72;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --blue:     #1a6fa8;
+  --blue2:    #1558a0;
+  --blue-g:   linear-gradient(135deg,#1a6fa8,#00b5c8);
+  --green:    #22c55e;
+  --amber:    #00b5c8;
+  --red:      #ef4444;
+  --purple:   #00b5c8;
+  --radius:   10px;
+  --radius-lg:16px;
+  --radius-xl:22px;
+  --shadow:   0 8px 32px rgba(0,0,0,0.4);
+  --shadow-sm:0 2px 12px rgba(0,0,0,0.3);
 }
-html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:#EEECEA;color:var(--ink);min-height:100vh;font-size:14px;line-height:1.6}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Be Vietnam Pro',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; font-size:14px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
 
-/* ── HEADER ── */
-.hdr{background:var(--ink);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:300}
-.logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--white);display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo em{font-style:italic;color:#A8D5BA}
-.hdr-r{display:flex;align-items:center;gap:10px}
-.db-chip{display:flex;align-items:center;gap:6px;font-size:12px;border-radius:20px;padding:5px 12px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7)}
-.sdot{width:7px;height:7px;border-radius:50%;background:#555;transition:background .3s;flex-shrink:0}
-.sdot.ok{background:#52c47a}
-.sdot.loading{background:#f5a623;animation:blink 1s infinite}
-.sdot.err{background:#ff5c5c}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+/* ── Screens ── */
+.screen { display:none; }
+.screen.active { display:block; }
 
-/* ── LAYOUT ── */
-.wrap{max-width:1240px;margin:0 auto;padding:1.75rem 1.25rem}
+/* ══════════════════════════════════════════
+   LOGIN PAGE
+══════════════════════════════════════════ */
+.login-page {
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  overflow:hidden;
+}
+@media(max-width:768px){ .login-page { grid-template-columns:1fr; } }
 
-/* ── DB SECTION ── */
-.db-section{margin-bottom:1.75rem}
-.eyebrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.875rem}
+.login-left {
+  background: linear-gradient(145deg, #0f1421 0%, #141929 50%, #0d1520 100%);
+  padding:3rem;
+  display:flex; flex-direction:column; justify-content:space-between;
+  position:relative; overflow:hidden;
+}
+.login-left::before {
+  content:'';
+  position:absolute; top:-100px; left:-100px;
+  width:500px; height:500px;
+  background:radial-gradient(circle, rgba(26,111,168,0.15) 0%, transparent 70%);
+  pointer-events:none;
+}
+.login-left::after {
+  content:'';
+  position:absolute; bottom:-80px; right:-80px;
+  width:400px; height:400px;
+  background:radial-gradient(circle, rgba(0,181,200,0.15) 0%, transparent 70%);
+  pointer-events:none;
+}
+@media(max-width:768px){ .login-left { display:none; } }
 
-.db-card{background:var(--white);border:1px solid var(--rule2);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.login-brand { position:relative; z-index:1; }
+.login-brand-logo {
+  display:inline-flex; align-items:center; gap:10px; margin-bottom:2.5rem;
+}
+.brand-icon {
+  width:40px; height:40px; border-radius:10px;
+  background:var(--blue-g);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Sora',sans-serif; font-size:14px; font-weight:700; color:#fff;
+}
+.brand-name { font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:var(--text); }
 
-/* Status bar */
-.db-status-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--rule);border-bottom:1px solid var(--rule)}
-.db-stat{background:var(--white);padding:.875rem 1.25rem;text-align:center}
-.db-stat-num{font-family:'DM Serif Display',serif;font-size:28px;color:var(--ink);line-height:1}
-.db-stat-num.green{color:var(--sage)}
-.db-stat-num.amber{color:var(--amber)}
-.db-stat-label{font-size:11px;color:var(--ink3);margin-top:3px}
+.login-hero-title {
+  font-family:'Sora',sans-serif;
+  font-size:clamp(28px,3vw,40px);
+  font-weight:700; line-height:1.25;
+  color:var(--text); margin-bottom:1rem;
+}
+.login-hero-title span { color:#00b5c8; }
+.login-hero-sub { font-size:15px; color:var(--text2); line-height:1.7; max-width:380px; }
 
-/* Sheet inputs */
-.db-inputs{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--rule)}
-.db-input-block{padding:1rem 1.25rem;border-right:1px solid var(--rule)}
-.db-input-block:last-child{border-right:none}
-.db-input-label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:7px}
-.db-input-ico{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
-.ico-koc{background:var(--sage3)}
-.ico-viral{background:var(--amberl)}
-.ico-return{background:#EEF2FF}
+.login-stats { display:flex; gap:2rem; position:relative; z-index:1; }
+.login-stat-item { }
+.login-stat-num { font-family:'Sora',sans-serif; font-size:24px; font-weight:700; color:var(--text); }
+.login-stat-label { font-size:12px; color:var(--text2); }
 
-/* ── MODE TOGGLE ── */
-.mode-toggle{display:flex;gap:8px;margin-bottom:14px}
-.mode-btn{flex:1;padding:9px 12px;border-radius:var(--rs);border:1.5px solid var(--rule2);background:var(--white);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink3);text-align:center;transition:all .18s;line-height:1.4}
-.mode-btn:hover{border-color:var(--sage);color:var(--sage)}
-.mode-btn.active{border-color:var(--sage);background:var(--sage3);color:var(--sage);font-weight:700}
-.mode-btn .mode-ico{font-size:16px;display:block;margin-bottom:3px}
-.mode-btn .mode-lbl{display:block;font-size:12px}
-.mode-btn .mode-sub{display:block;font-size:10px;color:var(--ink3);margin-top:1px;font-weight:400}
-.mode-btn.active .mode-sub{color:var(--sage4)}
+.login-right {
+  background:var(--bg2);
+  display:flex; align-items:center; justify-content:center;
+  padding:2rem;
+}
+.login-form-wrap {
+  width:100%; max-width:420px;
+}
+.login-form-logo {
+  display:flex; align-items:center; gap:10px; margin-bottom:2.5rem;
+}
+.login-form-logo .brand-icon { width:36px; height:36px; font-size:12px; }
+.login-form-logo .brand-name { font-size:16px; }
 
-/* Return DNA status */
-.return-dna-box{background:#EEF2FF;border:1px solid #C7D2FE;border-radius:var(--rs);padding:8px 11px;font-size:12px;color:#3730A3;margin-bottom:12px;display:none;line-height:1.6}
-.return-dna-box.show{display:block}
-.sheet-row{display:flex;gap:6px}
-.sheet-inp{flex:1;padding:7px 10px;font-size:12.5px;font-family:'DM Sans',sans-serif;border:1px solid var(--rule2);border-radius:var(--rs);background:#F7F6F3;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s}
-.sheet-inp:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(27,122,90,.09);background:var(--white)}
-.sheet-inp::placeholder{color:#bbb}
-.save-btn{padding:7px 12px;background:var(--ink2);color:var(--white);border:none;border-radius:var(--rs);font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:background .15s}
-.save-btn:hover{background:var(--ink)}
+.login-heading { font-family:'Sora',sans-serif; font-size:26px; font-weight:700; margin-bottom:6px; }
+.login-subheading { font-size:13px; color:var(--text2); margin-bottom:2rem; }
 
-/* Sync button */
-.db-footer{padding:.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;background:#FAFAF8}
-.sync-info{font-size:12px;color:var(--ink3)}
-.sync-info strong{color:var(--ink2)}
-.sync-btn{display:flex;align-items:center;gap:7px;padding:9px 20px;background:var(--sage);color:var(--white);border:none;border-radius:var(--rs);font-size:13px;font-weight:700;font-family:'DM Serif Display',serif;cursor:pointer;transition:all .18s}
-.sync-btn:hover{background:var(--sage4);transform:translateY(-1px);box-shadow:0 4px 16px rgba(27,122,90,.3)}
-.sync-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;box-shadow:none}
-.sync-progress{font-size:12px;color:var(--ink3);margin-top:6px;display:none;padding:0 1.25rem 1rem}
-.sync-progress.show{display:block}
-.prog-bar-wrap{height:4px;background:var(--rule);border-radius:2px;margin-top:6px;overflow:hidden}
-.prog-bar{height:100%;background:var(--sage);border-radius:2px;transition:width .3s;width:0%}
+.form-group { margin-bottom:16px; }
+.form-label { display:block; font-size:12px; font-weight:600; color:var(--text2); margin-bottom:7px; letter-spacing:0.04em; text-transform:uppercase; }
+.form-input {
+  width:100%; padding:12px 16px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--radius); color:var(--text);
+  font-size:14px; font-family:inherit; outline:none;
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(26,111,168,0.15);
+}
+.form-input::placeholder { color:var(--text3); }
 
-/* ── MAIN GRID ── */
-.main-grid{display:grid;grid-template-columns:400px 1fr;gap:1.5rem;align-items:start}
+.btn-login {
+  width:100%; padding:13px;
+  background:var(--blue-g);
+  border:none; border-radius:var(--radius);
+  color:#fff; font-size:15px; font-weight:600;
+  font-family:inherit; cursor:pointer;
+  transition:opacity 0.2s, transform 0.1s;
+  margin-top:8px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-login:hover { opacity:0.9; }
+.btn-login:active { transform:scale(0.99); }
+.btn-login:disabled { opacity:0.5; cursor:not-allowed; }
 
-/* ── INPUT PANEL ── */
-.panel{background:var(--white);border:1px solid var(--rule2);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;position:sticky;top:74px}
-.ph{background:var(--ink);padding:1.125rem 1.375rem}
-.ph h2{font-family:'DM Serif Display',serif;font-size:19px;color:var(--white);margin-bottom:3px}
-.ph p{font-size:12px;color:rgba(255,255,255,.5)}
-.pb{padding:1.25rem 1.375rem}
-.flbl{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:5px}
-.field{margin-bottom:14px}
-.koc-area{width:100%;min-height:220px;padding:12px 14px;font-size:13.5px;font-family:'DM Sans',sans-serif;border:1.5px solid var(--rule2);border-radius:var(--r);background:#F7F6F3;color:var(--ink);outline:none;resize:vertical;line-height:1.75;transition:border-color .18s,box-shadow .18s}
-.koc-area:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(27,122,90,.1);background:var(--white)}
-.koc-area::placeholder{color:#bbb;line-height:1.75}
-.koc-hint{margin-top:6px;font-size:11px;color:var(--ink3);line-height:1.6;padding:8px 10px;background:#F7F6F3;border-radius:var(--rs);border:1px solid var(--rule)}
-.link-inp{width:100%;padding:9px 11px;font-size:13px;font-family:'DM Sans',sans-serif;border:1.5px solid var(--rule2);border-radius:var(--rs);background:#F7F6F3;color:var(--ink);outline:none;transition:border-color .18s}
-.link-inp:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(27,122,90,.09);background:var(--white)}
-.hr{height:1px;background:var(--rule);margin:14px 0}
+.error-box {
+  background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25);
+  border-radius:var(--radius); padding:10px 14px;
+  font-size:13px; color:#fca5a5; margin-bottom:14px; display:none;
+}
+.success-box {
+  background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.25);
+  border-radius:var(--radius); padding:10px 14px;
+  font-size:13px; color:#86efac; margin-bottom:14px; display:none;
+}
 
-/* DNA status in panel */
-.dna-status{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--rs);border:1px solid var(--rule);background:#F7F6F3;margin-bottom:12px;font-size:12px}
-.dna-status.ready{background:var(--sage3);border-color:#A7D7B8;color:var(--sage)}
-.dna-status.empty{color:var(--ink3)}
-.dna-status-ico{font-size:14px;flex-shrink:0}
+/* ══════════════════════════════════════════
+   APP SHELL
+══════════════════════════════════════════ */
+.app { display:flex; min-height:100vh; }
 
-.gen-btn{width:100%;padding:13px;background:var(--sage);color:var(--white);border:none;border-radius:var(--rs);font-size:14px;font-weight:700;font-family:'DM Serif Display',serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .18s}
-.gen-btn:hover{background:var(--sage4);transform:translateY(-1px);box-shadow:0 4px 16px rgba(27,122,90,.28)}
-.gen-btn:disabled{background:#D4D4D8;cursor:not-allowed;transform:none;box-shadow:none;color:#A1A1AA}
-.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .65s linear infinite;display:none}
-.spin.show{display:block}
-@keyframes rot{to{transform:rotate(360deg)}}
+/* Sidebar */
+.sidebar {
+  width:240px; flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  padding:1.5rem 0;
+  position:fixed; top:0; left:0; bottom:0; z-index:100;
+  transition:transform 0.3s;
+}
+@media(max-width:900px){
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+}
 
-/* ── OUTPUT ── */
-.rarea{min-height:480px}
-.out-hd{margin-bottom:1.25rem}
-.out-hd h3{font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-.3px}
-.out-hd-sub{font-size:12px;color:var(--ink3);margin-top:2px}
+.sidebar-brand {
+  display:flex; align-items:center; gap:10px;
+  padding:0 1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:1rem;
+}
+.sidebar-brand .brand-icon { width:34px; height:34px; font-size:12px; }
+.sidebar-brand .brand-name { font-size:15px; }
 
-.empty-state{background:var(--white);border:1.5px dashed var(--rule2);border-radius:var(--r);padding:5rem 2rem;text-align:center}
-.empty-ico{font-family:'DM Serif Display',serif;font-size:52px;color:var(--rule2);margin-bottom:1rem}
-.empty-state h4{font-size:15px;font-weight:600;margin-bottom:6px}
-.empty-state p{font-size:13px;color:var(--ink3);line-height:1.7}
+.sidebar-section { padding:0 0.75rem; margin-bottom:0.5rem; }
+.sidebar-section-label {
+  font-size:10px; font-weight:700; color:var(--text3);
+  letter-spacing:0.08em; text-transform:uppercase;
+  padding:0 0.5rem; margin-bottom:4px;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:var(--radius);
+  font-size:13px; font-weight:500; color:var(--text2);
+  cursor:pointer; transition:all 0.15s;
+  margin-bottom:2px;
+}
+.nav-item:hover { background:var(--bg3); color:var(--text); }
+.nav-item.active { background:rgba(26,111,168,0.15); color:var(--blue); }
+.nav-icon {
+  width:18px; height:18px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.nav-icon svg { width:16px; height:16px; }
 
-/* DNA match badge */
-.dna-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px;margin-bottom:12px;background:var(--sage3);color:var(--sage)}
-.dna-badge.low{background:var(--amberl);color:var(--amber)}
+.sidebar-footer {
+  margin-top:auto;
+  padding:1rem 1.25rem 0;
+  border-top:1px solid var(--border);
+}
+.user-card {
+  display:flex; align-items:center; gap:10px;
+  padding:10px; border-radius:var(--radius);
+  background:var(--bg3);
+}
+.user-avatar {
+  width:34px; height:34px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:#fff; flex-shrink:0;
+}
+.user-info { flex:1; min-width:0; }
+.user-name { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-role { font-size:11px; color:var(--text2); }
+.btn-logout-sm {
+  width:28px; height:28px; border-radius:8px;
+  background:transparent; border:1px solid var(--border2);
+  color:var(--text2); cursor:pointer; display:flex;
+  align-items:center; justify-content:center;
+  transition:all 0.15s; flex-shrink:0;
+}
+.btn-logout-sm:hover { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.3); color:#fca5a5; }
 
-.result-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem}
-.ccard{background:var(--white);border:1px solid var(--rule2);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;animation:up .4s ease both}
-.ccard:nth-child(2){animation-delay:.1s}
-@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.ctop{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.125rem;border-bottom:1px solid var(--rule)}
-.clabel{display:flex;align-items:center;gap:8px}
-.cname{font-size:13px;font-weight:700}
-.csub{font-size:11px;color:var(--ink3)}
-.cbadge{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:10px}
-.cb1{background:var(--sage3);color:var(--sage)}
-.cb2{background:var(--amberl);color:var(--amber)}
-.cbody{padding:1.125rem}
-.fb-post{background:#F0F2F5;border-radius:8px;padding:1rem 1.125rem;font-size:13.5px;line-height:1.85;color:#1C1E21;white-space:pre-wrap;word-break:break-word;font-family:'DM Sans',sans-serif}
-.fb-post::before{content:'';display:block;width:32px;height:32px;background:var(--sage);border-radius:50%;margin-bottom:8px}
-.cfoot{padding:.75rem 1.125rem;border-top:1px solid var(--rule);display:flex;gap:6px;align-items:center}
-.cpybtn,.crebtn{font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--rs);border:1px solid var(--rule2);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;transition:all .15s}
-.cpybtn{background:var(--ink);color:var(--white);border-color:var(--ink)}
-.cpybtn:hover{background:var(--ink2)}
-.cpybtn.ok{background:var(--sage2);border-color:var(--sage2)}
-.crebtn{background:var(--white);color:var(--ink3)}
-.crebtn:hover{border-color:var(--sage);color:var(--sage)}
-.ccard-chars{margin-left:auto;font-size:11px;color:var(--ink3)}
+/* Main content */
+.main {
+  flex:1; margin-left:240px;
+  display:flex; flex-direction:column; min-height:100vh;
+}
+@media(max-width:900px){ .main { margin-left:0; } }
 
-.skel-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem}
-.skel-card{background:var(--white);border:1px solid var(--rule2);border-radius:var(--r);padding:1.125rem}
-.sk{background:linear-gradient(90deg,#EFEFEF 25%,#E5E5E5 50%,#EFEFEF 75%);background-size:200% 100%;animation:sh 1.1s infinite;border-radius:4px;margin-bottom:8px}
-@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Mobile topbar */
+.mobile-topbar {
+  display:none; align-items:center; justify-content:space-between;
+  padding:1rem 1.25rem;
+  background:var(--bg2); border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:50;
+}
+@media(max-width:900px){ .mobile-topbar { display:flex; } }
+.menu-btn {
+  width:36px; height:36px; border-radius:var(--radius);
+  background:var(--bg3); border:1px solid var(--border2);
+  color:var(--text); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.mobile-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.6); z-index:99;
+}
+.mobile-overlay.show { display:block; }
 
-.err-bar{background:var(--redl);border:1px solid #FECACA;border-radius:var(--rs);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:1rem;display:none;line-height:1.6}
+/* Page content */
+.page { padding:1.75rem; display:none; }
+.page.active { display:block; }
+@media(max-width:600px){ .page { padding:1rem; } }
 
-/* ── CHAT BOX ── */
-.chat-box{border-top:1px solid var(--rule);background:#FAFAF8}
-.chat-history{max-height:220px;overflow-y:auto;padding:.75rem 1rem;display:flex;flex-direction:column;gap:8px}
-.chat-history:empty{display:none}
-.chat-msg{display:flex;gap:8px;align-items:flex-start}
-.chat-msg.user{flex-direction:row-reverse}
-.chat-bubble{max-width:82%;padding:7px 11px;border-radius:10px;font-size:12.5px;line-height:1.6;word-break:break-word}
-.chat-msg.user .chat-bubble{background:var(--ink);color:var(--white);border-radius:10px 10px 2px 10px}
-.chat-msg.ai .chat-bubble{background:var(--sage3);color:var(--sage4);border-radius:10px 10px 10px 2px}
-.chat-msg.ai.loading .chat-bubble{background:var(--rule);color:var(--ink3);font-style:italic}
-.chat-avatar{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:2px}
-.chat-avatar.user-av{background:var(--ink);color:var(--white)}
-.chat-avatar.ai-av{background:var(--sage);color:var(--white)}
-.chat-input-row{display:flex;gap:6px;padding:.625rem .875rem;border-top:1px solid var(--rule);background:var(--white)}
-.chat-inp{flex:1;padding:7px 10px;font-size:12.5px;font-family:'DM Sans',sans-serif;border:1px solid var(--rule2);border-radius:20px;outline:none;background:#F7F6F3;color:var(--ink);transition:border-color .15s,box-shadow .15s}
-.chat-inp:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(27,122,90,.08);background:var(--white)}
-.chat-inp::placeholder{color:#bbb}
-.chat-send{padding:7px 14px;background:var(--sage);color:var(--white);border:none;border-radius:20px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s;white-space:nowrap;flex-shrink:0}
-.chat-send:hover{background:var(--sage4)}
-.chat-send:disabled{background:#ccc;cursor:not-allowed}
-.chat-hint{font-size:10.5px;color:var(--ink3);padding:5px 1rem 0;font-style:italic}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:var(--white);padding:10px 16px;border-radius:var(--rs);font-size:13px;font-weight:500;z-index:9999;transform:translateY(60px);opacity:0;transition:all .28s;pointer-events:none;max-width:320px}
-.toast.show{transform:translateY(0);opacity:1}
+.page-header { margin-bottom:1.5rem; }
+.page-title { font-family:'Sora',sans-serif; font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.page-sub { font-size:13px; color:var(--text2); }
 
-@media(max-width:900px){.main-grid{grid-template-columns:1fr}.panel{position:static}.result-cards,.skel-wrap{grid-template-columns:1fr}.db-inputs{grid-template-columns:1fr}.db-input-block{border-right:none;border-bottom:1px solid var(--rule)}.db-status-bar{grid-template-columns:1fr 1fr}}
+/* ── Metrics grid ── */
+.metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:1.5rem; }
+@media(max-width:480px){ .metrics { grid-template-columns:1fr 1fr; } }
+
+.metric {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:1.25rem;
+  position:relative; overflow:hidden;
+  transition:border-color 0.2s, transform 0.2s;
+}
+.metric:hover { border-color:var(--border2); transform:translateY(-1px); }
+.metric-accent {
+  position:absolute; top:0; left:0; right:0; height:2px;
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+}
+.metric-label { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
+.metric-value { font-family:'Sora',sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; margin-bottom:6px; }
+.metric-change { font-size:12px; font-weight:500; display:flex; align-items:center; gap:4px; }
+.change-up { color:var(--green); }
+.change-dn { color:var(--red); }
+.change-neu { color:var(--text2); }
+
+/* ── Cards ── */
+.card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:1.25rem;
+  margin-bottom:1.25rem;
+}
+.card-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:1rem; gap:8px; flex-wrap:wrap;
+}
+.card-title { font-size:14px; font-weight:600; color:var(--text); }
+
+/* ── Charts row ── */
+.chart-row { display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:1.25rem; }
+@media(max-width:900px){ .chart-row { grid-template-columns:1fr; } }
+
+/* ── Table ── */
+.table-wrap { overflow-x:auto; border-radius:var(--radius); }
+table { width:100%; border-collapse:collapse; font-size:13px; min-width:500px; }
+th {
+  text-align:left; font-size:11px; font-weight:700;
+  color:var(--text2); text-transform:uppercase; letter-spacing:0.05em;
+  padding:10px 12px; border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+td { padding:12px 12px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--bg3); }
+
+/* ── Progress bars ── */
+.prog-list { display:flex; flex-direction:column; gap:12px; }
+.prog-item { display:grid; grid-template-columns:120px 1fr 42px; align-items:center; gap:12px; }
+@media(max-width:480px){ .prog-item { grid-template-columns:90px 1fr 36px; gap:8px; } }
+.prog-label { font-size:12px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.prog-bg { background:var(--bg4); border-radius:6px; height:7px; overflow:hidden; }
+.prog-fill { height:7px; border-radius:6px; transition:width 0.6s cubic-bezier(0.4,0,0.2,1); }
+.prog-pct { font-size:12px; font-weight:600; color:var(--text); text-align:right; }
+
+/* ── Badges ── */
+.badge { display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+.b-green  { background:rgba(34,197,94,0.12);  color:#4ade80; }
+.b-amber  { background:rgba(245,158,11,0.12); color:#fbbf24; }
+.b-blue   { background:rgba(26,111,168,0.15); color:#7dd8e8; }
+.b-red    { background:rgba(239,68,68,0.12);  color:#fca5a5; }
+.b-purple { background:rgba(167,139,250,0.12);color:#7dd8e8; }
+
+/* ── Avatar ── */
+.avatar {
+  border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-weight:700; color:#fff; flex-shrink:0;
+}
+.av-sm { width:30px; height:30px; font-size:11px; }
+.av-md { width:38px; height:38px; font-size:13px; }
+.av-lg { width:48px; height:48px; font-size:16px; }
+
+/* ── Buttons ── */
+.btn-primary {
+  padding:10px 20px; background:var(--blue-g); border:none;
+  border-radius:var(--radius); color:#fff; font-size:13px;
+  font-weight:600; font-family:inherit; cursor:pointer;
+  transition:opacity 0.2s; white-space:nowrap;
+}
+.btn-primary:hover { opacity:0.88; }
+.btn-primary:disabled { opacity:0.45; cursor:not-allowed; }
+
+.btn-ghost {
+  padding:8px 14px; background:transparent;
+  border:1px solid var(--border2); border-radius:var(--radius);
+  color:var(--text2); font-size:12px; font-weight:500;
+  font-family:inherit; cursor:pointer; transition:all 0.15s;
+  white-space:nowrap;
+}
+.btn-ghost:hover { background:var(--bg3); color:var(--text); }
+
+.btn-danger {
+  padding:6px 12px; background:transparent;
+  border:1px solid rgba(239,68,68,0.3); border-radius:var(--radius);
+  color:#fca5a5; font-size:11px; font-weight:600;
+  font-family:inherit; cursor:pointer; transition:all 0.15s;
+}
+.btn-danger:hover { background:rgba(239,68,68,0.1); }
+
+.btn-success {
+  padding:6px 12px; background:transparent;
+  border:1px solid rgba(34,197,94,0.3); border-radius:var(--radius);
+  color:#4ade80; font-size:11px; font-weight:600;
+  font-family:inherit; cursor:pointer; transition:all 0.15s;
+}
+.btn-success:hover { background:rgba(34,197,94,0.1); }
+
+/* ── Tabs ── */
+.tabs { display:flex; gap:2px; border-bottom:1px solid var(--border); margin-bottom:1.25rem; overflow-x:auto; }
+.tab {
+  padding:8px 16px 12px; font-size:13px; font-weight:500;
+  color:var(--text2); cursor:pointer; border-bottom:2px solid transparent;
+  margin-bottom:-1px; white-space:nowrap; transition:all 0.15s;
+}
+.tab.active { color:var(--blue); border-bottom-color:var(--blue); }
+.tab:hover:not(.active) { color:var(--text); }
+.atab { display:none; }
+.atab.active { display:block; }
+
+/* ── Form fields ── */
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+.field input, .field select {
+  width:100%; padding:10px 14px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--radius); color:var(--text);
+  font-size:13px; font-family:inherit; outline:none;
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus, .field select:focus {
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(26,111,168,0.12);
+}
+.field select option { background:var(--bg3); }
+
+/* ── Spinner ── */
+.spinner {
+  display:inline-block; width:14px; height:14px;
+  border:2px solid rgba(255,255,255,0.2);
+  border-top-color:#fff; border-radius:50%;
+  animation:spin 0.65s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+
+/* ── Login benefits ── */
+.login-benefits {
+  display:flex; flex-direction:column; gap:16px;
+  margin:2rem 0 2rem;
+}
+.login-benefit-item {
+  display:flex; align-items:flex-start; gap:14px;
+  background:rgba(255,255,255,0.04);
+  border:0.5px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius-lg);
+  padding:14px 16px;
+  transition:background 0.2s;
+}
+.login-benefit-item:hover { background:rgba(255,255,255,0.07); }
+.benefit-icon {
+  font-size:22px; flex-shrink:0;
+  width:40px; height:40px;
+  background:rgba(26,111,168,0.15);
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+}
+.benefit-title {
+  font-size:13px; font-weight:600; color:var(--text);
+  margin-bottom:3px;
+}
+.benefit-desc {
+  font-size:12px; color:var(--text2); line-height:1.5;
+}
+
+/* ── Time filter bar ── */
+.filter-bar {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  margin-bottom:1.25rem;
+}
+.filter-group { display:flex; gap:4px; background:var(--bg3); border-radius:var(--radius); padding:4px; }
+.filter-btn {
+  padding:6px 14px; border:none; border-radius:8px;
+  font-size:12px; font-weight:600; font-family:inherit;
+  cursor:pointer; transition:all 0.15s; color:var(--text2);
+  background:transparent;
+}
+.filter-btn.active { background:var(--blue); color:#fff; }
+.filter-btn:hover:not(.active) { color:var(--text); background:var(--bg4); }
+.filter-sep { width:1px; background:var(--border); margin:4px 2px; }
+.date-range {
+  display:flex; align-items:center; gap:6px;
+  background:var(--bg3); border-radius:var(--radius); padding:6px 12px;
+  font-size:12px; color:var(--text2);
+}
+.date-range input[type="date"] {
+  background:var(--bg4); border:1px solid var(--border2);
+  border-radius:6px; padding:4px 8px; color:var(--text);
+  font-size:12px; font-family:inherit; outline:none;
+  cursor:pointer;
+}
+.date-range input[type="date"]:focus { border-color:var(--blue); }
+.chart-loading {
+  display:none; position:absolute; inset:0;
+  align-items:center; justify-content:center;
+  background:rgba(15,17,23,0.7); border-radius:var(--radius);
+  font-size:13px; color:var(--text2);
+}
+.chart-loading.show { display:flex; }
+.chart-wrap { position:relative; }
+.summary-row {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr));
+  gap:8px; margin-top:1rem; padding-top:1rem;
+  border-top:1px solid var(--border);
+}
+.summary-item { text-align:center; }
+.summary-val { font-family:'Sora',sans-serif; font-size:16px; font-weight:700; color:var(--text); }
+.summary-lbl { font-size:10px; color:var(--text2); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px; }
+
+/* ── KOC profile row ── */
+.koc-row { display:flex; align-items:center; gap:10px; }
+.koc-name { font-weight:600; font-size:13px; color:var(--text); }
+.koc-sub  { font-size:11px; color:var(--text2); }
+
+/* ── Portal welcome ── */
+.welcome-banner {
+  background:linear-gradient(135deg, rgba(26,111,168,0.15), rgba(124,92,255,0.1));
+  border:1px solid rgba(26,111,168,0.2);
+  border-radius:var(--radius-xl);
+  padding:1.5rem; margin-bottom:1.5rem;
+  display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;
+}
+.welcome-avatar { width:52px; height:52px; border-radius:14px; font-size:18px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.welcome-name { font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:var(--text); }
+.welcome-sub { font-size:13px; color:var(--text2); margin-top:2px; }
+.welcome-badge { margin-left:auto; background:rgba(26,111,168,0.2); border:1px solid rgba(26,111,168,0.3); border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600; color:var(--blue); white-space:nowrap; }
+
+/* ── Stat highlight ── */
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:10px; margin:1rem 0; }
+.stat-box { background:var(--bg4); border-radius:var(--radius); padding:12px; text-align:center; }
+.stat-box-num { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:var(--text); }
+.stat-box-label { font-size:10px; color:var(--text2); margin-top:2px; text-transform:uppercase; letter-spacing:0.04em; }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.page.active > * { animation:fadeUp 0.3s ease both; }
+.page.active > *:nth-child(2) { animation-delay:0.05s; }
+.page.active > *:nth-child(3) { animation-delay:0.1s; }
+.page.active > *:nth-child(4) { animation-delay:0.15s; }
 </style>
 </head>
 <body>
 
-<header class="hdr">
-  <a class="logo" href="#">Edupia <em>KOC Studio</em></a>
-  <div class="hdr-r">
-    <div class="db-chip">
-      <div class="sdot" id="sdot"></div>
-      <span id="stxt">Đang kiểm tra...</span>
+<!-- ══ LOGIN ══ -->
+<div class="screen active" id="screen-login">
+  <div class="login-page">
+    <div class="login-left">
+      <div class="login-brand">
+        <div class="login-brand-logo">
+          <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+  <img src="./Logo.png" alt="Edupia"
+       style="height:34px;width:auto;object-fit:contain;flex-shrink:0;"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+  <div style="display:none;align-items:center;justify-content:center;height:34px;padding:0 10px;background:linear-gradient(135deg,#1a6fa8,#00b5c8);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.3px;white-space:nowrap;">edupia</div>
+</div>
+          <span class="brand-name">Edupia Affiliate</span>
+        </div>
+        <div class="login-hero-title">
+          Tăng thu nhập<br>cùng <span>Edupia Affiliate</span>
+        </div>
+        <div class="login-hero-sub">
+          Nền tảng affiliate hàng đầu trong lĩnh vực giáo dục — hoa hồng hấp dẫn, minh bạch và được cập nhật theo thời gian thực.
+        </div>
+
+        <!-- Benefits list -->
+        <div class="login-benefits">
+          <div class="login-benefit-item">
+            <div class="benefit-icon">💰</div>
+            <div>
+              <div class="benefit-title">Hoa hồng minh bạch</div>
+              <div class="benefit-desc">Xem chi tiết hoa hồng từng ngày, không bỏ sót bất kỳ đơn hàng nào</div>
+            </div>
+          </div>
+          <div class="login-benefit-item">
+            <div class="benefit-icon">💹</div>
+            <div>
+              <div class="benefit-title">Theo dõi doanh thu hiệu quả</div>
+              <div class="benefit-desc">Nắm bắt doanh thu từng ngày, từng đơn hàng — không bỏ lỡ bất kỳ khoản thu nào</div>
+            </div>
+          </div>
+          <div class="login-benefit-item">
+            <div class="benefit-icon">📚</div>
+            <div>
+              <div class="benefit-title">Hướng dẫn cách làm chi tiết</div>
+              <div class="benefit-desc">Tài liệu và hướng dẫn bán hàng đầy đủ giúp bạn tối ưu hiệu suất ngay từ đầu</div>
+            </div>
+          </div>
+          <div class="login-benefit-item">
+            <div class="benefit-icon">🎧</div>
+            <div>
+              <div class="benefit-title">Hỗ trợ 24/7</div>
+              <div class="benefit-desc">Đội ngũ hỗ trợ luôn sẵn sàng giải đáp mọi thắc mắc về hoa hồng và chiến dịch</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust indicators -->
+      <div class="login-stats">
+        <div class="login-stat-item">
+          <div class="login-stat-num">100%</div>
+          <div class="login-stat-label">Minh bạch hoa hồng</div>
+        </div>
+        <div class="login-stat-item">
+          <div class="login-stat-num">Real-time</div>
+          <div class="login-stat-label">Cập nhật tức thì</div>
+        </div>
+        <div class="login-stat-item">
+          <div class="login-stat-num">Bảo mật</div>
+          <div class="login-stat-label">Dữ liệu riêng tư</div>
+        </div>
+      </div>
     </div>
-  </div>
-</header>
 
-<div class="wrap">
-
-  <!-- ── DATABASE SECTION ── -->
-  <div class="db-section">
-    <div class="eyebrow">Bộ nhớ AI — học 1 lần, dùng mãi mãi</div>
-    <div class="db-card">
-
-      <!-- Stats -->
-      <div class="db-status-bar" style="grid-template-columns:1fr 1fr 1fr 1fr">
-        <div class="db-stat">
-          <div class="db-stat-num green" id="statKoc">—</div>
-          <div class="db-stat-label">KOC lần đầu</div>
+    <div class="login-right">
+      <div class="login-form-wrap">
+        <div class="login-form-logo">
+          <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+  <img src="./Logo.png" alt="Edupia"
+       style="height:34px;width:auto;object-fit:contain;flex-shrink:0;"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+  <div style="display:none;align-items:center;justify-content:center;height:34px;padding:0 10px;background:linear-gradient(135deg,#1a6fa8,#00b5c8);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.3px;white-space:nowrap;">edupia</div>
+</div>
+          <span class="brand-name">Edupia Affiliate</span>
         </div>
-        <div class="db-stat">
-          <div class="db-stat-num amber" id="statViral">—</div>
-          <div class="db-stat-label">Bài Viral</div>
+        <div class="login-heading">Chào mừng trở lại</div>
+        <div class="login-subheading">Đăng nhập để truy cập dashboard của bạn</div>
+        <div class="error-box" id="loginErr"></div>
+        <div class="form-group">
+          <label class="form-label">Tên đăng nhập</label>
+          <input class="form-input" type="text" id="loginUser" placeholder="vd: lananh.affiliate" autocomplete="username" />
         </div>
-        <div class="db-stat">
-          <div class="db-stat-num" id="statReturn" style="color:#4F46E5">—</div>
-          <div class="db-stat-label">KOC lần 2+</div>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu</label>
+          <input class="form-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" />
         </div>
-        <div class="db-stat">
-          <div class="db-stat-num" id="statTotal" style="color:var(--ink3)">—</div>
-          <div class="db-stat-label">Tổng vectors</div>
-        </div>
-      </div>
-
-      <!-- Sheet URLs -->
-      <div class="db-inputs" style="grid-template-columns:1fr 1fr 1fr">
-        <div class="db-input-block">
-          <div class="db-input-label">
-            <div class="db-input-ico ico-koc">✍️</div>
-            KOC Content Win — Lần đầu
-          </div>
-          <div class="sheet-row">
-            <input class="sheet-inp" id="kocUrl" type="text" placeholder="https://docs.google.com/spreadsheets/d/...">
-            <button class="save-btn" onclick="saveUrl('koc')">Lưu</button>
-          </div>
-        </div>
-        <div class="db-input-block">
-          <div class="db-input-label">
-            <div class="db-input-ico ico-viral">🔥</div>
-            Facebook Viral
-          </div>
-          <div class="sheet-row">
-            <input class="sheet-inp" id="viralUrl" type="text" placeholder="https://docs.google.com/spreadsheets/d/...">
-            <button class="save-btn" onclick="saveUrl('viral')">Lưu</button>
-          </div>
-        </div>
-        <div class="db-input-block" style="border-right:none">
-          <div class="db-input-label">
-            <div class="db-input-ico ico-return">🔄</div>
-            KOC Content Win — Lần 2+
-          </div>
-          <div class="sheet-row">
-            <input class="sheet-inp" id="returnUrl" type="text" placeholder="https://docs.google.com/spreadsheets/d/...">
-            <button class="save-btn" onclick="saveUrl('return')">Lưu</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sync -->
-      <div class="db-footer">
-        <div>
-          <div class="sync-info" id="syncInfo">Nhấn "Đồng bộ & Học" để AI học toàn bộ dữ liệu từ 2 sheet.</div>
-          <div class="sync-info" id="lastSyncTime" style="color:#aaa"></div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button onclick="resetNamespace()" title="Xóa data cũ rồi sync lại"
-            style="padding:9px 14px;border-radius:var(--rs);border:1px solid var(--rule2);background:var(--white);font-size:12px;font-weight:600;cursor:pointer;color:var(--ink3);font-family:inherit;transition:all .15s"
-            onmouseover="this.style.borderColor='#DC2626';this.style.color='#DC2626'"
-            onmouseout="this.style.borderColor='var(--rule2)';this.style.color='var(--ink3)'">
-            🗑 Reset lần 2+
-          </button>
-          <button class="sync-btn" id="syncBtn" onclick="syncAndLearn()">
-            <span id="syncIco">⚡</span>
-            <span id="syncLbl">Đồng bộ &amp; Học</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="sync-progress" id="syncProgress">
-        <span id="syncProgressTxt">Đang xử lý...</span>
-        <div class="prog-bar-wrap"><div class="prog-bar" id="progBar"></div></div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ── MAIN GRID ── -->
-  <div class="main-grid">
-
-    <!-- LEFT -->
-    <div class="panel">
-      <div class="ph">
-        <h2>Thông tin KOC</h2>
-        <p>Mô tả tự do — AI tự phân tích, tìm mẫu phù hợp và viết</p>
-      </div>
-      <div class="pb">
-
-        <div class="dna-status empty" id="dnaStatusBox">
-          <span class="dna-status-ico">💾</span>
-          <span id="dnaStatusTxt">Chưa có dữ liệu trong DB — hãy đồng bộ trước</span>
-        </div>
-
-        <label class="flbl">Đây là lần hợp tác thứ mấy với KOC này?</label>
-        <div class="mode-toggle">
-          <button class="mode-btn active" id="modeBtn1" onclick="setMode('first')">
-            <span class="mode-ico">🌱</span>
-            <span class="mode-lbl">Lần đầu tiên</span>
-            <span class="mode-sub">Dùng DNA KOC + Viral</span>
-          </button>
-          <button class="mode-btn" id="modeBtn2" onclick="setMode('return')">
-            <span class="mode-ico">🔄</span>
-            <span class="mode-lbl">Lần 2 trở lên</span>
-            <span class="mode-sub">Dùng DNA lần 2 đã học</span>
-          </button>
-        </div>
-
-        <div class="return-dna-box" id="returnDnaBox">
-          <strong>Chế độ KOC quay lại:</strong> AI sẽ ưu tiên học từ kho content lần 2 của bạn, kết hợp với DNA lần đầu để viết bài phù hợp với KOC đã có kinh nghiệm.
-        </div>
-
-        <label class="flbl">Thông tin tóm tắt về KOC và con</label>
-        <textarea class="koc-area" id="kocInfo"
-          placeholder="Viết tự do những gì bạn biết về KOC...
-
-Ví dụ:
-- Tên con: Bond, lớp 3
-- Tiếng Anh tốt, nghe nói tốt nhất lớp
-- Hay làm được bài khó mà bạn bè không làm được
-- Mẹ lo con học quá dễ sẽ chán
-- Đã dùng Edupia 2 tháng, con tự tin hơn"></textarea>
-        <div class="koc-hint">💡 Càng chi tiết → AI tìm được mẫu phù hợp hơn → content sát thực tế hơn</div>
-
-        <div class="hr"></div>
-
-        <div class="field">
-          <label class="flbl">Link đăng ký của KOC</label>
-          <input class="link-inp" id="refLink" type="text" placeholder="https://link.educa.vn/hocbongGS_xxx">
-        </div>
-
-        <button class="gen-btn" id="genBtn" onclick="generate()">
-          <div class="spin" id="spinner"></div>
-          <span id="genLbl">✦ Tạo 2 phiên bản content</span>
+        <button class="btn-login" id="btnLogin" onclick="doLogin()">
+          <span id="btnLoginText">Đăng nhập</span>
         </button>
-        <div id="modeIndicator" style="text-align:center;font-size:11px;color:var(--ink3);margin-top:6px">
-          Chế độ: <strong id="modeIndicatorTxt" style="color:var(--sage)">Lần đầu tiên</strong>
-        </div>
-
       </div>
     </div>
-
-    <!-- RIGHT -->
-    <div class="rarea">
-      <div class="out-hd">
-        <h3>Content Output</h3>
-        <div class="out-hd-sub">2 phiên bản · Facebook post · Học từ DNA vector database</div>
-      </div>
-
-      <div class="err-bar" id="errBar"></div>
-
-      <div class="empty-state" id="emptyState">
-        <div class="empty-ico">✦</div>
-        <h4>Chưa có content</h4>
-        <p>1. Đồng bộ dữ liệu DNA (1 lần duy nhất)<br>2. Điền thông tin KOC → Tạo content</p>
-      </div>
-
-      <div id="cardsWrap"></div>
-    </div>
-
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- ══ KOC PORTAL ══ -->
+<div class="screen" id="screen-portal">
+  <div class="app">
+    <div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+
+    <nav class="sidebar" id="sidebarPortal">
+      <div class="sidebar-brand">
+        <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+  <img src="./Logo.png" alt="Edupia"
+       style="height:34px;width:auto;object-fit:contain;flex-shrink:0;"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+  <div style="display:none;align-items:center;justify-content:center;height:34px;padding:0 10px;background:linear-gradient(135deg,#1a6fa8,#00b5c8);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.3px;white-space:nowrap;">edupia</div>
+</div>
+        <span class="brand-name">Edupia Affiliate</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Menu</div>
+        <div class="nav-item active" onclick="switchPortalPage('dashboard')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+          Dashboard
+        </div>
+        <div class="nav-item" onclick="switchPortalPage('revenue')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+          Hoa hồng
+        </div>
+        <div class="nav-item" onclick="switchPortalPage('leads')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          Leads
+        </div>
+        <div class="nav-item" onclick="switchPortalPage('intro')" style="margin-top:8px;background:linear-gradient(135deg,rgba(26,111,168,0.2),rgba(0,181,200,0.1));border:1px solid rgba(0,181,200,0.4);color:#00b5c8;">
+          <span class="nav-icon" style="color:#00b5c8;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+          <span style="font-weight:700;">Thông tin chương trình</span>
+        </div>
+        <div class="nav-item" onclick="switchPortalPage('about')" style="margin-top:4px;">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></span>
+          Về Edupia
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar avatar av-sm" id="portalSidebarAvatar" style="background:#1a6fa8"></div>
+          <div class="user-info">
+            <div class="user-name" id="portalSidebarName">—</div>
+            <div class="user-role">KOC</div>
+          </div>
+          <button class="btn-logout-sm" onclick="doLogout()" title="Đăng xuất">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="mobile-topbar">
+        <button class="menu-btn" onclick="openSidebar('sidebarPortal')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="brand-icon" style="width:28px;height:28px;font-size:10px;">KOC</div>
+          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Edupia Affiliate</span>
+        </div>
+        <div style="width:36px;"></div>
+      </div>
+
+
+      <!-- Intro page -->
+      <div class="page" id="pportal-intro">
+        <style>
+        .intro-hero{background:linear-gradient(135deg,rgba(26,111,168,0.12),rgba(26,111,168,0.08));border:1px solid rgba(26,111,168,0.3);border-radius:var(--radius-xl);padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
+        .intro-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(26,111,168,0.15),transparent 70%);pointer-events:none;}
+        .intro-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(26,111,168,0.15);border:1px solid rgba(26,111,168,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#00b5c8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;}
+        .intro-title{font-family:'Sora',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:700;color:var(--text);line-height:1.3;margin-bottom:.75rem;}
+        .intro-title span{color:#00b5c8;}
+        .intro-desc{font-size:14px;color:var(--text2);line-height:1.8;max-width:600px;}
+        .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:0;}
+        .step-box{background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;}
+        .step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1a6fa8,#00b5c8);color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+        .step-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;}
+        .step-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+        .comm-table{width:100%;border-collapse:collapse;font-size:13px;}
+        .comm-table th{background:rgba(26,111,168,0.12);color:var(--text);font-weight:600;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+        .comm-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);}
+        .comm-table tr:last-child td{border-bottom:none;}
+        .comm-table tr:hover td{background:var(--bg3);}
+        .comm-rate{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#00b5c8;}
+        .pay-item{display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg3);border-radius:var(--radius);margin-bottom:8px;}
+        .pay-icon{font-size:20px;flex-shrink:0;}
+        .pay-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+        .pay-desc{font-size:12px;color:var(--text2);line-height:1.5;}
+        .faq-list{display:flex;flex-direction:column;gap:8px;}
+        .faq-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+        .faq-q{padding:14px 16px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;gap:12px;}
+        .faq-q:hover{background:var(--bg3);}
+        .faq-icon{color:var(--text2);font-size:20px;font-weight:300;transition:transform .2s;flex-shrink:0;}
+        .faq-a{padding:0 16px;max-height:0;overflow:hidden;transition:all .3s;font-size:13px;color:var(--text2);line-height:1.7;}
+        .faq-item.open .faq-a{padding:0 16px 14px;max-height:600px;}
+        .faq-item.open .faq-icon{transform:rotate(45deg);}
+        .intro-cta{background:linear-gradient(135deg,#1a6fa8,#00b5c8);border-radius:var(--radius-xl);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;}
+        .cta-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;}
+        .cta-sub{font-size:13px;color:rgba(255,255,255,.85);}
+        .cta-btn{background:#fff;color:#1a6fa8;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;border:none;border-radius:var(--radius);padding:10px 24px;cursor:pointer;white-space:nowrap;}
+        .cta-btn:hover{opacity:.9;}
+        </style>
+
+        <div class="intro-hero">
+          <div class="intro-badge">🎓 Chương trình Affiliate Giáo dục</div>
+          <div class="intro-title">Kiếm thu nhập bền vững<br>cùng <span>Edupia Affiliate</span></div>
+          <div class="intro-desc">Edupia là nền tảng học trực tuyến hàng đầu Việt Nam với hàng triệu học viên. Tham gia chương trình Affiliate, bạn sẽ nhận hoa hồng hấp dẫn cho mỗi học viên đăng ký thành công — hoàn toàn minh bạch và thanh toán đúng hạn.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><span class="card-title">4 bước tham gia đơn giản</span></div>
+          <div class="steps-grid">
+            <div class="step-box"><div class="step-num">1</div><div class="step-title">📣 Chia sẻ khóa học</div><div class="step-desc">Đăng nội dung giới thiệu khóa học Edupia lên kênh TikTok, Facebook, YouTube hoặc Instagram của bạn</div></div>
+            <div class="step-box"><div class="step-num">2</div><div class="step-title">🔗 Học viên đăng ký</div><div class="step-desc">Học viên tiềm năng xem nội dung, quan tâm và hoàn tất đăng ký mua khóa học tại Edupia</div></div>
+            <div class="step-box"><div class="step-num">3</div><div class="step-title">✅ Ghi nhận đơn hàng</div><div class="step-desc">Hệ thống tự động ghi nhận đơn hàng hợp lệ và cập nhật báo cáo theo thời gian thực</div></div>
+            <div class="step-box"><div class="step-num">4</div><div class="step-title">💰 Nhận hoa hồng</div><div class="step-desc">Hoa hồng thanh toán định kỳ, minh bạch — theo dõi toàn bộ ngay trên dashboard này</div></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:1.25rem;">
+          <div class="card" style="margin-bottom:0">
+            <div class="card-head"><span class="card-title">Cách tính doanh thu</span></div>
+            <div style="overflow-x:auto;">
+              <table class="comm-table">
+                <thead><tr><th>Hành động</th><th>Hoa hồng</th><th>Ghi chú</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><div style="font-weight:500">📣 Đăng bài đầu tiên lên Facebook</div></td>
+                    <td><span class="comm-rate">100.000 ₫</span></td>
+                    <td><span class="badge b-green">Dễ dàng nhất</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:500">✅ 3 lead đầu tiên hợp lệ <span style="font-size:11px;color:var(--text2);font-weight:400;">(tính gộp)</span></div></td>
+                    <td><span class="comm-rate">200.000 ₫</span></td>
+                    <td><span class="badge b-blue">Phổ biến nhất</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:500">✅ Từ lead thứ 4 hợp lệ</div></td>
+                    <td><span class="comm-rate">50.000 ₫</span></td>
+                    <td><span class="badge b-purple" style="background:rgba(167,139,250,0.15);color:#7dd8e8;">Thu nhập đều</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:500">🛒 Đơn hàng hợp lệ</div></td>
+                    <td><span class="comm-rate">500.000 ₫</span></td>
+                    <td><span class="badge b-amber" style="background:rgba(245,158,11,0.15);color:#fbbf24;">Giá trị cao</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- Ví dụ cụ thể -->
+            <div style="margin-top:14px;background:linear-gradient(135deg,rgba(26,111,168,0.08),rgba(0,181,200,0.05));border:1px solid rgba(26,111,168,0.3);border-radius:var(--radius-lg);padding:14px 16px;">
+              <div style="font-size:12px;font-weight:700;color:#00b5c8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">💡 Ví dụ cụ thể</div>
+              <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+                Tháng 5 bạn đăng bài review khóa học Edupia. Từ bài viết này có <strong style="color:var(--text)">30 lead hợp lệ</strong> (3 lead đầu tính gộp = 200.000₫, 27 lead còn lại × 50.000₫) và <strong style="color:var(--text)">10 đơn hàng</strong> phát sinh.
+              </div>
+              <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;">
+                <div style="background:var(--bg3);border-radius:var(--radius);padding:6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;">Đăng bài</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--text)">100.000 ₫</span>
+                </div>
+                <span style="color:var(--text3);font-size:18px;font-weight:300;">+</span>
+                <div style="background:var(--bg3);border-radius:var(--radius);padding:6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;">3 leads đầu (gộp)</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--text)">200.000 ₫</span>
+                </div>
+                <span style="color:var(--text3);font-size:18px;font-weight:300;">+</span>
+                <div style="background:var(--bg3);border-radius:var(--radius);padding:6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;">27 leads × 50.000</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--text)">1.350.000 ₫</span>
+                </div>
+                <span style="color:var(--text3);font-size:18px;font-weight:300;">+</span>
+                <div style="background:var(--bg3);border-radius:var(--radius);padding:6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;">10 đơn × 500.000</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--text)">5.000.000 ₫</span>
+                </div>
+                <span style="color:var(--text3);font-size:18px;font-weight:300;">=</span>
+                <div style="background:linear-gradient(135deg,rgba(26,111,168,0.2),rgba(0,181,200,0.15));border:1px solid rgba(26,111,168,0.35);border-radius:var(--radius);padding:6px 16px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                  <span style="font-size:10px;color:#00b5c8;text-transform:uppercase;letter-spacing:.04em;font-weight:700;">Tổng thu nhập</span>
+                  <span style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#1a6fa8;">6.650.000 ₫</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <div class="card-head"><span class="card-title">Điều kiện & Thanh toán</span></div>
+            <div class="pay-item"><span class="pay-icon">📅</span><div><div class="pay-title">Chu kỳ thanh toán</div><div class="pay-desc">Thanh toán vào ngày <strong style="color:var(--text)">10 hàng tháng</strong> cho doanh thu tháng trước</div></div></div>
+            <div class="pay-item"><span class="pay-icon">💳</span><div><div class="pay-title">Hình thức thanh toán</div><div class="pay-desc">Chuyển khoản ngân hàng trực tiếp vào tài khoản đã đăng ký</div></div></div>
+            <div class="pay-item" style="margin-bottom:0"><span class="pay-icon">📊</span><div><div class="pay-title">Ngưỡng rút tối thiểu</div><div class="pay-desc">Tối thiểu <strong style="color:var(--text)">100.000 ₫</strong> mới được thanh toán trong kỳ</div></div></div>
+
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><span class="card-title">Câu hỏi thường gặp</span></div>
+          <div class="faq-list">
+            <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Lead là gì?</span><span class="faq-icon">+</span></div><div class="faq-a">
+              Lead là <strong>1 data khách hàng có đầy đủ thông tin</strong>, bao gồm:
+              <ul style="margin-top:8px;padding-left:16px;display:flex;flex-direction:column;gap:5px;">
+                <li>Tên phụ huynh</li>
+                <li>Số điện thoại phụ huynh</li>
+                <li>Địa chỉ</li>
+                <li>Lớp của con</li>
+              </ul>
+            </div></div>
+            <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Làm thế nào để biết lead của tôi có hợp lệ không?</span><span class="faq-icon">+</span></div><div class="faq-a">
+              Cần đảm bảo <strong>2 yếu tố</strong> sau:<br><br>
+              <strong style="color:var(--text)">1. Số điện thoại:</strong>
+              <ul style="margin-top:6px;padding-left:16px;display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+                <li>Là số điện thoại hợp lệ</li>
+                <li>Chưa từng đăng ký bất kỳ sản phẩm nào của Edupia</li>
+              </ul>
+              <strong style="color:var(--text)">2. Khách hàng:</strong>
+              <ul style="margin-top:6px;padding-left:16px;display:flex;flex-direction:column;gap:5px;">
+                <li>Con trong độ tuổi <strong style="color:var(--text)">lớp 1 – lớp 9</strong> tại Việt Nam</li>
+                <li>Có nhu cầu tìm hiểu khóa học tiếng Anh cho con</li>
+              </ul>
+            </div></div>
+            <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Tôi có thể quảng bá trên nhiều kênh cùng lúc không?</span><span class="faq-icon">+</span></div><div class="faq-a">Hoàn toàn được! Bạn có thể chia sẻ trên TikTok, Facebook, YouTube, Instagram hoặc bất kỳ nền tảng nào. Đội hỗ trợ sẽ cung cấp tài liệu và nội dung mẫu phù hợp với từng kênh.</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Hoa hồng được tính trên giá trước hay sau khi giảm giá?</span><span class="faq-icon">+</span></div><div class="faq-a">Hoa hồng tính trên <strong>giá thực tế học viên thanh toán</strong> — tức giá sau khi đã áp dụng mã giảm giá, không phải giá gốc.</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Nếu học viên hoàn tiền, hoa hồng có bị thu hồi không?</span><span class="faq-icon">+</span></div><div class="faq-a">Nếu học viên hoàn tiền trong 7 ngày đầu, hoa hồng tương ứng sẽ bị trừ vào kỳ thanh toán tiếp theo. Hoàn tiền sau 7 ngày sẽ không ảnh hưởng đến hoa hồng của bạn.</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Tôi cần hỗ trợ thì liên hệ ở đâu?</span><span class="faq-icon">+</span></div><div class="faq-a">Đội hỗ trợ Affiliate Edupia làm việc từ 8:00–22:00 tất cả các ngày trong tuần. Liên hệ qua Zalo Edupia Affiliate: <strong style="color:var(--text)">0813468321</strong> hoặc email <strong style="color:var(--text)">koc_affiliate@edupia.vn</strong>.</div></div>
+          </div>
+        </div>
+
+        <div class="intro-cta">
+          <div>
+            <div class="cta-title">Sẵn sàng bắt đầu kiếm thu nhập? 🚀</div>
+            <div class="cta-sub">Xem dashboard để theo dõi hoa hồng và leads của bạn ngay hôm nay</div>
+          </div>
+          <button class="cta-btn" onclick="switchPortalPage('dashboard')">Xem Dashboard →</button>
+        </div>
+      </div>
+
+      <!-- About Edupia page -->
+      <div class="page" id="pportal-about">
+        <style>
+        /* ══ About page visual styles ══ */
+        .ab-hero{border-radius:var(--radius-xl);padding:2rem 2rem 2.5rem;margin-bottom:1.5rem;background:linear-gradient(135deg,#1558a0 0%,#1a6fa8 60%,#00b5c8 100%);position:relative;overflow:hidden;}
+        .ab-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent 70%);pointer-events:none;}
+        .ab-hero::after{content:'';position:absolute;bottom:-50px;left:40%;width:180px;height:180px;background:radial-gradient(circle,rgba(0,181,200,0.18),transparent 70%);pointer-events:none;}
+        .ab-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.28);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;}
+        .ab-hero-title{font-family:"Sora",sans-serif;font-size:clamp(20px,3vw,30px);font-weight:700;color:#fff;line-height:1.25;margin-bottom:10px;position:relative;z-index:1;}
+        .ab-hero-desc{font-size:13px;color:rgba(255,255,255,.82);line-height:1.7;max-width:580px;margin-bottom:1.5rem;position:relative;z-index:1;}
+
+        /* Big stat cards inside hero */
+        .ab-stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;position:relative;z-index:1;}
+        .ab-stat-card{background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);border-radius:var(--radius-lg);padding:1rem;text-align:center;}
+        .ab-stat-icon{font-size:22px;margin-bottom:6px;}
+        .ab-stat-num{font-family:"Sora",sans-serif;font-size:22px;font-weight:700;color:#fff;line-height:1;}
+        .ab-stat-lbl{font-size:10px;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+
+        /* Mission — horizontal cards with large icon left */
+        .ab-mission-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:0;}
+        .ab-mission{display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;transition:transform .2s,border-color .2s;}
+        .ab-mission:hover{transform:translateY(-2px);border-color:rgba(0,181,200,0.3);}
+        .ab-mission-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+        .ab-mission-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+        .ab-mission-desc{font-size:11px;color:var(--text2);line-height:1.6;}
+        </style>
+
+        <!-- Company banner image -->
+        <div style="border-radius:var(--radius-xl);overflow:hidden;margin-bottom:1.25rem;line-height:0;">
+          <img src="https://careerhub.vn/upload/company/zfh1685347311.jpg"
+               alt="Educa Corporation"
+               style="width:100%;height:500px;object-fit:cover;object-position:center;display:block;"
+               onerror="this.parentElement.style.display='none'"/>
+        </div>
+
+        <!-- Hero with stats inside -->
+        <div class="ab-hero">
+          <div class="ab-tag">🏫 Về Educa Corporation</div>
+          <div class="ab-hero-title">Vị thế số 1 EdTech Việt Nam<br>&amp; Hành trình kiến tạo tương lai</div>
+          <div class="ab-hero-desc">Ứng dụng công nghệ giáo dục hiện đại — xóa nhòa khoảng cách học tập, mang tiêu chuẩn quốc tế đến mọi trẻ em Việt Nam.</div>
+          <div class="ab-stat-row">
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">👨‍🎓</div>
+              <div class="ab-stat-num">10M+</div>
+              <div class="ab-stat-lbl">Học sinh</div>
+            </div>
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">🏆</div>
+              <div class="ab-stat-num">Top 5</div>
+              <div class="ab-stat-lbl">EdTech ĐNA</div>
+            </div>
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">📈</div>
+              <div class="ab-stat-num">95%</div>
+              <div class="ab-stat-lbl">Cải thiện điểm</div>
+            </div>
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">📅</div>
+              <div class="ab-stat-num">2014</div>
+              <div class="ab-stat-lbl">Thành lập</div>
+            </div>
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon">📍</div>
+              <div class="ab-stat-num">34</div>
+              <div class="ab-stat-lbl">Tỉnh thành</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sứ mệnh — horizontal icon cards -->
+        <div class="card" style="margin-bottom:1.25rem;">
+          <div class="card-head"><span class="card-title">Sứ mệnh & Giá trị cốt lõi</span></div>
+          <div class="ab-mission-row">
+            <div class="ab-mission">
+              <div class="ab-mission-icon" style="background:rgba(26,111,168,0.12);">🎓</div>
+              <div>
+                <div class="ab-mission-title">Giáo dục tiếp cận mọi người</div>
+                <div class="ab-mission-desc">Phổ cập giáo dục chất lượng cao, không phân biệt vùng miền hay điều kiện kinh tế</div>
+              </div>
+            </div>
+            <div class="ab-mission">
+              <div class="ab-mission-icon" style="background:rgba(0,181,200,0.12);">🤖</div>
+              <div>
+                <div class="ab-mission-title">Công nghệ AI tiên tiến</div>
+                <div class="ab-mission-desc">Cá nhân hóa lộ trình học — đầu tiên tại Việt Nam, mỗi học sinh tiến bộ theo tốc độ riêng</div>
+              </div>
+            </div>
+            <div class="ab-mission">
+              <div class="ab-mission-icon" style="background:rgba(34,197,94,0.12);">🌏</div>
+              <div>
+                <div class="ab-mission-title">Tiêu chuẩn quốc tế</div>
+                <div class="ab-mission-desc">Chương trình chuẩn Cambridge, đáp ứng các chứng chỉ quốc tế IELTS, PET</div>
+              </div>
+            </div>
+            <div class="ab-mission">
+              <div class="ab-mission-icon" style="background:rgba(21,88,160,0.12);">🤝</div>
+              <div>
+                <div class="ab-mission-title">Đối tác tin cậy</div>
+                <div class="ab-mission-desc">10+ năm đồng hành, xây dựng niềm tin qua chất lượng và sự minh bạch</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Edupia Pro Product Module -->
+        <div class="card" style="margin-bottom:1.25rem;overflow:hidden;position:relative;">
+          <style>
+          .pro-header{background:linear-gradient(135deg,#1558a0 0%,#1a6fa8 50%,#00b5c8 100%);margin:-1.25rem -1.25rem 1.5rem;padding:1.75rem 1.5rem;position:relative;overflow:hidden;}
+          .pro-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent 70%);pointer-events:none;}
+          .pro-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;margin-bottom:10px;}
+          .pro-title{font-family:'Sora',sans-serif;font-size:clamp(18px,2.5vw,24px);font-weight:700;color:#fff;margin-bottom:6px;line-height:1.3;}
+          .pro-age-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;color:#fff;margin-top:6px;}
+          /* Chip tag grid */
+          .pro-chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;}
+          .pro-chip{display:inline-flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:600;color:var(--text);transition:border-color .15s;}
+          .pro-chip:hover{border-color:rgba(0,181,200,0.4);}
+          .pro-chip-icon{font-size:17px;}
+          /* Model cards */
+          .pro-model{background:linear-gradient(135deg,rgba(26,111,168,0.08),rgba(0,181,200,0.05));border:1px solid rgba(26,111,168,0.2);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.25rem;}
+          .pro-model-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;background:linear-gradient(135deg,#1a6fa8,#00b5c8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;}
+          .pro-model-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
+          .pro-teacher-card{background:var(--bg2);border-radius:var(--radius);padding:14px 16px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+          .pro-teacher-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+          .pro-teacher-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+          .pro-teacher-name{font-size:14px;font-weight:700;color:var(--text);}
+          /* Outcome pills */
+          .pro-outcome-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;}
+          .pro-outcome-pill{display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:var(--radius);padding:12px 14px;border:1px solid var(--border);}
+          .pro-outcome-pill span{font-size:22px;flex-shrink:0;}
+          .pro-outcome-pill strong{font-size:13px;font-weight:700;color:var(--text);}
+          /* SA section grid */
+          .pro2-sa-grid,.pro2-ben-grid{display:flex;flex-direction:column;gap:1px;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);margin-bottom:1rem;}
+
+          /* ── Row header ── */
+          .pro2-sa-card,.pro2-ben{background:var(--bg2);cursor:pointer;transition:background .15s;}
+          .pro2-sa-card:hover,.pro2-ben:hover{background:var(--bg3);}
+          .pro2-sa-card:not(:last-child),.pro2-ben:not(:last-child){border-bottom:1px solid var(--border);}
+          .pro2-sa-head,.pro2-ben-head{display:flex;align-items:center;gap:0;padding:0;user-select:none;}
+
+          /* Number badge */
+          .pro2-sa-tag,.pro2-ben-num{
+            display:none;
+          }
+
+          /* Icon */
+          .pro2-sa-icon,.pro2-ben-icon{
+            width:54px;padding:18px 0;
+            text-align:center;font-size:20px;
+            flex-shrink:0;
+          }
+
+          /* Title */
+          .pro2-sa-title,.pro2-ben-title{
+            flex:1;padding:18px 16px;
+            font-size:14px;font-weight:600;color:var(--text);line-height:1.4;
+          }
+
+          /* Arrow */
+          .pro2-sa-arrow,.pro2-ben-arrow{
+            width:44px;text-align:center;
+            font-size:12px;color:var(--text3);
+            transition:transform .25s;flex-shrink:0;
+          }
+          .pro2-sa-card.open .pro2-sa-arrow,
+          .pro2-ben.open .pro2-ben-arrow{transform:rotate(180deg);}
+
+          /* Active state */
+          .pro2-sa-card.open,.pro2-ben.open{
+            background:linear-gradient(135deg,rgba(26,111,168,0.06),rgba(0,181,200,0.03));
+          }
+          .pro2-sa-card.open .pro2-sa-title,
+          .pro2-ben.open .pro2-ben-title{color:#1a6fa8;}
+
+          /* Body */
+          .pro2-sa-body,.pro2-ben-body{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+          .pro2-sa-card.open .pro2-sa-body,
+          .pro2-ben.open .pro2-ben-body{max-height:500px;}
+          .pro2-sa-body-inner,.pro2-ben-body-inner{
+            padding:4px 16px 16px 126px;
+            border-top:1px solid var(--border);
+            background:linear-gradient(135deg,rgba(26,111,168,0.04),rgba(0,181,200,0.02));
+          }
+          .pro2-sa-body-inner ul,.pro2-ben-body-inner ul{
+            list-style:none;display:flex;flex-direction:column;gap:8px;padding-top:12px;
+          }
+          .pro2-sa-body-inner ul li,.pro2-ben-body-inner ul li,.pro2-ben-body-inner p{
+            font-size:13px;color:var(--text2);line-height:1.7;
+            display:flex;gap:8px;align-items:flex-start;
+          }
+          .pro2-ben-body-inner p{display:block;padding-top:12px;}
+          .pro2-sa-body-inner ul li::before,.pro2-ben-body-inner ul li::before{
+            content:"→";color:#00b5c8;font-size:13px;flex-shrink:0;margin-top:1px;
+          }
+          /* Stats bar */
+          .pro2-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:1.25rem;}
+          .pro2-stat{background:linear-gradient(135deg,rgba(26,111,168,0.1),rgba(0,181,200,0.06));border:1px solid rgba(26,111,168,0.2);border-radius:var(--radius-lg);padding:12px;text-align:center;}
+          .pro2-stat-num{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#1a6fa8;}
+          .pro2-stat-lbl{font-size:11px;color:var(--text2);margin-top:3px;}
+          </style>
+
+          <!-- Header -->
+          <div class="pro-header">
+            <div class="pro-badge">⭐ Sản phẩm nổi bật</div>
+            <div class="pro-title">Edupia Pro — Gia sư Tiếng Anh trực tuyến chất lượng cao</div>
+            <div class="pro-age-badge">👦 Học sinh 6 – 15 tuổi</div>
+          </div>
+
+          <!-- Key features — chip grid -->
+          <div class="card-head"><span class="card-title">✨ Điểm nổi bật</span></div>
+          <div class="pro-chip-grid" style="margin-bottom:1.25rem;">
+            <div class="pro-chip"><span class="pro-chip-icon">🤖</span>AI cá nhân hóa — Đầu tiên tại Việt Nam</div>
+            <div class="pro-chip"><span class="pro-chip-icon">📋</span>Chuẩn 6 bậc Bộ GD&ĐT</div>
+            <div class="pro-chip"><span class="pro-chip-icon">🔄</span>Cam kết hoàn tiền 100%</div>
+            <div class="pro-chip"><span class="pro-chip-icon">📱</span>EPAS — Phương pháp quốc tế</div>
+          </div>
+
+          <!-- Mô hình 1 kèm 4 -->
+          <div class="pro-model">
+            <div class="pro-model-title">Mô hình Gia sư 1 kèm 4 độc quyền</div>
+            <div class="pro-model-grid">
+              <div class="pro-teacher-card">
+                <div class="pro-teacher-avatar" style="background:rgba(26,111,168,0.15);">👩‍🏫</div>
+                <div>
+                  <div class="pro-teacher-label" style="color:#1a6fa8;">Giáo viên chủ nhiệm</div>
+                  <div class="pro-teacher-name">Đồng hành xuyên suốt</div>
+                </div>
+              </div>
+              <div class="pro-teacher-card">
+                <div class="pro-teacher-avatar" style="background:rgba(0,181,200,0.15);">👨‍💼</div>
+                <div>
+                  <div class="pro-teacher-label" style="color:#00b5c8;">Giáo viên chuyên môn</div>
+                  <div class="pro-teacher-name">Đảm bảo hiệu quả học</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6 SA — icon + title only -->
+          <div class="card-head"><span class="card-title">🎯 6 Lợi thế cốt lõi</span></div>
+          <div class="pro2-sa-grid">
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">🏆</div><div class="pro2-sa-title">Gia sư Hạng A+</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li>Top 5% gia sư giỏi nhất thị trường, trình độ tương đương IELTS 6.5+</li>
+                <li>Kinh nghiệm dạy chuyên lứa tuổi Tiểu học & THCS từ 6 tháng trở lên</li>
+                <li>Được đào tạo tâm lý trẻ em — luôn vui vẻ, nhiệt huyết và trách nhiệm</li>
+                <li>Mô hình cố định 1 gia sư đồng hành xuyên suốt khóa học</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">📊</div><div class="pro2-sa-title">Hệ thống đo lường MAPS</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li>1 bài thi tháng + 1 bài tập về nhà + 1 bài thi vận dụng nói mỗi tháng</li>
+                <li>Hội đồng chuyên môn đánh giá từng kỹ năng, phát hiện kịp thời lỗ hổng</li>
+                <li>GVCN gửi báo cáo qua Zalo, gọi điện cập nhật tiến bộ cho phụ huynh</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">🎯</div><div class="pro2-sa-title">Cam kết đầu ra rõ ràng</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li>Bám sát chương trình GDPT Bộ GD&ĐT + chuẩn Cambridge quốc tế</li>
+                <li>Đạt chuẩn CEFR, quy đổi Cambridge / PET / IELTS sau khi hoàn thành</li>
+                <li><strong style="color:var(--text)">Hoàn tiền 100%</strong> nếu học sinh không tiến bộ sau cam kết</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">🗺️</div><div class="pro2-sa-title">Lộ trình theo năng lực</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li>Kiểm tra đầu vào phân 4 trình độ: Giỏi (A) · Khá (B) · Trung bình (C) · Yếu (D)</li>
+                <li>Học đúng lộ trình phù hợp năng lực, không quá dễ cũng không quá khó</li>
+                <li>Định kỳ 6 tháng đánh giá lại và điều chỉnh lộ trình học</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">⚡</div><div class="pro2-sa-title">Phương pháp EPAS</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li><strong style="color:var(--text)">Engage – Present – Activate – Self Learning</strong></li>
+                <li>Phương pháp tiên tiến đang được các trường Quốc tế áp dụng</li>
+                <li>Tăng tính thực hành, cải thiện kỹ năng phản xạ và giao tiếp tự nhiên</li>
+              </ul></div></div>
+            </div>
+            <div class="pro2-sa-card" onclick="toggleAccordion(this)">
+              <div class="pro2-sa-head"><div class="pro2-sa-icon">🤖</div><div class="pro2-sa-title">App AI + CLB ngoại khóa</div><span class="pro2-sa-arrow">▾</span></div>
+              <div class="pro2-sa-body"><div class="pro2-sa-body-inner"><ul>
+                <li><strong style="color:#00b5c8;">AI Speak:</strong> Môi trường mô phỏng thực tế, tăng phản xạ giao tiếp tự nhiên</li>
+                <li><strong style="color:#00b5c8;">AI Practice:</strong> Ôn luyện sau giờ học, bài tập bám sát theo trình độ</li>
+                <li>Edupia Club: Kỹ năng sống · STEM · Công nghệ AI · Khám phá thế giới</li>
+              </ul></div></div>
+            </div>
+          </div>
+
+          <!-- 3 cam kết đầu ra -->
+          <div class="pro-outcome-row" style="margin:1rem 0;">
+            <div class="pro-outcome-pill"><span>🎯</span><strong>Chuẩn 6 bậc Bộ GD&ĐT</strong></div>
+            <div class="pro-outcome-pill"><span>⏱️</span><strong>Thấy kết quả sau 3 tháng</strong></div>
+            <div class="pro-outcome-pill"><span>🏅</span><strong>Giáo viên IELTS 6.5+</strong></div>
+          </div>
+
+          <!-- 6 lợi ích SB — icon + title only -->
+          <div class="card-head" style="margin-top:.5rem;"><span class="card-title">💡 6 Lợi ích học sinh nhận được</span></div>
+          <div class="pro2-ben-grid">
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">👨‍🏫</div><div class="pro2-ben-title">Gia sư giỏi, trách nhiệm, hiểu tâm lý</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>100% gia sư có chứng chỉ quốc tế IELTS 6.5+, kinh nghiệm chuyên lứa tuổi. Cố định 1 gia sư đồng hành xuyên suốt — hiểu rõ điểm mạnh, điểm yếu và tâm lý của từng học sinh.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">📈</div><div class="pro2-ben-title">Tiến bộ đảm bảo theo tháng</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>Hệ thống MAPS theo dõi chặt chẽ, hội đồng chuyên môn can thiệp kịp thời. Phụ huynh nhận báo cáo tiến bộ hàng tháng qua Zalo — minh bạch và rõ ràng.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">🌟</div><div class="pro2-ben-title">Điểm cao trên trường + Tự tin giao tiếp</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>95% học sinh tăng 1–3 điểm sau 1 học kỳ. Phát âm chuẩn, phản xạ giao tiếp tự nhiên nhờ phương pháp EPAS và luyện tập với AI Speak hàng ngày.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">🏅</div><div class="pro2-ben-title">Chuẩn đầu ra quốc tế</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>Hoàn thành lớp 9 đủ năng lực chinh phục IELTS 5.0–6.5. Quy đổi Cambridge/PET. Tương đương chuẩn đầu vào các trường THPT chuyên và quốc tế.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">💡</div><div class="pro2-ben-title">Con yêu thích & tự giác học</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>Học liệu phù hợp tâm lý lứa tuổi, phương pháp EPAS tạo hứng thú học tập tự nhiên. Gia sư nhiệt huyết giúp con duy trì động lực mà không cần ép buộc.</p></div></div>
+            </div>
+            <div class="pro2-ben" onclick="toggleAccordion(this)">
+              <div class="pro2-ben-head"><div class="pro2-ben-icon">✅</div><div class="pro2-ben-title">Uy tín số 1 — Bố mẹ yên tâm</div><span class="pro2-ben-arrow">▾</span></div>
+              <div class="pro2-ben-body"><div class="pro2-ben-body-inner"><p>Hơn 400.000 học sinh trên 34 tỉnh thành tin dùng. Lộ trình rõ ràng, báo cáo minh bạch. Cam kết hoàn tiền 100% nếu học sinh không tiến bộ theo đúng cam kết.</p></div></div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="pro2-stats">
+            <div class="pro2-stat"><div class="pro2-stat-num">400.000+</div><div class="pro2-stat-lbl">Học sinh</div></div>
+            <div class="pro2-stat"><div class="pro2-stat-num">34</div><div class="pro2-stat-lbl">Tỉnh thành</div></div>
+            <div class="pro2-stat"><div class="pro2-stat-num">95%</div><div class="pro2-stat-lbl">Tăng điểm</div></div>
+            <div class="pro2-stat"><div class="pro2-stat-num">100%</div><div class="pro2-stat-lbl">Hoàn tiền nếu không TB</div></div>
+            <div class="pro2-stat"><div class="pro2-stat-num">IELTS 6.5+</div><div class="pro2-stat-lbl">Chuẩn gia sư</div></div>
+          </div>
+        </div>
+        <!-- Lớp học mẫu Module -->
+        <div class="card" style="margin-top:0;">
+          <style>
+          .demo-section{margin-bottom:1.5rem;}
+          .demo-section:last-child{margin-bottom:0;}
+          .demo-section-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+          /* Video */
+          .demo-video-wrap{position:relative;width:100%;padding-bottom:56.25%;border-radius:var(--radius-lg);overflow:hidden;background:#000;}
+          .demo-video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+          /* Account cards */
+          .demo-acc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;}
+          .demo-acc-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;flex-direction:column;gap:10px;}
+          .demo-acc-title{font-size:12px;font-weight:700;color:#00b5c8;text-transform:uppercase;letter-spacing:.05em;}
+          .demo-acc-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+          .demo-acc-label{font-size:12px;color:var(--text2);flex-shrink:0;}
+          .demo-acc-value{font-size:13px;font-weight:600;color:var(--text);font-family:monospace;background:var(--bg2);padding:4px 10px;border-radius:6px;border:1px solid var(--border);}
+          .demo-acc-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1a6fa8;font-weight:600;text-decoration:none;background:rgba(26,111,168,0.1);padding:6px 12px;border-radius:var(--radius);border:1px solid rgba(26,111,168,0.2);}
+          .demo-acc-link:hover{background:rgba(26,111,168,0.18);}
+          .demo-acc-note{display:inline-flex;align-items:center;padding:2px 8px;background:rgba(0,181,200,0.12);color:#00b5c8;border-radius:20px;font-size:10px;font-weight:700;}
+          /* Slide ảnh feedback */
+          .demo-slide-wrap{position:relative;overflow:hidden;border-radius:var(--radius-lg);background:var(--bg3);}
+          .demo-slide-track{display:flex;gap:12px;transition:transform .4s ease;padding:4px;}
+          .demo-slide-item{flex-shrink:0;width:240px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);}
+          .demo-slide-item img{width:100%;height:180px;object-fit:cover;display:block;}
+          .demo-slide-nav{display:flex;justify-content:center;gap:8px;margin-top:10px;}
+          .demo-slide-btn{width:8px;height:8px;border-radius:50%;background:var(--border2);border:none;cursor:pointer;transition:background .2s;padding:0;}
+          .demo-slide-btn.active{background:#1a6fa8;width:20px;border-radius:4px;}
+          .demo-slide-arrows{display:flex;justify-content:space-between;margin-bottom:8px;}
+          .demo-slide-arrow{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:6px 14px;cursor:pointer;color:var(--text);font-size:14px;transition:background .15s;}
+          .demo-slide-arrow:hover{background:var(--bg3);}
+          /* Placeholder khi chưa có ảnh */
+          .demo-fb-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;background:var(--bg3);border-radius:var(--radius-lg);border:1.5px dashed var(--border2);text-align:center;gap:8px;}
+          </style>
+
+          <div class="card-head">
+            <span class="card-title">🎓 Lớp học mẫu</span>
+          </div>
+
+          <!-- 1. Video lớp học mẫu -->
+          <div class="demo-section">
+            <div class="demo-section-title">🎥 Video lớp học mẫu</div>
+            <div class="demo-video-wrap">
+              <iframe
+                src="https://www.youtube.com/embed/x5zmhVxCic8?rel=0&modestbranding=1"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                title="Lớp học mẫu Edupia Pro">
+              </iframe>
+            </div>
+          </div>
+
+          <!-- 2. Tài khoản học thử -->
+          <div class="demo-section">
+            <div class="demo-section-title">🔑 Tài khoản học thử</div>
+            <div class="demo-acc-grid">
+              <div class="demo-acc-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div class="demo-acc-title">Tài khoản học thử app Edupia</div>
+                  <span class="demo-acc-note">Cấp 1</span>
+                </div>
+                <a class="demo-acc-link" href="https://edupia.vn/hoc-gia-su" target="_blank">
+                  🔗 edupia.vn/hoc-gia-su
+                </a>
+                <div class="demo-acc-row">
+                  <span class="demo-acc-label">Username</span>
+                  <span class="demo-acc-value">0985908890</span>
+                </div>
+                <div class="demo-acc-row">
+                  <span class="demo-acc-label">Mật khẩu</span>
+                  <span class="demo-acc-value">edupia123</span>
+                </div>
+              </div>
+              <div class="demo-acc-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div class="demo-acc-title">Tài khoản học thử app Edupia</div>
+                  <span class="demo-acc-note">Cấp 2</span>
+                </div>
+                <a class="demo-acc-link" href="https://edupiasecondary.vn/" target="_blank">
+                  🔗 edupiasecondary.vn
+                </a>
+                <div class="demo-acc-row">
+                  <span class="demo-acc-label">Username</span>
+                  <span class="demo-acc-value">0985908890</span>
+                </div>
+                <div class="demo-acc-row">
+                  <span class="demo-acc-label">Mật khẩu</span>
+                  <span class="demo-acc-value">edupia123</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Slide feedback phụ huynh -->
+          <div class="demo-section">
+            <div class="demo-section-title">💬 Feedback phụ huynh</div>
+            <div class="demo-fb-placeholder" id="feedbackSlide">
+              <span style="font-size:32px;">🖼️</span>
+              <div style="font-size:13px;font-weight:600;color:var(--text);">Thêm ảnh feedback từ Google Drive</div>
+              <div style="font-size:12px;color:var(--text2);max-width:360px;line-height:1.6;">
+                Để hiển thị ảnh feedback, hãy tải ảnh từ Google Drive về máy → upload lên GitHub cùng thư mục → cho tôi biết tên các file ảnh để nhúng vào đây.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Dashboard page -->
+      <div class="page active" id="pportal-dashboard">
+        <div class="welcome-banner" id="portalWelcome">
+          <div class="welcome-avatar" id="portalWelcomeAvatar" style="background:#1a6fa8">LA</div>
+          <div>
+            <div class="welcome-name" id="portalWelcomeName">Xin chào!</div>
+            <div class="welcome-sub" id="portalWelcomeSub">Đây là tổng quan hiệu suất của bạn</div>
+          </div>
+          <div class="welcome-badge" id="portalPlatformBadge">Tiktok</div>
+        </div>
+        <div class="metrics" id="portalMetrics"></div>
+        <div class="chart-row">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Doanh thu 6 tháng</span></div>
+            <div style="position:relative;height:200px;"><canvas id="portalChartRev" role="img" aria-label="Doanh thu 6 tháng"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">Tiến độ mục tiêu</span></div>
+            <div class="prog-list" id="portalProgress" style="padding-top:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue page -->
+      <div class="page" id="pportal-revenue">
+        <div class="page-header">
+          <div class="page-title">Doanh thu</div>
+          <div class="page-sub" id="revPageSub">Theo dõi hoa hồng và thưởng theo thời gian</div>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <button class="filter-btn" onclick="setRevFilter('7d',this)">7 ngày</button>
+            <button class="filter-btn" onclick="setRevFilter('14d',this)">14 ngày</button>
+            <button class="filter-btn" onclick="setRevFilter('30d',this)">30 ngày</button>
+            <div class="filter-sep"></div>
+            <button class="filter-btn active" onclick="setRevFilter('month',this)">Tháng này</button>
+            <button class="filter-btn" onclick="setRevFilter('6m',this)">6 tháng</button>
+          </div>
+          <div class="date-range">
+            <span>Từ</span>
+            <input type="date" id="revDateFrom" onchange="setRevFilter('custom',null)"/>
+            <span>đến</span>
+            <input type="date" id="revDateTo" onchange="setRevFilter('custom',null)"/>
+          </div>
+        </div>
+        <div class="metrics" id="portalRevMetrics" style="margin-bottom:1.25rem;"></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" id="revChartTitle">Doanh thu theo ngày</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+                <span style="width:10px;height:3px;border-radius:2px;background:var(--blue);display:inline-block;"></span>Hoa hồng
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+                <span style="width:10px;height:3px;border-radius:2px;background:#00b5c8;display:inline-block;border-top:2px dashed #00b5c8;"></span>TB ngày
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <div style="position:relative;height:280px;">
+              <canvas id="portalChartRev2" role="img" aria-label="Doanh thu theo ngày"></canvas>
+            </div>
+            <div class="chart-loading" id="revChartLoading"><span class="spinner" style="border-top-color:var(--blue);margin-right:8px;"></span>Đang tải...</div>
+          </div>
+          <div class="summary-row" id="revSummaryRow"></div>
+        </div>
+
+        <!-- Chi tiết cấu thành doanh thu -->
+        <div class="card" id="revBreakdownCard" style="margin-top:0;">
+          <div class="card-head">
+            <span class="card-title">📋 Chi tiết cấu thành doanh thu</span>
+            <span style="font-size:11px;color:var(--text2)" id="revBreakdownPeriod"></span>
+          </div>
+          <style>
+          .rev-breakdown{display:flex;flex-direction:column;gap:0;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);}
+          .rev-brow{display:flex;align-items:center;padding:13px 16px;background:var(--bg2);border-bottom:1px solid var(--border);gap:12px;}
+          .rev-brow:last-child{border-bottom:none;}
+          .rev-brow-icon{font-size:20px;width:32px;text-align:center;flex-shrink:0;}
+          .rev-brow-label{flex:1;font-size:13px;font-weight:600;color:var(--text);}
+          .rev-brow-detail{font-size:12px;color:var(--text2);margin-right:12px;}
+          .rev-brow-amount{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#1a6fa8;white-space:nowrap;}
+          .rev-brow.total{background:linear-gradient(135deg,rgba(26,111,168,0.08),rgba(0,181,200,0.04));border-top:2px solid rgba(0,181,200,0.3);}
+          .rev-brow.total .rev-brow-label{color:#00b5c8;font-size:14px;}
+          .rev-brow.total .rev-brow-amount{font-size:18px;color:#1a6fa8;}
+          .rev-brow-bar-wrap{width:80px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-right:8px;}
+          .rev-brow-bar{height:6px;border-radius:3px;transition:width .4s;}
+          .rev-empty{text-align:center;padding:2rem;color:var(--text2);font-size:13px;}
+          </style>
+          <div class="rev-breakdown" id="revBreakdown">
+            <div class="rev-empty">Chọn khoảng thời gian để xem chi tiết</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leads page -->
+      <div class="page" id="pportal-leads">
+        <div class="page-header">
+          <div class="page-title">Leads</div>
+          <div class="page-sub" id="leadPageSub">Theo dõi lead phát sinh theo ngày</div>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <button class="filter-btn" onclick="setLeadFilter('7d',this)">7 ngày</button>
+            <button class="filter-btn" onclick="setLeadFilter('14d',this)">14 ngày</button>
+            <button class="filter-btn" onclick="setLeadFilter('30d',this)">30 ngày</button>
+            <div class="filter-sep"></div>
+            <button class="filter-btn active" onclick="setLeadFilter('month',this)">Tháng này</button>
+          </div>
+          <div class="date-range">
+            <span>Từ</span>
+            <input type="date" id="leadDateFrom" onchange="setLeadFilter('custom',null)"/>
+            <span>đến</span>
+            <input type="date" id="leadDateTo" onchange="setLeadFilter('custom',null)"/>
+          </div>
+        </div>
+
+        <!-- 4 metric cards -->
+        <div class="metrics" id="portalLeadMetrics" style="margin-bottom:1.25rem;"></div>
+
+        <!-- Chart + table -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" id="leadChartTitle">Lead theo ngày</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+                <span style="width:10px;height:10px;border-radius:2px;background:#1a6fa8;display:inline-block;"></span>Tổng lead
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
+                <span style="width:10px;height:10px;border-radius:2px;background:#22c55e;display:inline-block;"></span>Lead hợp lệ
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <div style="position:relative;height:240px;">
+              <canvas id="portalChartLeadBar" role="img" aria-label="Lead theo ngày"></canvas>
+            </div>
+            <div class="chart-loading" id="leadChartLoading">
+              <span class="spinner" style="border-top-color:var(--green);margin-right:8px;"></span>Đang tải...
+            </div>
+          </div>
+          <div class="summary-row" id="leadSummaryRow"></div>
+        </div>
+
+        <!-- Detail table -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Chi tiết từng ngày</span>
+            <span style="font-size:11px;color:var(--text2)" id="leadTableCount"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th style="width:18%">Ngày tạo</th>
+                <th style="width:20%">Tổng lead</th>
+                <th style="width:20%">Lead hợp lệ</th>
+                <th style="width:20%">Đơn hàng</th>
+                <th style="width:22%">Tỷ lệ hợp lệ</th>
+              </tr></thead>
+              <tbody id="leadTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN ══ -->
+<div class="screen" id="screen-admin">
+  <div class="app">
+    <div class="mobile-overlay" id="mobileOverlayAdmin" onclick="closeSidebar()"></div>
+
+    <nav class="sidebar" id="sidebarAdmin">
+      <div class="sidebar-brand">
+        <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+  <img src="./Logo.png" alt="Edupia"
+       style="height:34px;width:auto;object-fit:contain;flex-shrink:0;"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+  <div style="display:none;align-items:center;justify-content:center;height:34px;padding:0 10px;background:linear-gradient(135deg,#1a6fa8,#00b5c8);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.3px;white-space:nowrap;">edupia</div>
+</div>
+        <span class="brand-name">Edupia Affiliate — Admin</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Quản trị</div>
+        <div class="nav-item active" onclick="switchATab('accounts')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
+          Tài khoản KOC
+        </div>
+        <div class="nav-item" onclick="switchATab('add')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+          Thêm tài khoản
+        </div>
+        <div class="nav-item" onclick="switchATab('reset')">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          Đặt lại mật khẩu
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar avatar av-sm" style="background:#00b5c8;">AD</div>
+          <div class="user-info">
+            <div class="user-name">Admin</div>
+            <div class="user-role">Quản trị viên</div>
+          </div>
+          <button class="btn-logout-sm" onclick="doLogout()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="mobile-topbar">
+        <button class="menu-btn" onclick="openSidebar('sidebarAdmin')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="brand-icon" style="width:28px;height:28px;font-size:10px;">KOC</div>
+          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Edupia Affiliate — Admin</span>
+        </div>
+        <div style="width:36px;"></div>
+      </div>
+
+      <div class="atab active page" id="atab-accounts" style="display:block;">
+        <div class="page-header">
+          <div class="page-title">Tài khoản KOC</div>
+          <div class="page-sub">Quản lý danh sách tài khoản</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Danh sách KOC</span>
+            <button class="btn-ghost" onclick="loadAdminData()">Làm mới</button>
+          </div>
+          <div id="adminLoading" style="display:none;padding:1.5rem 0;text-align:center;color:var(--text2);font-size:13px;">
+            <span class="spinner" style="vertical-align:middle;margin-right:8px;"></span>Đang tải...
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th style="width:30%">KOC</th>
+                <th style="width:18%">Tài khoản</th>
+                <th style="width:14%">Platform</th>
+                <th style="width:14%">Doanh thu</th>
+                <th style="width:12%">Trạng thái</th>
+                <th style="width:12%">Thao tác</th>
+              </tr></thead>
+              <tbody id="adminTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="atab page" id="atab-add">
+        <div class="page-header">
+          <div class="page-title">Thêm tài khoản</div>
+          <div class="page-sub">Tạo tài khoản mới cho KOC</div>
+        </div>
+        <div class="card" style="max-width:480px;">
+          <div class="error-box" id="addErr"></div>
+          <div class="success-box" id="addSuccess">Tạo tài khoản thành công!</div>
+          <div class="field"><label>Họ và tên</label><input type="text" id="newName" placeholder="Nguyễn Văn A"/></div>
+          <div class="field"><label>Tên đăng nhập</label><input type="text" id="newUser" placeholder="vd: vana.koc"/></div>
+          <div class="field"><label>Mật khẩu</label><input type="password" id="newPass" placeholder="Tối thiểu 6 ký tự"/></div>
+          <div class="field"><label>Platform</label>
+            <select id="newPlat"><option>Tiktok</option><option>Instagram</option><option>Youtube</option><option>Facebook</option></select>
+          </div>
+          <button class="btn-primary" id="btnAdd" onclick="addAccount()">Tạo tài khoản</button>
+        </div>
+      </div>
+
+      <div class="atab page" id="atab-reset">
+        <div class="page-header">
+          <div class="page-title">Đặt lại mật khẩu</div>
+          <div class="page-sub">Reset mật khẩu cho KOC</div>
+        </div>
+        <div class="card" style="max-width:480px;">
+          <div class="error-box" id="resetErr"></div>
+          <div class="success-box" id="resetSuccess">Đặt lại mật khẩu thành công!</div>
+          <div class="field"><label>Tên đăng nhập KOC</label><input type="text" id="resetUser" placeholder="vd: lananh.affiliate"/></div>
+          <div class="field"><label>Mật khẩu mới</label><input type="password" id="resetPass" placeholder="Tối thiểu 6 ký tự"/></div>
+          <button class="btn-primary" id="btnReset" onclick="doReset()">Xác nhận đặt lại</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-// ══ INIT ══
-let currentMode = 'first'; // 'first' | 'return'
+const apiUrl = 'https://script.google.com/macros/s/AKfycbwLV_xivT-QOhAiiPi50nRUxrFAgcwREBEZLod3xH4sloWT7d1pDhCOf-53Aco4j_j1qQ/exec';
 
-window.addEventListener('DOMContentLoaded', () => {
-  const ku = localStorage.getItem('kocSheetUrl');
-  const vu = localStorage.getItem('viralSheetUrl');
-  const ru = localStorage.getItem('returnSheetUrl');
-  if (ku) document.getElementById('kocUrl').value    = ku;
-  if (vu) document.getElementById('viralUrl').value  = vu;
-  if (ru) document.getElementById('returnUrl').value = ru;
+const AC = ['#1a6fa8','#22c55e','#00b5c8','#00b5c8','#06b6d4','#f97316'];
+const aC = i => AC[Math.abs(i) % AC.length];
+const hashColor = s => aC(s.split('').reduce((a,c)=>a+c.charCodeAt(0),0));
+const PB = { Tiktok:'b-red', Instagram:'b-purple', Youtube:'b-red', Facebook:'b-blue' };
 
-  const ls = localStorage.getItem('lastSync');
-  if (ls) document.getElementById('lastSyncTime').textContent = 'Lần cuối học: ' + ls;
+let session = null, portalData = null, historyData = [];
+let chartRevInst = null, chartRev2Inst = null, chartLeadInst = null, chartLeadBarInst = null;
+let currentRevFilter = 'month', currentLeadFilter = 'month';
+let allDays = [];      // dữ liệu ngày từ KOC_Report
+let allLeadRows = []; // dữ liệu lead từ sheet Leads riêng
 
-  checkStats();
-});
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-// ══ RESET NAMESPACE ══
-async function resetNamespace() {
-  if (!confirm('Xóa toàn bộ data KOC lần 2+ trong Pinecone và sync lại? Thao tác này không thể hoàn tác.')) return;
+async function callApi(params) {
   try {
-    setSt('loading', 'Đang xóa data cũ...');
-    const r = await fetch('/api/reset', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ namespace: 'return' }),
-    });
-    const j = await r.json();
-    if (j.error) throw new Error(j.error);
-    toast('✓ Đã xóa sạch — nhấn Đồng bộ & Học để sync lại');
-    await checkStats();
-  } catch(e) {
-    toast('Lỗi reset: ' + e.message);
-    setSt('err', 'Lỗi reset');
-  }
-}
+    const qs  = new URLSearchParams(params).toString();
+    const key = 'api_cache_' + qs;
+    // Cache các action không thay đổi thường xuyên trong 3 phút
+    const cacheable = ['getKocData','getKocHistory','getAllKoc']; // getLeadData không cache để luôn lấy mới nhất
+    const action = params.action || '';
+    const CACHE_TTL = 3 * 60 * 1000; // 3 phút
 
-// ══ MODE TOGGLE ══
-function setMode(mode) {
-  currentMode = mode;
-  document.getElementById('modeBtn1').classList.toggle('active', mode === 'first');
-  document.getElementById('modeBtn2').classList.toggle('active', mode === 'return');
-  const returnBox = document.getElementById('returnDnaBox');
-  returnBox.classList.toggle('show', mode === 'return');
-  document.getElementById('modeIndicatorTxt').textContent =
-    mode === 'first' ? 'Lần đầu tiên' : 'Lần 2 trở lên';
-  document.getElementById('modeIndicatorTxt').style.color =
-    mode === 'first' ? 'var(--sage)' : '#4F46E5';
-}
-
-// ══ SAVE URL ══
-function saveUrl(type) {
-  const idMap  = { koc: 'kocUrl', viral: 'viralUrl', return: 'returnUrl' };
-  const keyMap = { koc: 'kocSheetUrl', viral: 'viralSheetUrl', return: 'returnSheetUrl' };
-  const lblMap = { koc: 'KOC lần đầu', viral: 'Viral', return: 'KOC lần 2+' };
-  const val = document.getElementById(idMap[type]).value.trim();
-  if (!val) { toast('Nhập link trước!'); return; }
-  localStorage.setItem(keyMap[type], val);
-  toast('✓ Đã lưu link ' + lblMap[type]);
-}
-
-// ══ CHECK STATS ══
-async function checkStats() {
-  setSt('loading', 'Đang kiểm tra DB...');
-  try {
-    const res  = await fetch('/api/stats');
-    const json = await res.json();
-    updateStats(json);
-    if (json.ready) {
-      setSt('ok', `DB: ${json.koc} KOC + ${json.viral} Viral`);
-      setDNAReady(json.koc, json.viral);
-    } else {
-      setSt('', 'DB chưa có dữ liệu');
-      setDNAEmpty();
+    if(cacheable.includes(action)) {
+      try {
+        const cached = sessionStorage.getItem(key);
+        if(cached) {
+          const { data, ts } = JSON.parse(cached);
+          if(Date.now() - ts < CACHE_TTL) return data;
+        }
+      } catch(e) {}
     }
-  } catch(e) {
-    setSt('err', 'Không kết nối được DB');
-  }
+
+    const res  = await fetch(apiUrl + '?' + qs);
+    const data = await res.json();
+
+    if(cacheable.includes(action) && data && data.ok) {
+      try { sessionStorage.setItem(key, JSON.stringify({ data, ts: Date.now() })); } catch(e) {}
+    }
+    return data;
+  } catch { return null; }
 }
 
-function updateStats(json) {
-  document.getElementById('statKoc').textContent    = json.koc    || 0;
-  document.getElementById('statViral').textContent  = json.viral  || 0;
-  document.getElementById('statReturn').textContent = json.return || 0;
-  document.getElementById('statTotal').textContent  = json.total  || 0;
+// Xóa cache khi cần refresh data thủ công
+function clearApiCache() {
+  try {
+    Object.keys(sessionStorage).filter(k=>k.startsWith('api_cache_')).forEach(k=>sessionStorage.removeItem(k));
+  } catch(e) {}
 }
 
-function setDNAReady(koc, viral) {
-  const ret = parseInt(document.getElementById('statReturn').textContent) || 0;
-  const box = document.getElementById('dnaStatusBox');
-  box.className = 'dna-status ready';
-  document.getElementById('dnaStatusTxt').textContent =
-    `✓ DB sẵn sàng — ${koc} KOC lần đầu · ${viral} viral · ${ret} KOC lần 2+`;
-}
-
-function setDNAEmpty() {
-  const box = document.getElementById('dnaStatusBox');
-  box.className = 'dna-status empty';
-  document.getElementById('dnaStatusTxt').textContent = 'Chưa có dữ liệu trong DB — hãy nhấn "Đồng bộ & Học"';
-}
-
-// ══ SYNC & LEARN ══
-async function syncAndLearn() {
-  const kocUrl    = localStorage.getItem('kocSheetUrl')    || document.getElementById('kocUrl').value.trim();
-  const viralUrl  = localStorage.getItem('viralSheetUrl')  || document.getElementById('viralUrl').value.trim();
-  const returnUrl = localStorage.getItem('returnSheetUrl') || document.getElementById('returnUrl').value.trim();
-
-  if (!kocUrl && !viralUrl && !returnUrl) {
-    toast('⚠ Nhập ít nhất 1 link Google Sheet trước!'); return;
-  }
-
-  const btn = document.getElementById('syncBtn');
-  const lbl = document.getElementById('syncLbl');
-  const ico = document.getElementById('syncIco');
-  const prog = document.getElementById('syncProgress');
-  const bar  = document.getElementById('progBar');
-  const txt  = document.getElementById('syncProgressTxt');
-
+/* ── Login ── */
+async function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginErr');
+  err.style.display = 'none';
+  if (!u || !p) { err.textContent='Vui lòng nhập đầy đủ.'; err.style.display='block'; return; }
+  const btn = document.getElementById('btnLogin');
+  const txt = document.getElementById('btnLoginText');
   btn.disabled = true;
-  ico.innerHTML = '<span style="display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .6s linear infinite;vertical-align:middle"></span>';
-  lbl.textContent = 'Đang học...';
-  prog.classList.add('show');
-  setSt('loading', 'Đang đồng bộ & học...');
+  txt.innerHTML = '<span class="spinner"></span> Đang đăng nhập...';
 
-  // Simulate progress
-  let p = 0;
-  const interval = setInterval(() => {
-    p = Math.min(p + 3, 90);
-    bar.style.width = p + '%';
-    if (p < 30)       txt.textContent = 'Đang đọc Google Sheets...';
-    else if (p < 60)  txt.textContent = 'Đang tạo embeddings (vectors)...';
-    else if (p < 85)  txt.textContent = 'Đang lưu vào Pinecone DB...';
-  }, 400);
+  let result = await callApi({ action:'login', username:u, password:p });
+  if (!result) result = { ok:false, error:'Không kết nối được server.' };
 
-  try {
-    const res  = await fetch('/api/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        kocUrl:    localStorage.getItem('kocSheetUrl')    || '',
-        viralUrl:  localStorage.getItem('viralSheetUrl')  || '',
-        returnUrl: localStorage.getItem('returnSheetUrl') || '',
-      }),
-    });
-    const json = await res.json();
-    clearInterval(interval);
-
-    if (!res.ok || json.error) throw new Error(json.error || 'Sync thất bại');
-
-    bar.style.width = '100%';
-    txt.textContent = '✓ ' + json.message;
-    txt.style.color = '#1B7A5A';
-
-    const now = new Date().toLocaleString('vi-VN');
-    localStorage.setItem('lastSync', now);
-    document.getElementById('lastSyncTime').textContent = 'Lần cuối học: ' + now;
-    document.getElementById('syncInfo').textContent = json.message;
-
-    await checkStats();
-    toast('✓ AI đã học xong ' + json.message);
-
-    setTimeout(() => { prog.classList.remove('show'); bar.style.width = '0'; txt.style.color = ''; }, 3000);
-
-  } catch(e) {
-    clearInterval(interval);
-    bar.style.width = '0';
-    txt.textContent = '✗ Lỗi: ' + e.message;
-    txt.style.color = '#DC2626';
-    setSt('err', 'Lỗi đồng bộ');
-    toast('Lỗi: ' + e.message);
-  }
-
-  btn.disabled = false;
-  ico.textContent = '⚡';
-  lbl.textContent = 'Đồng bộ & Học lại';
+  btn.disabled = false; txt.textContent = 'Đăng nhập';
+  if (!result.ok) { err.textContent=result.error; err.style.display='block'; return; }
+  session = result.user;
+  localStorage.setItem('koc_session', JSON.stringify({ data: session, savedAt: Date.now() }));
+  if (session.role==='admin') { loadAdminData(); showScreen('screen-admin'); }
+  else { await loadPortalData(); showScreen('screen-portal'); }
 }
 
-// ══ GENERATE ══
-async function generate() {
-  const kocInfo = document.getElementById('kocInfo').value.trim();
-  const link    = document.getElementById('refLink').value.trim();
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  if (!kocInfo) { toast('⚠ Nhập thông tin KOC trước!'); return; }
-  if (!link)    { toast('⚠ Nhập link đăng ký!'); return; }
-
-  const btn = document.getElementById('genBtn');
-  const sp  = document.getElementById('spinner');
-  const lbl = document.getElementById('genLbl');
-  btn.disabled = true; sp.classList.add('show'); lbl.textContent = 'Đang tìm mẫu & viết...';
-  hideErr();
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('cardsWrap').innerHTML = `<div class="skel-wrap">${[1,2].map(() => `
-    <div class="skel-card">
-      <div class="sk" style="width:35%;height:12px;margin-bottom:14px"></div>
-      <div class="sk" style="width:100%;height:9px"></div>
-      <div class="sk" style="width:94%;height:9px"></div>
-      <div class="sk" style="width:87%;height:9px"></div>
-      <div class="sk" style="width:91%;height:9px;margin-top:6px"></div>
-    </div>`).join('')}</div>`;
-
-  try {
-    const res  = await fetch('/api/generate', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ kocInfo, link, mode: currentMode }),
-    });
-    const json = await res.json();
-    if (!res.ok || json.error) throw new Error(json.error || 'Lỗi generate');
-
-    window._vers    = json.versions;
-    window._kocInfo = kocInfo;
-    window._link    = link;
-    renderCards(json.versions, json.dnaUsed, json.topKocScore);
-
-  } catch(e) {
-    document.getElementById('cardsWrap').innerHTML = '';
-    document.getElementById('emptyState').style.display = 'block';
-    showErr('Lỗi tạo content: ' + e.message);
+/* ── Helpers ── */
+/* ── Format số tiền VNĐ ── */
+function fmtVND(val) {
+  // val là đơn vị triệu VNĐ (vd: 14.2 = 14.2 triệu)
+  const vnd = Math.round(val * 1000000);
+  if (vnd >= 1000000000) {
+    return (vnd/1000000000).toFixed(2).replace(/\.?0+$/,'') + ' tỷ';
+  } else if (vnd >= 1000000) {
+    return new Intl.NumberFormat('vi-VN').format(Math.round(vnd/1000)*1000) + ' đ';
+  } else if (vnd > 0) {
+    return new Intl.NumberFormat('vi-VN').format(vnd) + ' đ';
   }
-
-  btn.disabled = false; sp.classList.remove('show'); lbl.textContent = '↻ Tạo lại';
+  return '0 đ';
 }
 
-// ══ RENDER ══
-const BADGES = ['cb1','cb2'];
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+function daysAgoStr(n) {
+  const d = new Date(); d.setDate(d.getDate()-n);
+  return d.toISOString().slice(0,10);
+}
+function currentMonthStr() {
+  const now = new Date();
+  return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+}
+function filterDaysByRange(days, filter) {
+  const today = todayStr();
+  let from, to;
+  if (filter==='7d')    { from=daysAgoStr(6);  to=today; }
+  else if(filter==='14d') { from=daysAgoStr(13); to=today; }
+  else if(filter==='30d') { from=daysAgoStr(29); to=today; }
+  else if(filter==='month') {
+    const m = currentMonthStr();
+    from = m+'-01'; to = today;
+  } else if(filter==='6m') {
+    from = daysAgoStr(179); to = today;
+  } else if(filter==='custom') {
+    from = document.getElementById('revDateFrom').value;
+    to   = document.getElementById('revDateTo').value;
+    if(!from||!to) return days;
+  } else return days;
+  return days.filter(d => d.date >= from && d.date <= to);
+}
 
-// Chat history per card: { role: 'user'|'ai', text }
-const chatHistories = [{}, {}];
+/* ── Portal data ── */
+async function loadPortalData() {
+  // Bước 1: Load getKocData trước (nhanh nhất) — hiển thị dashboard ngay
+  const r1 = await callApi({ action:'getKocData', username:session.username });
+  let koc = r1 && r1.ok ? r1.koc : { doanh_thu:0,don_hang:0,hoa_hong:0,leads:0,lead_cl:0,lead_chot:0,muc_tieu_rev:100,muc_tieu_lead:50,days:[] };
+  portalData = koc;
+  allDays = koc.days || [];
+  historyData = [];
+  allLeadRows = [];
 
-function renderCards(versions, dnaUsed, topScore) {
-  const matchPct = Math.round((topScore || 0) * 100);
-  const badgeClass = matchPct >= 70 ? 'dna-badge' : 'dna-badge low';
-  let badgeTxt;
-  if (dnaUsed?.return > 0) {
-    badgeTxt = `🔄 Lần 2+: học từ ${dnaUsed.return} mẫu lần 2 · ${dnaUsed.koc||0} lần đầu · ${dnaUsed.viral||0} viral · Khớp: ${matchPct}%`;
-  } else if (dnaUsed?.koc > 0) {
-    badgeTxt = `🧬 Lần đầu: học từ ${dnaUsed.koc} mẫu KOC + ${dnaUsed.viral||0} viral · Khớp: ${matchPct}%`;
+  // Bước 2: Load lịch sử + leads sau khi UI đã hiển thị (lazy)
+  setTimeout(async () => {
+    const [r2, r3] = await Promise.all([
+      callApi({ action:'getKocHistory', username:session.username, months:6 }),
+      callApi({ action:'getLeadData', username:session.username })
+    ]);
+    historyData = r2 && r2.ok ? r2.history : [];
+    const toMillion = v => {
+      const n = +v || 0;
+      // Nếu giá trị > 10000 → đang là đơn vị VNĐ → chia 1.000.000
+      // Nếu <= 10000 → đã là triệu rồi → giữ nguyên
+      return n > 10000 ? Math.round(n/1000000*100)/100 : n;
+    };
+    allLeadRows = (r3 && r3.ok ? r3.leads : []).map(r => ({
+      ...r,
+      hoa_hong: toMillion(r.hoa_hong),
+      thuong:   toMillion(r.thuong),
+    }));
+    console.log('[KOC] Lead rows loaded:', allLeadRows.length, 'sample hoa_hong:', allLeadRows[0]?.hoa_hong);
+    // Cập nhật dashboard + charts sau khi có đủ data
+    renderDashboardMetrics();
+    renderDashboardChart(hashColor(session.username));
+    renderRevChart(currentRevFilter);
+    renderLeadChart(currentLeadFilter);
+  }, 200);
+
+  const color = hashColor(session.username);
+  const initials = session.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
+
+  ['portalSidebarAvatar','portalWelcomeAvatar'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.textContent=initials; el.style.background=color;
+  });
+  document.getElementById('portalSidebarName').textContent = session.full_name.split(' ').pop();
+  document.getElementById('portalWelcomeName').textContent = 'Xin chào, '+session.full_name.split(' ').pop()+'!';
+  document.getElementById('portalPlatformBadge').textContent = session.platform || 'KOC';
+
+  const conv = koc.leads>0?(koc.lead_chot/koc.leads*100).toFixed(1):'0.0';
+  // Tính hoa hồng tháng này từ allLeadRows
+  const monthNow = currentMonthStr();
+  const monthLeads = allLeadRows.filter(r=>r.date&&r.date.startsWith(monthNow));
+  const totalHHThang = Math.round(monthLeads.reduce((s,r)=>s+(+r.hoa_hong||0),0)*100)/100;
+  document.getElementById('portalWelcomeSub').textContent = `Hoa hồng tháng này: ${fmtVND(totalHHThang)}`;
+
+  const totalDonHang  = monthLeads.reduce((s,r)=>s+(+r.don_hang||0),0);
+  const totalHopLe    = monthLeads.reduce((s,r)=>s+(+r.lead_hop_le||0),0);
+  const totalLeadM    = monthLeads.reduce((s,r)=>s+(+r.tong_lead||0),0);
+
+  document.getElementById('portalMetrics').innerHTML = `
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
+      <div class="metric-label">Hoa hồng</div>
+      <div class="metric-value" style="font-size:18px">${fmtVND(totalHHThang)}</div>
+      <div class="metric-change change-up">↑ tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
+      <div class="metric-label">Đơn hàng</div>
+      <div class="metric-value">${totalDonHang}</div>
+      <div class="metric-change change-neu">đơn tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
+      <div class="metric-label">Lead phát sinh</div>
+      <div class="metric-value">${totalLeadM > 0 ? totalLeadM : koc.leads}</div>
+      <div class="metric-change change-neu">tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#1a6fa8"></div>
+      <div class="metric-label">Lead hợp lệ</div>
+      <div class="metric-value">${totalHopLe}</div>
+      <div class="metric-change change-neu">${totalLeadM>0?Math.round(totalHopLe/totalLeadM*100):0}% tổng lead</div></div>
+  `;
+
+  const bar = p=>p>=100?'#22c55e':p>=70?'#1a6fa8':'#00b5c8';
+  const hp=Math.round(totalHHThang/(koc.muc_tieu_rev||1)*100); // hoa hồng vs mục tiêu
+  const lp=Math.round((totalLeadM||koc.leads)/(koc.muc_tieu_lead||1)*100);
+  const hlp=Math.round(totalHopLe/((koc.muc_tieu_lead||1))*100);
+  document.getElementById('portalProgress').innerHTML=[
+    {label:'Hoa hồng',pct:hp},{label:'Lead phát sinh',pct:lp},{label:'Lead hợp lệ',pct:hlp}
+  ].map(r=>`<div class="prog-item"><span class="prog-label">${r.label}</span><div class="prog-bg"><div class="prog-fill" style="width:${Math.min(r.pct,100)}%;background:${bar(r.pct)}"></div></div><span class="prog-pct">${r.pct}%</span></div>`).join('');
+
+  renderDashboardChart(color);
+  renderRevChart(currentRevFilter);
+  renderLeadChart(currentLeadFilter);
+}
+
+/* ── Dashboard chart (6 tháng) ── */
+function renderDashboardMetrics() {
+  if (!portalData) return;
+  const koc   = portalData;
+  const color = hashColor(session.username);
+  const monthNow   = currentMonthStr();
+  const monthLeads = allLeadRows.filter(r => r.date && r.date.startsWith(monthNow));
+  const totalHHThang = Math.round(monthLeads.reduce((s,r)=>s+(+r.hoa_hong||0),0)*100)/100;
+  const totalDonHang = monthLeads.reduce((s,r)=>s+(+r.don_hang||0),0);
+  const totalHopLe   = monthLeads.reduce((s,r)=>s+(+r.lead_hop_le||0),0);
+  const totalLeadM   = monthLeads.reduce((s,r)=>s+(+r.tong_lead||0),0);
+
+  document.getElementById('portalWelcomeSub').textContent =
+    totalHHThang > 0
+      ? `Hoa hồng tháng này: ${fmtVND(totalHHThang)}`
+      : 'Đây là tổng quan hiệu suất của bạn';
+
+  document.getElementById('portalMetrics').innerHTML = `
+    <div class="metric"><div class="metric-accent" style="background:${color}"></div>
+      <div class="metric-label">Hoa hồng</div>
+      <div class="metric-value" style="font-size:18px">${fmtVND(totalHHThang)}</div>
+      <div class="metric-change change-up">↑ tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
+      <div class="metric-label">Đơn hàng</div>
+      <div class="metric-value">${totalDonHang}</div>
+      <div class="metric-change change-neu">đơn tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
+      <div class="metric-label">Lead phát sinh</div>
+      <div class="metric-value">${totalLeadM > 0 ? totalLeadM : koc.leads}</div>
+      <div class="metric-change change-neu">tháng này</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#1a6fa8"></div>
+      <div class="metric-label">Lead hợp lệ</div>
+      <div class="metric-value">${totalHopLe}</div>
+      <div class="metric-change change-neu">${totalLeadM>0?Math.round(totalHopLe/totalLeadM*100):0}% tổng lead</div></div>
+  `;
+
+  const bar = p=>p>=100?'#22c55e':p>=70?'#1a6fa8':'#00b5c8';
+  const hp  = Math.round(totalHHThang / (koc.muc_tieu_rev  || 1) * 100);
+  const lp  = Math.round((totalLeadM || koc.leads) / (koc.muc_tieu_lead || 1) * 100);
+  const hlp = Math.round(totalHopLe / (koc.muc_tieu_lead || 1) * 100);
+  document.getElementById('portalProgress').innerHTML = [
+    {label:'Hoa hồng', pct:hp},
+    {label:'Lead phát sinh', pct:lp},
+    {label:'Lead hợp lệ', pct:hlp}
+  ].map(r=>`<div class="prog-item"><span class="prog-label">${r.label}</span><div class="prog-bg"><div class="prog-fill" style="width:${Math.min(r.pct,100)}%;background:${bar(r.pct)}"></div></div><span class="prog-pct">${r.pct}%</span></div>`).join('');
+}
+
+function renderDashboardChart(color) {
+  const c = color || hashColor(session.username);
+  const labels = historyData.map(h=>{
+    const [y,m] = h.month.split('-');
+    return `T${parseInt(m)}/${y.slice(2)}`;
+  });
+  const data = historyData.map(h=>+h.doanh_thu);
+  const opts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(1)} tr`}}},
+    scales:{ y:{ticks:{color:'#555b72',font:{size:11},callback:v=>v+'tr'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+             x:{ticks:{color:'#555b72',font:{size:11}},grid:{display:false},border:{display:false}} } };
+  if(chartRevInst) chartRevInst.destroy();
+  chartRevInst = new Chart(document.getElementById('portalChartRev'),{
+    type:'line', data:{labels, datasets:[{
+      data, borderColor:c, backgroundColor:c+'22',
+      fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:c, borderWidth:2
+    }]}, options:opts
+  });
+}
+
+/* ── Revenue chart with filter ── */
+function setRevFilter(filter, btn) {
+  currentRevFilter = filter;
+  if (btn) {
+    document.querySelectorAll('#pportal-revenue .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  if(filter!=='custom') {
+    const today = todayStr();
+    const toEl   = document.getElementById('revDateTo');
+    const fromEl = document.getElementById('revDateFrom');
+    if(toEl)   toEl.value = today;
+    if(fromEl) {
+      if(filter==='7d')     fromEl.value = daysAgoStr(6);
+      else if(filter==='14d')  fromEl.value = daysAgoStr(13);
+      else if(filter==='30d')  fromEl.value = daysAgoStr(29);
+      else if(filter==='month') fromEl.value = currentMonthStr()+'-01';
+      else if(filter==='6m')   fromEl.value = daysAgoStr(179);
+    }
+  }
+  renderRevChart(filter);
+}
+
+function renderRevChart(filter) {
+  const color = hashColor(session.username);
+
+  // Luôn dùng allLeadRows (cột hoa_hong từ sheet Leads)
+  // Fallback sang allDays nếu chưa có sheet Leads
+  const hasLeadData = allLeadRows.length > 0;
+
+  // Filter 6 tháng → group by tháng
+  if(filter==='6m') {
+    let monthData;
+    if(hasLeadData) {
+      const byMonth = {};
+      allLeadRows.forEach(r => {
+        const m = r.date ? r.date.slice(0,7) : '';
+        if(!m) return;
+        if(!byMonth[m]) byMonth[m] = { hoa_hong:0, thuong:0 };
+        byMonth[m].hoa_hong += +r.hoa_hong || 0;
+        byMonth[m].thuong   += +r.thuong   || 0;
+      });
+      monthData = Object.entries(byMonth).sort().slice(-6).map(([m,v]) => ({
+        label: `T${parseInt(m.split('-')[1])}/${m.split('-')[0].slice(2)}`,
+        hoa_hong: Math.round(v.hoa_hong*100)/100
+      }));
+    } else {
+      monthData = historyData.map(h => ({
+        label: `T${parseInt(h.month.split('-')[1])}/${h.month.split('-')[0].slice(2)}`,
+        hoa_hong: +h.doanh_thu
+      }));
+    }
+    const labels = monthData.map(m=>m.label);
+    const data   = monthData.map(m=>m.hoa_hong);
+    const total  = Math.round(data.reduce((s,v)=>s+v,0)*100)/100;
+    const avg    = data.length>0?total/data.length:0;
+    updateRevMetrics(total, data.length, filter, data.length, []);
+    renderRevChartRaw(labels, data, Array(data.length).fill(+avg.toFixed(2)), color, '6 tháng gần nhất');
+    return;
+  }
+
+  // Filter theo khoảng thời gian
+  let filtered;
+  const today = todayStr();
+  let from;
+  if(filter==='custom') {
+    const fromEl2 = document.getElementById('revDateFrom');
+    const toEl2   = document.getElementById('revDateTo');
+    from = fromEl2 ? fromEl2.value : '';
+    const to = toEl2 ? toEl2.value : '';
+    filtered = hasLeadData
+      ? (from&&to ? allLeadRows.filter(r=>r.date>=from&&r.date<=to) : allLeadRows)
+      : (from&&to ? filterDaysByRange(allDays,'custom') : allDays);
   } else {
-    badgeTxt = '🧬 Viết dựa trên kiến thức chung (chưa có dữ liệu DNA)';
+    if(filter==='7d')      from = daysAgoStr(6);
+    else if(filter==='14d')   from = daysAgoStr(13);
+    else if(filter==='30d')   from = daysAgoStr(29);
+    else if(filter==='month') from = currentMonthStr()+'-01';
+    else from = daysAgoStr(6);
+    filtered = hasLeadData
+      ? allLeadRows.filter(r=>r.date>=from && r.date<=today)
+      : filterDaysByRange(allDays, filter);
   }
 
-  // Reset chat history on new generation
-  chatHistories[0] = []; chatHistories[1] = [];
+  const sorted = [...filtered].sort((a,b)=>a.date.localeCompare(b.date));
+  const labels  = sorted.map(d=>{ const p=d.date.split('-'); return `${p[2]}/${p[1]}`; });
+  // Vẽ biểu đồ theo cột hoa_hong (cột G sheet Leads)
+  const data    = sorted.map(r=>+(hasLeadData ? r.hoa_hong : r.doanh_thu)||0);
+  const total   = Math.round(data.reduce((s,v)=>s+v,0)*100)/100;
+  const avg     = data.length>0?total/data.length:0;
+  const avgArr  = Array(data.length).fill(+avg.toFixed(2));
 
-    // Clean content — chỉ xóa JSON thừa thực sự bị leak
-  versions = versions.map(v => {
-    let c = v.content || '';
-    const leak1 = c.indexOf('"     },     {');
-    const leak2 = c.indexOf('"},{"label"');
-    const leak3 = c.indexOf('"versions":[');
-    const leaks = [leak1, leak2, leak3].filter(x => x > 80).sort((a,b) => a-b);
-    if (leaks.length > 0) c = c.slice(0, leaks[0]).replace(/["\s]+$/, '').trim();
-    return { ...v, content: c };
+  updateRevMetrics(total, sorted.length, filter, sorted.length, sorted);
+  renderRevChartRaw(labels, data, avgArr, color,
+    filter==='month'
+      ? `Tháng ${currentMonthStr().split('-')[1]}/${currentMonthStr().split('-')[0]}`
+      : `${sorted.length} ngày`
+  );
+}
+
+function renderRevChartRaw(labels, data, avgData, color, title) {
+  document.getElementById('revChartTitle').textContent = `Hoa hồng — ${title}`;
+  const opts = {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtVND(ctx.parsed.y)}`}}},
+    scales:{
+      y:{ticks:{color:'#555b72',font:{size:10},callback:v=>new Intl.NumberFormat('vi-VN',{notation:'compact',maximumFractionDigits:1}).format(Math.round(v*1000000))},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+      x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:14},grid:{display:false},border:{display:false}}
+    }
+  };
+  if(chartRev2Inst) chartRev2Inst.destroy();
+  chartRev2Inst = new Chart(document.getElementById('portalChartRev2'),{
+    type:'bar',
+    data:{labels, datasets:[
+      { label:'Hoa hồng', data, backgroundColor:color+'66', borderColor:color, borderWidth:1.5, borderRadius:4, order:2, yAxisID:'y' },
+      { label:'TB ngày',   data:avgData, type:'line', borderColor:'#00b5c8', borderDash:[5,4], borderWidth:2, pointRadius:0, tension:0, fill:false, order:1, yAxisID:'y' }
+    ]}, options:opts
+  });
+}
+
+function updateRevMetrics(total, days, filter, count, filteredRows) {
+  const koc = portalData || {};
+  const avg = count>0?(total/count):0;
+
+  // Tính tổng hoa hồng và thưởng từ allLeadRows trong khoảng thời gian
+  let totalHoaHong = 0;
+  if(allLeadRows.length > 0) {
+    let filtered;
+    if(filter==='custom') {
+      const from = document.getElementById('revDateFrom').value;
+      const to   = document.getElementById('revDateTo').value;
+      filtered = from && to ? allLeadRows.filter(r=>r.date>=from && r.date<=to) : allLeadRows;
+    } else {
+      const today = todayStr();
+      let from;
+      if(filter==='7d')      from = daysAgoStr(6);
+      else if(filter==='14d')   from = daysAgoStr(13);
+      else if(filter==='30d')   from = daysAgoStr(29);
+      else if(filter==='month') from = currentMonthStr()+'-01';
+      else if(filter==='6m')    from = daysAgoStr(179);
+      else from = daysAgoStr(6);
+      filtered = allLeadRows.filter(r=>r.date>=from && r.date<=today);
+    }
+    totalHoaHong = Math.round(filtered.reduce((s,r)=>s+(+r.hoa_hong||0),0)*100)/100;
+  }
+
+  document.getElementById('portalRevMetrics').innerHTML=`
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
+      <div class="metric-label">Hoa hồng (dự kiến)</div>
+      <div class="metric-value" style="font-size:18px">${fmtVND(totalHoaHong)}</div>
+      <div class="metric-change change-up">${count} ngày</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
+      <div class="metric-label">Trung bình hoa hồng / ngày</div>
+      <div class="metric-value" style="font-size:18px">${fmtVND(count>0?totalHoaHong/count:0)}</div>
+      <div class="metric-change change-neu">${count} ngày</div></div>
+  `;
+  document.getElementById('revSummaryRow').innerHTML=`
+    <div class="summary-item"><div class="summary-val" style="font-size:15px">${fmtVND(totalHoaHong)}</div><div class="summary-lbl">Tổng hoa hồng</div></div>
+    <div class="summary-item"><div class="summary-val" style="font-size:15px">${fmtVND(count>0?totalHoaHong/count:0)}</div><div class="summary-lbl">TB/ngày</div></div>
+    <div class="summary-item"><div class="summary-val">${count}</div><div class="summary-lbl">Ngày có data</div></div>
+    <div class="summary-item"><div class="summary-val">${count>0?Math.round(totalHoaHong/(portalData.muc_tieu_rev||1)*100):0}%</div><div class="summary-lbl">Mục tiêu</div></div>
+  `;
+  renderRevBreakdown(filteredRows || [], filter);
+}
+
+function renderRevBreakdown(rows, filter) {
+  const el = document.getElementById('revBreakdown');
+  const periodEl = document.getElementById('revBreakdownPeriod');
+  if(!el) return;
+  if(!rows || rows.length === 0) {
+    el.innerHTML = '<div class="rev-empty">Không có dữ liệu trong khoảng thời gian này</div>';
+    return;
+  }
+  // Tính từng loại hoa hồng từ raw VNĐ
+  const toVND = r => {
+    const raw = +r.hoa_hong_raw || 0;
+    return raw > 0 ? raw : Math.round((+r.hoa_hong||0) * 1000000);
+  };
+  const tb_vnd  = rows.reduce((s,r) => s + (+r.thuong_bai  > 1000 ? +r.thuong_bai  : (+r.thuong_bai ||0)*1000000), 0);
+  const tl_vnd  = rows.reduce((s,r) => s + (+r.thuong_lead > 1000 ? +r.thuong_lead : (+r.thuong_lead||0)*1000000), 0);
+  const total   = rows.reduce((s,r) => s + toVND(r), 0);
+  const tongLead  = rows.reduce((s,r) => s + (+r.tong_lead  ||0), 0);
+  const leadHopLe = rows.reduce((s,r) => s + (+r.lead_hop_le||0), 0);
+  const donHang   = rows.reduce((s,r) => s + (+r.don_hang   ||0), 0);
+
+  periodEl.textContent = rows.length + ' ngày có dữ liệu';
+
+  const items = [
+    { icon:'📣', label:'Thưởng lên bài', detail:'Đăng bài đầu tiên', amount:tb_vnd,  color:'#22c55e' },
+    { icon:'✅', label:'Thưởng lead hợp lệ', detail:leadHopLe+' lead hợp lệ', amount:tl_vnd, color:'#1a6fa8' },
+  ].filter(i => i.amount > 0);
+
+  const maxVal = Math.max(...items.map(i=>i.amount), 1);
+  const pct = v => Math.round(Math.min(v/maxVal,1)*100);
+
+  const rows_html = items.map(i => `
+    <div class="rev-brow">
+      <span class="rev-brow-icon">${i.icon}</span>
+      <span class="rev-brow-label">${i.label}</span>
+      <span class="rev-brow-detail">${i.detail}</span>
+      <div class="rev-brow-bar-wrap"><div class="rev-brow-bar" style="width:${pct(i.amount)}%;background:${i.color}"></div></div>
+      <span class="rev-brow-amount">${i.amount.toLocaleString('vi-VN')} ₫</span>
+    </div>`).join('');
+
+  const total_html = `
+    <div class="rev-brow total">
+      <span class="rev-brow-icon">💰</span>
+      <span class="rev-brow-label">Tổng hoa hồng</span>
+      <span class="rev-brow-detail">${rows.length} ngày</span>
+      <div class="rev-brow-bar-wrap"></div>
+      <span class="rev-brow-amount">${total.toLocaleString('vi-VN')} ₫</span>
+    </div>`;
+
+  el.innerHTML = items.length > 0 ? rows_html + total_html
+    : '<div class="rev-empty">Chưa có dữ liệu hoa hồng trong kỳ này</div>';
+}
+
+/* ── Lead chart with filter ── */
+function setLeadFilter(filter, btn) {
+  currentLeadFilter = filter;
+  if(btn){
+    document.querySelectorAll('#pportal-leads .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  if(filter!=='custom'){
+    const today = todayStr();
+    const toEl   = document.getElementById('leadDateTo');
+    const fromEl = document.getElementById('leadDateFrom');
+    if(toEl)   toEl.value = today;
+    if(fromEl) {
+      if(filter==='7d')     fromEl.value = daysAgoStr(6);
+      else if(filter==='14d')  fromEl.value = daysAgoStr(13);
+      else if(filter==='30d')  fromEl.value = daysAgoStr(29);
+      else if(filter==='month') fromEl.value = currentMonthStr()+'-01';
+    }
+  }
+  renderLeadChart(filter);
+}
+
+function renderLeadChart(filter) {
+  // Dữ liệu lead đọc từ allLeadRows (sheet Leads riêng)
+  // hoặc fallback sang allDays nếu chưa có sheet Leads
+  let rows = allLeadRows.length > 0 ? allLeadRows : allDays.map(d=>({
+    date: d.date, tong_lead: d.leads||0, lead_hop_le: d.lead_cl||0, don_hang: d.don_hang||0
+  }));
+
+  // Filter theo khoảng thời gian
+  let filtered;
+  if(filter==='custom'){
+    const lfEl = document.getElementById('leadDateFrom');
+    const ltEl = document.getElementById('leadDateTo');
+    const from = lfEl ? lfEl.value : '';
+    const to   = ltEl ? ltEl.value : '';
+    filtered = from && to ? rows.filter(r=>r.date>=from && r.date<=to) : rows;
+  } else {
+    const today = todayStr();
+    let from;
+    if(filter==='7d')    from = daysAgoStr(6);
+    else if(filter==='14d') from = daysAgoStr(13);
+    else if(filter==='30d') from = daysAgoStr(29);
+    else if(filter==='month') from = currentMonthStr()+'-01';
+    else from = daysAgoStr(6);
+    filtered = rows.filter(r=>r.date>=from && r.date<=today);
+  }
+
+  const sorted = [...filtered].sort((a,b)=>a.date.localeCompare(b.date));
+  const totalLead   = sorted.reduce((s,r)=>s+(+r.tong_lead||0),0);
+  const totalHopLe  = sorted.reduce((s,r)=>s+(+r.lead_hop_le||0),0);
+  const totalDon    = sorted.reduce((s,r)=>s+(+r.don_hang||0),0);
+  const pctHopLe    = totalLead>0?Math.round(totalHopLe/totalLead*100):0;
+
+  // 4 metric cards
+  document.getElementById('portalLeadMetrics').innerHTML=`
+    <div class="metric"><div class="metric-accent" style="background:#1a6fa8"></div>
+      <div class="metric-label">Tổng lead</div>
+      <div class="metric-value">${totalLead}</div>
+      <div class="metric-change change-neu">${sorted.length} ngày</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
+      <div class="metric-label">Lead hợp lệ</div>
+      <div class="metric-value">${totalHopLe}</div>
+      <div class="metric-change change-neu">${pctHopLe}% tổng lead</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
+      <div class="metric-label">Đơn hàng</div>
+      <div class="metric-value">${totalDon}</div>
+      <div class="metric-change change-neu">từ lead hợp lệ</div></div>
+    <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
+      <div class="metric-label">Tỷ lệ hợp lệ</div>
+      <div class="metric-value">${pctHopLe}%</div>
+      <div class="metric-change ${pctHopLe>=60?'change-up':'change-neu'}">${totalLead>0?'lead → hợp lệ':'-'}</div></div>
+  `;
+
+  // Chart title
+  const fromEl = document.getElementById('leadDateFrom').value;
+  const toEl   = document.getElementById('leadDateTo').value;
+  document.getElementById('leadChartTitle').textContent = `Lead theo ngày${fromEl&&toEl?' ('+fromEl+' → '+toEl+')':''}`;
+
+  // Biểu đồ grouped bar
+  const labels    = sorted.map(d=>{ const p=d.date.split('-'); return `${p[2]}/${p[1]}`; });
+  const leadData  = sorted.map(r=>+r.tong_lead||0);
+  const hopLeData = sorted.map(r=>+r.lead_hop_le||0);
+
+  if(chartLeadBarInst) chartLeadBarInst.destroy();
+  chartLeadBarInst = new Chart(document.getElementById('portalChartLeadBar'),{
+    type:'bar',
+    data:{labels, datasets:[
+      { label:'Tổng lead',  data:leadData,  backgroundColor:'#1a6fa855', borderColor:'#1a6fa8', borderWidth:1.5, borderRadius:4 },
+      { label:'Lead hợp lệ', data:hopLeData, backgroundColor:'#22c55e55', borderColor:'#22c55e', borderWidth:1.5, borderRadius:4 }
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y}`}}},
+      scales:{
+        y:{ticks:{color:'#555b72',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+        x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:14},grid:{display:false},border:{display:false}}
+      }
+    }
   });
 
-    document.getElementById('cardsWrap').innerHTML =
-    `<div class="${badgeClass}">${badgeTxt}</div>` +
-    `<div class="result-cards">` +
-    versions.map((v, i) => {
-      const wc = v.content.split(/\s+/).length;
-      return `<div class="ccard" id="ccard${i}">
-        <div class="ctop">
-          <div class="clabel">
-            <div><div class="cname">${v.label}</div><div class="csub" id="csub${i}">${wc} từ · Facebook post</div></div>
+  // Summary row
+  document.getElementById('leadSummaryRow').innerHTML=`
+    <div class="summary-item"><div class="summary-val">${totalLead}</div><div class="summary-lbl">Tổng lead</div></div>
+    <div class="summary-item"><div class="summary-val">${totalHopLe}</div><div class="summary-lbl">Lead hợp lệ</div></div>
+    <div class="summary-item"><div class="summary-val">${totalDon}</div><div class="summary-lbl">Đơn hàng</div></div>
+    <div class="summary-item"><div class="summary-val">${pctHopLe}%</div><div class="summary-lbl">Tỷ lệ hợp lệ</div></div>
+  `;
+
+  // Detail table
+  document.getElementById('leadTableCount').textContent = sorted.length + ' bản ghi';
+  document.getElementById('leadTableBody').innerHTML = [...sorted].reverse().map(r=>{
+    const pct = r.tong_lead>0?Math.round(r.lead_hop_le/r.tong_lead*100):0;
+    const parts = r.date.split('-');
+    const dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return `<tr>
+      <td style="font-weight:500">${dateStr}</td>
+      <td>${+r.tong_lead||0}</td>
+      <td><span style="color:#22c55e;font-weight:600">${+r.lead_hop_le||0}</span></td>
+      <td>${+r.don_hang||0}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;background:var(--bg4);border-radius:4px;height:6px;">
+            <div style="width:${Math.min(pct,100)}%;background:${pct>=60?'#22c55e':'#00b5c8'};border-radius:4px;height:6px;"></div>
           </div>
-          <span class="cbadge ${BADGES[i]}">Phiên bản ${i+1}</span>
+          <span style="font-size:12px;font-weight:600;min-width:32px;text-align:right">${pct}%</span>
         </div>
-        <div class="cbody"><div class="fb-post" id="ct${i}">${esc(v.content)}</div></div>
-        <div class="cfoot">
-          <button class="cpybtn" onclick="copyCard(${i},this)">⎘ Copy</button>
-          <button class="crebtn" onclick="regenOne(${i})">↻ Viết lại</button>
-          <span class="ccard-chars" id="cchars${i}">${v.content.length} ký tự</span>
-        </div>
-        <div class="chat-box">
-          <div class="chat-hint">💬 Góp ý để sửa bài — AI sẽ chỉnh ngay bên trên</div>
-          <div class="chat-history" id="chat-history-${i}"></div>
-          <div class="chat-input-row">
-            <input class="chat-inp" id="chat-inp-${i}" type="text"
-              placeholder="Vd: Câu mở đầu chưa đủ hút, thêm chi tiết về con..."
-              onkeydown="if(event.key==='Enter')sendChat(${i})">
-            <button class="chat-send" id="chat-send-${i}" onclick="sendChat(${i})">Gửi ↵</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('') +
-    `</div>`;
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-// ── SEND CHAT ──
-async function sendChat(idx) {
-  const inp     = document.getElementById('chat-inp-' + idx);
-  const sendBtn = document.getElementById('chat-send-' + idx);
-  const msg     = inp.value.trim();
-  if (!msg) return;
+function switchPortalPage(id) {
+  document.querySelectorAll('#screen-portal .nav-item').forEach((el,i)=>{
+    const ids=['dashboard','revenue','leads','intro','about'];
+    el.classList.toggle('active', ids[i]===id);
+  });
+  document.querySelectorAll('#screen-portal .page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pportal-'+id).classList.add('active');
+  closeSidebar();
+}
 
-  // Append user message
-  if (!chatHistories[idx]) chatHistories[idx] = [];
-  chatHistories[idx].push({ role: 'user', text: msg });
-  renderChatHistory(idx);
-  inp.value = '';
-  sendBtn.disabled = true;
+/* ── Admin ── */
+async function loadAdminData() {
+  document.getElementById('adminLoading').style.display='block';
+  document.getElementById('adminTableBody').innerHTML='';
+  let kocs = null;
+  const r = await callApi({action:'getAllKoc',role:'admin'});
+  if(r && r.ok) kocs = r.kocs;
+  if(!kocs) kocs = [];
+  document.getElementById('adminLoading').style.display='none';
 
-  // Show AI thinking
-  chatHistories[idx].push({ role: 'ai', text: '...', loading: true });
-  renderChatHistory(idx);
+  document.getElementById('adminTableBody').innerHTML = kocs.map((a,i)=>{
+    const init = a.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const color = hashColor(a.username);
+    const active = a.status==='active';
+    return `<tr>
+      <td><div class="koc-row">
+        <div class="avatar av-sm" style="background:${color}">${init}</div>
+        <div><div class="koc-name">${a.full_name}</div><div class="koc-sub">${a.username}</div></div>
+      </div></td>
+      <td style="color:var(--text2);font-size:12px">${a.username}</td>
+      <td><span class="badge ${PB[a.platform]||'b-blue'}">${a.platform}</span></td>
+      <td style="font-weight:600">${fmtVND(+a.doanh_thu)}</td>
+      <td><span class="badge ${active?'b-green':'b-amber'}">${active?'Hoạt động':'Tạm khóa'}</span></td>
+      <td>${active
+        ? `<button class="btn-danger" onclick="toggleStatus('${a.username}','${a.status}')">Khóa</button>`
+        : `<button class="btn-success" onclick="toggleStatus('${a.username}','${a.status}')">Mở</button>`
+      }</td>
+    </tr>`;
+  }).join('');
+}
 
-  const currentContent = document.getElementById('ct' + idx)?.innerText || '';
+async function toggleStatus(username) {
+  await callApi({action:'toggleStatus',role:'admin',username});
+  loadAdminData();
+}
 
+async function addAccount() {
+  const name=document.getElementById('newName').value.trim();
+  const user=document.getElementById('newUser').value.trim();
+  const pass=document.getElementById('newPass').value;
+  const plat=document.getElementById('newPlat').value;
+  const err=document.getElementById('addErr'), suc=document.getElementById('addSuccess');
+  err.style.display='none'; suc.style.display='none';
+  if(!name||!user||!pass){err.textContent='Vui lòng điền đầy đủ.';err.style.display='block';return;}
+  if(pass.length<6){err.textContent='Mật khẩu tối thiểu 6 ký tự.';err.style.display='block';return;}
+  const btn=document.getElementById('btnAdd'); btn.disabled=true; btn.textContent='Đang tạo...';
+  let result = await callApi({action:'addAccount',role:'admin',full_name:name,username:user,password:pass,platform:plat});
+  if(!result) result={ok:false,error:'Không kết nối được server'};
+  btn.disabled=false; btn.textContent='Tạo tài khoản';
+  if(!result.ok){err.textContent=result.error;err.style.display='block';return;}
+  suc.style.display='block';
+  document.getElementById('newName').value=''; document.getElementById('newUser').value=''; document.getElementById('newPass').value='';
+  // Chuyển về tab danh sách và reload sau 1.2s để thấy thông báo thành công
+  setTimeout(() => { switchATab('accounts'); }, 1200);
+}
+
+async function doReset() {
+  const user=document.getElementById('resetUser').value.trim();
+  const pass=document.getElementById('resetPass').value;
+  const err=document.getElementById('resetErr'), suc=document.getElementById('resetSuccess');
+  err.style.display='none'; suc.style.display='none';
+  if(!user||!pass){err.textContent='Vui lòng điền đầy đủ.';err.style.display='block';return;}
+  if(pass.length<6){err.textContent='Mật khẩu tối thiểu 6 ký tự.';err.style.display='block';return;}
+  const btn=document.getElementById('btnReset'); btn.disabled=true; btn.textContent='Đang xử lý...';
+  let result = await callApi({action:'resetPassword',role:'admin',username:user,newPassword:pass});
+  if(!result) result={ok:false,error:'Không kết nối được server'};
+  btn.disabled=false; btn.textContent='Xác nhận đặt lại';
+  if(!result.ok){err.textContent=result.error;err.style.display='block';return;}
+  suc.style.display='block';
+  document.getElementById('resetUser').value=''; document.getElementById('resetPass').value='';
+}
+
+function switchATab(id) {
+  document.querySelectorAll('#screen-admin .nav-item').forEach((el,i)=>{
+    const tabs=['accounts','add','reset'];
+    el.classList.toggle('active',tabs[i]===id);
+  });
+  document.querySelectorAll('.atab').forEach(t=>{t.classList.remove('active');t.style.display='none';});
+  const tab = document.getElementById('atab-'+id);
+  tab.classList.add('active'); tab.style.display='block';
+  if(id==='accounts') loadAdminData();
+  closeSidebar();
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+function toggleAccordion(el) {
+  // Close others in same group
+  const siblings = el.parentElement.querySelectorAll(':scope > [onclick="toggleAccordion(this)"]');
+  siblings.forEach(s => { if(s !== el) s.classList.remove('open'); });
+  el.classList.toggle('open');
+}
+
+function doLogout() {
+  session=null; portalData=null; allDays=[]; historyData=[];
+  localStorage.removeItem('koc_session');
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginErr').style.display='none';
+  showScreen('screen-login');
+}
+
+/* ── Mobile sidebar ── */
+function openSidebar(id) {
+  document.getElementById(id).classList.add('open');
+  document.querySelectorAll('.mobile-overlay').forEach(o=>o.classList.add('show'));
+}
+function closeSidebar() {
+  document.querySelectorAll('.sidebar').forEach(s=>s.classList.remove('open'));
+  document.querySelectorAll('.mobile-overlay').forEach(o=>o.classList.remove('show'));
+}
+
+/* ── Auto-restore session on page load ── */
+(async function restoreSession() {
   try {
-    const res  = await fetch('/api/generate', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        kocInfo: window._kocInfo,
-        link:    window._link,
-        editRequest: {
-          currentContent,
-          feedback: msg,
-          history:  chatHistories[idx].filter(m => !m.loading),
-        }
-      }),
-    });
-    const json = await res.json();
-    if (json.error) throw new Error(json.error);
+    const saved = localStorage.getItem('koc_session');
+    if (!saved) return;
 
-    const newContent = json.versions?.[idx]?.content || json.versions?.[0]?.content;
-    if (!newContent) throw new Error('Không nhận được content mới');
+    const parsed = JSON.parse(saved);
+    // Hỗ trợ cả 2 format: {data, savedAt} và trực tiếp
+    const s       = parsed.data || parsed;
+    const savedAt = parsed.savedAt || Date.now();
 
-    // Update card content
-    window._vers[idx] = { ...window._vers[idx], content: newContent };
-    const el = document.getElementById('ct' + idx);
-    el.innerHTML = esc(newContent);
-    document.getElementById('csub' + idx).textContent  = newContent.split(/\s+/).length + ' từ · Facebook post';
-    document.getElementById('cchars' + idx).textContent = newContent.length + ' ký tự';
+    if (!s || !s.username || !s.role) return;
 
-    // Remove loading, add AI reply
-    chatHistories[idx] = chatHistories[idx].filter(m => !m.loading);
-    chatHistories[idx].push({ role: 'ai', text: '✓ Đã cập nhật bài viết theo góp ý của bạn!' });
-    renderChatHistory(idx);
+    // Session hết hạn sau 30 ngày
+    const SESSION_TTL = 30 * 24 * 60 * 60 * 1000;
+    if (Date.now() - savedAt > SESSION_TTL) {
+      localStorage.removeItem('koc_session');
+      return;
+    }
 
+    // Restore ngay lập tức — không cần ping server
+    session = s;
+
+    // Cập nhật thời gian để kéo dài session thêm 30 ngày
+    localStorage.setItem('koc_session', JSON.stringify({ data: s, savedAt: Date.now() }));
+
+    if (session.role === 'admin') {
+      loadAdminData();
+      showScreen('screen-admin');
+    } else {
+      await loadPortalData();
+      showScreen('screen-portal');
+    }
   } catch(e) {
-    chatHistories[idx] = chatHistories[idx].filter(m => !m.loading);
-    chatHistories[idx].push({ role: 'ai', text: '✗ Lỗi: ' + e.message });
-    renderChatHistory(idx);
+    // Nếu lỗi parse thì xóa session lỗi
+    localStorage.removeItem('koc_session');
   }
-
-  sendBtn.disabled = false;
-  inp.focus();
-}
-
-function renderChatHistory(idx) {
-  const el = document.getElementById('chat-history-' + idx);
-  if (!el) return;
-  const history = chatHistories[idx] || [];
-  el.innerHTML = history.map(m => `
-    <div class="chat-msg ${m.role === 'user' ? 'user' : 'ai'}${m.loading ? ' loading' : ''}">
-      <div class="chat-avatar ${m.role === 'user' ? 'user-av' : 'ai-av'}">${m.role === 'user' ? '👤' : '✦'}</div>
-      <div class="chat-bubble">${esc(m.text)}</div>
-    </div>`).join('');
-  el.scrollTop = el.scrollHeight;
-}
-
-async function copyCard(i, btn) {
-  await navigator.clipboard.writeText(document.getElementById('ct'+i).innerText);
-  const o = btn.innerHTML; btn.innerHTML = '✓ Đã copy!'; btn.classList.add('ok');
-  setTimeout(() => { btn.innerHTML = o; btn.classList.remove('ok'); }, 2000);
-  toast('Đã copy phiên bản ' + (i+1) + '!');
-}
-
-async function regenOne(idx) {
-  const card = document.querySelectorAll('.ccard')[idx];
-  const fb   = card.querySelector('.fb-post');
-  fb.innerHTML = '<div class="sk" style="width:100%;height:9px;margin-bottom:6px"></div><div class="sk" style="width:90%;height:9px"></div>';
-
-  try {
-    const res  = await fetch('/api/generate', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        kocInfo: (window._kocInfo || '') + '\n[Viet khac hoan toan so voi bai cu]',
-        link:    window._link || '',
-        mode:    currentMode,
-      }),
-    });
-    const json = await res.json();
-    if (json.error) throw new Error(json.error);
-
-    const ver = json.versions[idx] || json.versions[0];
-    if (!ver) throw new Error('Khong co phien ban trong response');
-
-    // Clean content — chỉ xóa JSON thừa thực sự bị leak
-    let newContent = ver.content || '';
-    const lk1 = newContent.indexOf('"     },     {');
-    const lk2 = newContent.indexOf('"},{"label"');
-    const lk3 = newContent.indexOf('"versions":[');
-    const lks = [lk1, lk2, lk3].filter(x => x > 80).sort((a,b) => a-b);
-    if (lks.length > 0) newContent = newContent.slice(0, lks[0]).replace(/["\s]+$/, '').trim();
-
-    window._vers[idx] = { ...window._vers[idx], content: newContent };
-    fb.innerHTML = esc(newContent); fb.id = 'ct'+idx;
-    card.querySelector('.csub').textContent        = newContent.split(/\s+/).length + ' từ · Facebook post';
-    card.querySelector('.ccard-chars').textContent = newContent.length + ' ký tự';
-    toast('✓ Đã viết lại phiên bản ' + (idx+1));
-  } catch(e) { fb.textContent = 'Lỗi: ' + e.message; }
-}
-
-// ══ HELPERS ══
-function setSt(state, txt) {
-  document.getElementById('sdot').className = 'sdot ' + state;
-  document.getElementById('stxt').textContent = txt;
-}
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
-function showErr(msg) { const b = document.getElementById('errBar'); b.textContent = msg; b.style.display = 'block'; }
-function hideErr()    { document.getElementById('errBar').style.display = 'none'; }
+})();
 </script>
 </body>
 </html>
