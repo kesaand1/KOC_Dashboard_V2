@@ -2199,12 +2199,14 @@ function renderLeadChart(filter) {
 }
 
 function switchPortalPage(id) {
-  document.querySelectorAll('#screen-portal .nav-item').forEach((el,i)=>{
-    const ids=['dashboard','revenue','leads','intro','about','demo'];
-    el.classList.toggle('active', ids[i]===id);
+  // Match nav items by their onclick attribute — robust against order changes
+  document.querySelectorAll('#screen-portal .nav-item').forEach(el => {
+    const onclick = el.getAttribute('onclick') || '';
+    el.classList.toggle('active', onclick.includes("'" + id + "'"));
   });
-  document.querySelectorAll('#screen-portal .page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('pportal-'+id).classList.add('active');
+  document.querySelectorAll('#screen-portal .page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('pportal-' + id);
+  if(page) page.classList.add('active');
   closeSidebar();
 }
 
