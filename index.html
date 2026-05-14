@@ -1727,10 +1727,12 @@ async function loadPortalData() {
     const rawToM = v => Math.round((+v || 0) / 1000000 * 1000) / 1000;
     allLeadRows = (r3 && r3.ok ? r3.leads : []).map(r => ({
       ...r,
-      hoa_hong:     rawToM(r.hoa_hong),      // Cột H → triệu VNĐ
-      thuong_bai:   rawToM(r.thuong_bai),    // Cột F → triệu VNĐ
-      thuong_lead:  rawToM(r.thuong_lead),   // Cột G → triệu VNĐ
-      hoa_hong_raw: +r.hoa_hong || 0,        // Giữ nguyên VNĐ thô cho breakdown
+      hoa_hong:          rawToM(r.hoa_hong),      // Cột H → triệu VNĐ
+      thuong_bai:        rawToM(r.thuong_bai),    // Cột F → triệu VNĐ
+      thuong_lead:       rawToM(r.thuong_lead),   // Cột G → triệu VNĐ
+      hoa_hong_raw:      +r.hoa_hong    || 0,     // Cột H VNĐ thô
+      thuong_bai_raw:    +r.thuong_bai  || 0,     // Cột F VNĐ thô
+      thuong_lead_raw:   +r.thuong_lead || 0,     // Cột G VNĐ thô
     }));
     console.log('[KOC] Leads loaded:', allLeadRows.length,
       '| sample hoa_hong:', allLeadRows[0]?.hoa_hong, 'tr',
@@ -2037,11 +2039,10 @@ function renderRevBreakdown(rows, filter) {
     return;
   }
   // Tính từng loại hoa hồng từ raw VNĐ
-  // hoa_hong_raw = VNĐ thô từ cột H
-  // thuong_bai/thuong_lead = VNĐ thô từ cột F, G
-  const tb_vnd  = rows.reduce((s,r) => s + (+r.thuong_bai  || 0), 0);
-  const tl_vnd  = rows.reduce((s,r) => s + (+r.thuong_lead || 0), 0);
-  const total   = rows.reduce((s,r) => s + (+r.hoa_hong_raw || 0), 0);
+  // Dùng raw VNĐ để hiển thị đúng đơn vị
+  const tb_vnd  = rows.reduce((s,r) => s + (+r.thuong_bai_raw  || 0), 0);
+  const tl_vnd  = rows.reduce((s,r) => s + (+r.thuong_lead_raw || 0), 0);
+  const total   = rows.reduce((s,r) => s + (+r.hoa_hong_raw    || 0), 0);
   const tongLead  = rows.reduce((s,r) => s + (+r.tong_lead  ||0), 0);
   const leadHopLe = rows.reduce((s,r) => s + (+r.lead_hop_le||0), 0);
   const donHang   = rows.reduce((s,r) => s + (+r.don_hang   ||0), 0);
