@@ -1582,7 +1582,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbwLV_xivT-QOhAiiPi50nRUxrFAgcwREBEZLod3xH4sloWT7d1pDhCOf-53Aco4j_j1qQ/exec';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbxmpoOnasMPk38MGqIEXO8hLgaJ1tmRefaTaVxnbZWONO1HauIJtN0wGqFnwORkuPIXcA/exec';
 
 const AC = ['#1a6fa8','#22c55e','#00b5c8','#00b5c8','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -1723,18 +1723,18 @@ async function loadPortalData() {
       callApi({ action:'getLeadData', username:session.username })
     ]);
     historyData = r2 && r2.ok ? r2.history : [];
-    const toMillion = v => {
-      const n = +v || 0;
-      // Nếu giá trị > 10000 → đang là đơn vị VNĐ → chia 1.000.000
-      // Nếu <= 10000 → đã là triệu rồi → giữ nguyên
-      return n > 10000 ? Math.round(n/1000000*100)/100 : n;
-    };
+    // Apps Script trả về VNĐ thô → convert sang triệu VNĐ để hiển thị
+    const rawToM = v => Math.round((+v || 0) / 1000000 * 1000) / 1000;
     allLeadRows = (r3 && r3.ok ? r3.leads : []).map(r => ({
       ...r,
-      hoa_hong: toMillion(r.hoa_hong),
-      thuong:   toMillion(r.thuong),
+      hoa_hong:     rawToM(r.hoa_hong),      // Cột H → triệu VNĐ
+      thuong_bai:   rawToM(r.thuong_bai),    // Cột F → triệu VNĐ
+      thuong_lead:  rawToM(r.thuong_lead),   // Cột G → triệu VNĐ
+      hoa_hong_raw: +r.hoa_hong || 0,        // Giữ nguyên VNĐ thô cho breakdown
     }));
-    console.log('[KOC] Lead rows loaded:', allLeadRows.length, 'sample hoa_hong:', allLeadRows[0]?.hoa_hong);
+    console.log('[KOC] Leads loaded:', allLeadRows.length,
+      '| sample hoa_hong:', allLeadRows[0]?.hoa_hong, 'tr',
+      '| raw:', allLeadRows[0]?.hoa_hong_raw, 'VNĐ');
     // Cập nhật dashboard + charts sau khi có đủ data
     renderDashboardMetrics();
     renderDashboardChart(hashColor(session.username));
@@ -2037,13 +2037,11 @@ function renderRevBreakdown(rows, filter) {
     return;
   }
   // Tính từng loại hoa hồng từ raw VNĐ
-  const toVND = r => {
-    const raw = +r.hoa_hong_raw || 0;
-    return raw > 0 ? raw : Math.round((+r.hoa_hong||0) * 1000000);
-  };
-  const tb_vnd  = rows.reduce((s,r) => s + (+r.thuong_bai  > 1000 ? +r.thuong_bai  : (+r.thuong_bai ||0)*1000000), 0);
-  const tl_vnd  = rows.reduce((s,r) => s + (+r.thuong_lead > 1000 ? +r.thuong_lead : (+r.thuong_lead||0)*1000000), 0);
-  const total   = rows.reduce((s,r) => s + toVND(r), 0);
+  // hoa_hong_raw = VNĐ thô từ cột H
+  // thuong_bai/thuong_lead = VNĐ thô từ cột F, G
+  const tb_vnd  = rows.reduce((s,r) => s + (+r.thuong_bai  || 0), 0);
+  const tl_vnd  = rows.reduce((s,r) => s + (+r.thuong_lead || 0), 0);
+  const total   = rows.reduce((s,r) => s + (+r.hoa_hong_raw || 0), 0);
   const tongLead  = rows.reduce((s,r) => s + (+r.tong_lead  ||0), 0);
   const leadHopLe = rows.reduce((s,r) => s + (+r.lead_hop_le||0), 0);
   const donHang   = rows.reduce((s,r) => s + (+r.don_hang   ||0), 0);
