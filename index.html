@@ -2042,7 +2042,7 @@ function renderRevBreakdown(rows, filter) {
   // Dùng raw VNĐ để hiển thị đúng đơn vị
   const tb_vnd  = rows.reduce((s,r) => s + (+r.thuong_bai_raw  || 0), 0);
   const tl_vnd  = rows.reduce((s,r) => s + (+r.thuong_lead_raw || 0), 0);
-  const total   = rows.reduce((s,r) => s + (+r.hoa_hong_raw    || 0), 0);
+  const total   = tb_vnd + tl_vnd; // Tổng = cộng tất cả các loại hoa hồng
   const tongLead  = rows.reduce((s,r) => s + (+r.tong_lead  ||0), 0);
   const leadHopLe = rows.reduce((s,r) => s + (+r.lead_hop_le||0), 0);
   const donHang   = rows.reduce((s,r) => s + (+r.don_hang   ||0), 0);
