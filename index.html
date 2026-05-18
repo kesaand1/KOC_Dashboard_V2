@@ -2234,28 +2234,55 @@ async function loadAdminData() {
   if(!kocs) kocs = [];
   document.getElementById('adminLoading').style.display='none';
 
-  document.getElementById('adminTableBody').innerHTML = kocs.map((a,i)=>{
-    const init = a.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    const color = hashColor(a.username);
-    const active = a.status==='active';
-    return `<tr>
-      <td><div class="koc-row">
-        <div class="avatar av-sm" style="background:${color}">${init}</div>
-        <div><div class="koc-name">${a.full_name}</div><div class="koc-sub">${a.username}</div></div>
-      </div></td>
-      <td style="color:var(--text2);font-size:12px">${a.username}</td>
-      <td><span class="badge ${PB[a.platform]||'b-blue'}">${a.platform}</span></td>
-      <td style="font-weight:600">${fmtVND(+a.doanh_thu)}</td>
-      <td><span class="badge ${active?'b-green':'b-amber'}">${active?'Hoạt động':'Tạm khóa'}</span></td>
-      <td style="display:flex;gap:6px;align-items:center;">
-        <button class="btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="openKocModal('${a.username}','${a.full_name}')">📊 Xem</button>
-        ${active
+  // Hiển thị bảng trước với doanh thu đang tải
+  const renderTable = (kocList, revenueMap) => {
+    document.getElementById('adminTableBody').innerHTML = kocList.map((a,i)=>{
+      const init = a.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      const color = hashColor(a.username);
+      const active = a.status==='active';
+      const rev = revenueMap[a.username];
+      const revDisplay = rev === undefined
+        ? '<span style="color:var(--text3);font-size:11px;">Đang tải...</span>'
+        : `<span style="font-weight:700;color:#1a6fa8;">${rev.toLocaleString('vi-VN')} ₫</span>`;
+      return `<tr>
+        <td><div class="koc-row">
+          <div class="avatar av-sm" style="background:${color}">${init}</div>
+          <div><div class="koc-name">${a.full_name}</div><div class="koc-sub">${a.username}</div></div>
+        </div></td>
+        <td style="color:var(--text2);font-size:12px">${a.username}</td>
+        <td><span class="badge ${PB[a.platform]||'b-blue'}">${a.platform}</span></td>
+        <td>${revDisplay}</td>
+        <td><span class="badge ${active?'b-green':'b-amber'}">${active?'Hoạt động':'Tạm khóa'}</span></td>
+        <td>${active
           ? `<button class="btn-danger" onclick="toggleStatus('${a.username}','${a.status}')">Khóa</button>`
           : `<button class="btn-success" onclick="toggleStatus('${a.username}','${a.status}')">Mở</button>`
-        }
-      </td>
-    </tr>`;
-  }).join('');
+        }</td>
+      </tr>`;
+    }).join('');
+  };
+
+  // Render ngay với placeholder
+  renderTable(kocs, {});
+
+  // Load doanh thu từng KOC song song
+  const monthNow = currentMonthStr();
+  const revenueMap = {};
+  await Promise.all(kocs.map(async a => {
+    try {
+      const res = await callApi({ action:'getLeadData', username: a.username });
+      if(res && res.ok && res.leads) {
+        const monthLeads = res.leads.filter(r => r.date && r.date.startsWith(monthNow));
+        revenueMap[a.username] = monthLeads.reduce((s,r) => s + (+r.hoa_hong||0), 0);
+      } else {
+        revenueMap[a.username] = 0;
+      }
+    } catch(e) {
+      revenueMap[a.username] = 0;
+    }
+  }));
+
+  // Re-render với doanh thu thật
+  renderTable(kocs, revenueMap);
 }
 
 async function toggleStatus(username) {
