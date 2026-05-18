@@ -2247,10 +2247,13 @@ async function loadAdminData() {
       <td><span class="badge ${PB[a.platform]||'b-blue'}">${a.platform}</span></td>
       <td style="font-weight:600">${fmtVND(+a.doanh_thu)}</td>
       <td><span class="badge ${active?'b-green':'b-amber'}">${active?'Hoạt động':'Tạm khóa'}</span></td>
-      <td>${active
-        ? `<button class="btn-danger" onclick="toggleStatus('${a.username}','${a.status}')">Khóa</button>`
-        : `<button class="btn-success" onclick="toggleStatus('${a.username}','${a.status}')">Mở</button>`
-      }</td>
+      <td style="display:flex;gap:6px;align-items:center;">
+        <button class="btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="openKocModal('${a.username}','${a.full_name}')">📊 Xem</button>
+        ${active
+          ? `<button class="btn-danger" onclick="toggleStatus('${a.username}','${a.status}')">Khóa</button>`
+          : `<button class="btn-success" onclick="toggleStatus('${a.username}','${a.status}')">Mở</button>`
+        }
+      </td>
     </tr>`;
   }).join('');
 }
@@ -2318,6 +2321,123 @@ function toggleAccordion(el) {
   siblings.forEach(s => { if(s !== el) s.classList.remove('open'); });
   el.classList.toggle('open');
 }
+
+/* ── Admin KOC Detail Modal ── */
+let modalLeadRows = [], modalChartInst = null, currentModalFilter = 'month';
+
+async function openKocModal(username, fullName) {
+  document.getElementById('modalKocName').textContent = fullName;
+  document.getElementById('modalKocUser').textContent = username;
+  document.getElementById('kocDetailModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modalMetrics').innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--text2);font-size:12px;grid-column:1/-1"><span class="spinner" style="vertical-align:middle;margin-right:6px;"></span>Đang tải...</div>';
+  document.getElementById('modalTableBody').innerHTML = '';
+
+  // Reset filter buttons
+  document.querySelectorAll('#kocDetailModal .filter-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  currentModalFilter = 'month';
+
+  const r = await callApi({ action:'getLeadData', username });
+  modalLeadRows = (r && r.ok ? r.leads : []).map(row => ({
+    ...row,
+    hoa_hong:        Math.round((+row.hoa_hong    ||0)/1000000*1000)/1000,
+    thuong_bai:      Math.round((+row.thuong_bai  ||0)/1000000*1000)/1000,
+    thuong_lead:     Math.round((+row.thuong_lead ||0)/1000000*1000)/1000,
+    hoa_hong_raw:    +row.hoa_hong    || 0,
+    thuong_bai_raw:  +row.thuong_bai  || 0,
+    thuong_lead_raw: +row.thuong_lead || 0,
+  }));
+
+  renderModalData('month');
+}
+
+function closeKocModal() {
+  document.getElementById('kocDetailModal').style.display = 'none';
+  document.body.style.overflow = '';
+  if(modalChartInst) { modalChartInst.destroy(); modalChartInst = null; }
+}
+
+function setModalFilter(filter, btn) {
+  currentModalFilter = filter;
+  document.querySelectorAll('#kocDetailModal .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderModalData(filter);
+}
+
+function filterModalRows(filter) {
+  const today = todayStr();
+  if(filter==='month') return modalLeadRows.filter(r=>r.date&&r.date.startsWith(currentMonthStr()));
+  if(filter==='30d')   return modalLeadRows.filter(r=>r.date>=daysAgoStr(29)&&r.date<=today);
+  return modalLeadRows; // all
+}
+
+function renderModalData(filter) {
+  const rows = filterModalRows(filter);
+  const sorted = [...rows].sort((a,b)=>a.date.localeCompare(b.date));
+
+  const totalHH   = sorted.reduce((s,r)=>s+(+r.hoa_hong_raw||0),0);
+  const totalLead = sorted.reduce((s,r)=>s+(+r.tong_lead||0),0);
+  const totalHL   = sorted.reduce((s,r)=>s+(+r.lead_hop_le||0),0);
+  const totalDon  = sorted.reduce((s,r)=>s+(+r.don_hang||0),0);
+  const totalTB   = sorted.reduce((s,r)=>s+(+r.thuong_bai_raw||0),0);
+  const totalTL   = sorted.reduce((s,r)=>s+(+r.thuong_lead_raw||0),0);
+
+  // Metrics
+  const metricStyle = 'padding:1rem;background:var(--bg2);text-align:center;';
+  document.getElementById('modalMetrics').innerHTML = `
+    <div style="${metricStyle}">
+      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Hoa hồng</div>
+      <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#1a6fa8;">${totalHH.toLocaleString('vi-VN')} ₫</div>
+    </div>
+    <div style="${metricStyle}border-left:1px solid var(--border);border-right:1px solid var(--border)">
+      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Lead hợp lệ</div>
+      <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#00b5c8;">${totalHL}</div>
+    </div>
+    <div style="${metricStyle}">
+      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Đơn hàng</div>
+      <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#22c55e;">${totalDon}</div>
+    </div>
+  `;
+
+  // Chart
+  document.getElementById('modalChartTitle').textContent = `Hoa hồng theo ngày (${sorted.length} ngày)`;
+  const labels = sorted.map(r=>{ const p=r.date.split('-'); return p[2]+'/'+p[1]; });
+  const data   = sorted.map(r=>+r.hoa_hong_raw||0);
+  if(modalChartInst) modalChartInst.destroy();
+  modalChartInst = new Chart(document.getElementById('modalChart'),{
+    type:'bar',
+    data:{labels, datasets:[{
+      label:'Hoa hồng',data,
+      backgroundColor:'rgba(26,111,168,0.5)',borderColor:'#1a6fa8',
+      borderWidth:1.5,borderRadius:4
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toLocaleString('vi-VN')} ₫`}}},
+      scales:{
+        y:{ticks:{color:'#555b72',font:{size:10},callback:v=>v>=1000000?(v/1000000).toFixed(1)+'M':v>=1000?(v/1000).toFixed(0)+'K':v},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+        x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:12},grid:{display:false},border:{display:false}}
+      }
+    }
+  });
+
+  // Table
+  document.getElementById('modalTableBody').innerHTML = [...sorted].reverse().map(r=>{
+    const p = r.date.split('-');
+    return `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 10px;color:var(--text);font-weight:500;">${p[2]}/${p[1]}/${p[0]}</td>
+      <td style="padding:8px 10px;text-align:right;color:var(--text2);">${+r.tong_lead||0}</td>
+      <td style="padding:8px 10px;text-align:right;color:#00b5c8;font-weight:600;">${+r.lead_hop_le||0}</td>
+      <td style="padding:8px 10px;text-align:right;color:#22c55e;">${+r.don_hang||0}</td>
+      <td style="padding:8px 10px;text-align:right;color:#1a6fa8;font-weight:700;">${(+r.hoa_hong_raw||0).toLocaleString('vi-VN')} ₫</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" style="padding:1.5rem;text-align:center;color:var(--text2);">Không có dữ liệu</td></tr>';
+}
+
+// Đóng modal khi click ngoài
+document.getElementById('kocDetailModal').addEventListener('click', function(e) {
+  if(e.target === this) closeKocModal();
+});
 
 function doLogout() {
   session=null; portalData=null; allDays=[]; historyData=[];
