@@ -2238,12 +2238,15 @@ async function loadAdminData() {
   const leadsRes = await callApi({ action:'getAllLeads', role:'admin' });
   const summary = (leadsRes && leadsRes.ok) ? leadsRes.summary : {};
 
+
   const renderTable = (kocList) => {
     document.getElementById('adminTableBody').innerHTML = kocList.map((a,i)=>{
       const init = a.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
       const color = hashColor(a.username);
       const active = a.status==='active';
-      const rev = summary[a.username]?.hoa_hong || 0;
+      // Match case-insensitive vì username trong Leads có thể khác case
+      const summaryKey = Object.keys(summary).find(k => k.toLowerCase() === a.username.toLowerCase()) || a.username;
+      const rev = summary[summaryKey]?.hoa_hong || 0;
       const revDisplay = rev > 0
         ? `<span style="font-weight:700;color:#1a6fa8;">${rev.toLocaleString('vi-VN')} ₫</span>`
         : `<span style="color:var(--text3);font-size:12px;">0 ₫</span>`;
