@@ -1582,7 +1582,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbxmpoOnasMPk38MGqIEXO8hLgaJ1tmRefaTaVxnbZWONO1HauIJtN0wGqFnwORkuPIXcA/exec';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbxKyQB1MH_2FkTwWgtOoSW6MituqLOWyPO89d0joRdkda0CfamhF3CfWRdQYI3UIQ8C9g/exec';
 
 const AC = ['#1a6fa8','#22c55e','#00b5c8','#00b5c8','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -2234,16 +2234,19 @@ async function loadAdminData() {
   if(!kocs) kocs = [];
   document.getElementById('adminLoading').style.display='none';
 
-  // Hiển thị bảng trước với doanh thu đang tải
-  const renderTable = (kocList, revenueMap) => {
+  // Load doanh thu tất cả KOC 1 lần duy nhất (nhanh)
+  const leadsRes = await callApi({ action:'getAllLeads', role:'admin' });
+  const summary = (leadsRes && leadsRes.ok) ? leadsRes.summary : {};
+
+  const renderTable = (kocList) => {
     document.getElementById('adminTableBody').innerHTML = kocList.map((a,i)=>{
       const init = a.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
       const color = hashColor(a.username);
       const active = a.status==='active';
-      const rev = revenueMap[a.username];
-      const revDisplay = rev === undefined
-        ? '<span style="color:var(--text3);font-size:11px;">Đang tải...</span>'
-        : `<span style="font-weight:700;color:#1a6fa8;">${rev.toLocaleString('vi-VN')} ₫</span>`;
+      const rev = summary[a.username]?.hoa_hong || 0;
+      const revDisplay = rev > 0
+        ? `<span style="font-weight:700;color:#1a6fa8;">${rev.toLocaleString('vi-VN')} ₫</span>`
+        : `<span style="color:var(--text3);font-size:12px;">0 ₫</span>`;
       return `<tr>
         <td><div class="koc-row">
           <div class="avatar av-sm" style="background:${color}">${init}</div>
@@ -2261,28 +2264,7 @@ async function loadAdminData() {
     }).join('');
   };
 
-  // Render ngay với placeholder
-  renderTable(kocs, {});
-
-  // Load doanh thu từng KOC song song
-  const monthNow = currentMonthStr();
-  const revenueMap = {};
-  await Promise.all(kocs.map(async a => {
-    try {
-      const res = await callApi({ action:'getLeadData', username: a.username });
-      if(res && res.ok && res.leads) {
-        const monthLeads = res.leads.filter(r => r.date && r.date.startsWith(monthNow));
-        revenueMap[a.username] = monthLeads.reduce((s,r) => s + (+r.hoa_hong||0), 0);
-      } else {
-        revenueMap[a.username] = 0;
-      }
-    } catch(e) {
-      revenueMap[a.username] = 0;
-    }
-  }));
-
-  // Re-render với doanh thu thật
-  renderTable(kocs, revenueMap);
+  renderTable(kocs);
 }
 
 async function toggleStatus(username) {
