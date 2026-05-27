@@ -2625,7 +2625,7 @@ async function doRegister() {
   btn.textContent = 'Đang gửi...';
   btn.disabled = true;
 
-  let username = '', password = 'edupia123';
+  let finalUsername = username, password = 'edupia123';
   try {
     const res = await callApi({
       action:    'register',
@@ -2636,13 +2636,19 @@ async function doRegister() {
       link: link || '',
     });
     if(res && res.ok) {
-      username = res.username || username;
+      finalUsername = res.username || username;
       password = res.password || 'edupia123';
+    } else if(res && res.error) {
+      errEl.textContent = res.error;
+      errEl.style.display = 'block';
+      btn.textContent = 'Gửi đăng ký';
+      btn.disabled = false;
+      return;
     }
   } catch(e) {}
 
   // Hiển thị thành công với thông tin tài khoản
-  document.getElementById('regSuccessUser').textContent = username || phone.replace(/[^0-9]/g,'');
+  document.getElementById('regSuccessUser').textContent = finalUsername || phone.replace(/[^0-9]/g,'');
   document.getElementById('regSuccessPass').textContent = password;
   document.getElementById('regForm').style.display = 'none';
   document.getElementById('regSuccess').style.display = 'block';
