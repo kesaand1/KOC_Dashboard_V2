@@ -434,7 +434,6 @@ tr:hover td { background:var(--bg3); }
   background:rgba(0,0,0,0.7); backdrop-filter:blur(6px);
   align-items:center; justify-content:center; padding:1rem;
 }
-.reg-modal-overlay.show { display:flex; }
 .reg-modal {
   background:var(--bg2); border:1px solid var(--border);
   border-radius:var(--radius-xl); width:100%; max-width:480px;
@@ -2578,23 +2577,27 @@ function validateUsername(input) {
 }
 
 function openRegModal() {
-  document.getElementById('regModal').classList.add('show');
-  document.getElementById('regForm').style.display='flex';
-  document.getElementById('regSuccess').style.display='none';
-  document.getElementById('regUsername').value='';
-  document.getElementById('regUsername').style.borderColor='';
-  document.getElementById('regUsernameHint').style.color='var(--text2)';
-  document.getElementById('regUsernameHint').textContent='Chỉ gồm chữ cái và số, không dấu, tối thiểu 8 ký tự';
-  document.getElementById('regName').value='';
-  document.getElementById('regPhone').value='';
-  document.getElementById('regPlatform').value='';
-  document.getElementById('regLink').value='';
-  document.getElementById('regErr').style.display='none';
+  const modal = document.getElementById('regModal');
+  if(!modal) return;
+  modal.style.display = 'flex';
+  const form = document.getElementById('regForm');
+  const success = document.getElementById('regSuccess');
+  if(form) form.style.display = 'flex';
+  if(success) success.style.display = 'none';
+  const fields = ['regUsername','regName','regPhone','regLink'];
+  fields.forEach(id => { const el = document.getElementById(id); if(el) { el.value=''; el.style.borderColor=''; } });
+  const hint = document.getElementById('regUsernameHint');
+  if(hint) { hint.style.color='var(--text2)'; hint.textContent='Chỉ gồm chữ cái và số, không dấu, tối thiểu 8 ký tự'; }
+  const platform = document.getElementById('regPlatform');
+  if(platform) platform.value = '';
+  const err = document.getElementById('regErr');
+  if(err) err.style.display = 'none';
 }
 
 function closeRegModal(e) {
-  if(e && e.target !== document.getElementById('regModal')) return;
-  document.getElementById('regModal').classList.remove('show');
+  if(e && e.target.id !== 'regModal') return;
+  const modal = document.getElementById('regModal');
+  if(modal) modal.style.display = 'none';
 }
 
 async function doRegister() {
