@@ -741,6 +741,53 @@ tr:hover td { background:var(--bg3); }
   </div>
 </div>
 
+<!-- ══ BẢNG VINH DANH POPUP ══ -->
+<div id="leaderboardPopup" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;">
+  <div style="max-width:420px;width:100%;position:relative;animation:popupIn .4s cubic-bezier(.34,1.56,.64,1) both;">
+    <style>
+    @keyframes popupIn{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .lb-wrap{background:linear-gradient(160deg,#0d1520 0%,#1a2540 60%,#0f2035 100%);border:1px solid rgba(255,255,255,0.12);border-radius:24px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.5);}
+    .lb-header{background:linear-gradient(135deg,#1a6fa8,#00b5c8);padding:1.5rem;text-align:center;position:relative;}
+    .lb-header::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.05),transparent);}
+    .lb-crown{font-size:2.5rem;display:block;margin-bottom:.5rem;filter:drop-shadow(0 4px 8px rgba(255,200,0,.4));}
+    .lb-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;position:relative;}
+    .lb-month{font-size:13px;color:rgba(255,255,255,.8);position:relative;}
+    .lb-body{padding:1.25rem 1.25rem .75rem;}
+    .lb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;margin-bottom:8px;position:relative;overflow:hidden;}
+    .lb-item.r1{background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,180,0,.08));border:1px solid rgba(255,215,0,.3);}
+    .lb-item.r2{background:linear-gradient(135deg,rgba(192,192,192,.12),rgba(160,160,160,.06));border:1px solid rgba(192,192,192,.25);}
+    .lb-item.r3{background:linear-gradient(135deg,rgba(205,127,50,.12),rgba(180,100,30,.06));border:1px solid rgba(205,127,50,.25);}
+    .lb-rank{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;flex-shrink:0;}
+    .lb-item.r1 .lb-rank{background:linear-gradient(135deg,#ffd700,#ffb300);color:#7a4f00;box-shadow:0 4px 12px rgba(255,215,0,.4);}
+    .lb-item.r2 .lb-rank{background:linear-gradient(135deg,#c8c8c8,#a0a0a0);color:#3a3a3a;box-shadow:0 4px 12px rgba(192,192,192,.3);}
+    .lb-item.r3 .lb-rank{background:linear-gradient(135deg,#cd7f32,#a0522d);color:#fff;box-shadow:0 4px 12px rgba(205,127,50,.3);}
+    .lb-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+    .lb-name{flex:1;font-size:14px;font-weight:700;color:#f0f2f8;}
+    .lb-rev{font-family:'Sora',sans-serif;font-size:14px;font-weight:800;white-space:nowrap;}
+    .lb-item.r1 .lb-rev{color:#ffd700;}
+    .lb-item.r2 .lb-rev{color:#c8c8c8;}
+    .lb-item.r3 .lb-rev{color:#cd7f32;}
+    .lb-empty{text-align:center;padding:2rem;color:rgba(255,255,255,.5);font-size:13px;}
+    .lb-footer{padding:.75rem 1.25rem 1.25rem;text-align:center;}
+    .lb-close-btn{background:linear-gradient(135deg,#1a6fa8,#00b5c8);color:#fff;border:none;border-radius:12px;padding:11px 32px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;width:100%;}
+    .lb-close-btn:hover{opacity:.9;}
+    </style>
+    <div class="lb-wrap">
+      <div class="lb-header">
+        <span class="lb-crown">🏆</span>
+        <div class="lb-title">Bảng Vinh Danh Tháng</div>
+        <div class="lb-month" id="lbMonth"></div>
+      </div>
+      <div class="lb-body" id="lbBody">
+        <div class="lb-empty">Đang tải...</div>
+      </div>
+      <div class="lb-footer">
+        <button class="lb-close-btn" onclick="closeLeaderboard()">Bắt đầu làm việc 🚀</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ KOC PORTAL ══ -->
 <div class="screen" id="screen-portal">
   <div class="app">
@@ -1677,7 +1724,7 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
-const apiUrl = 'https://script.google.com/macros/s/AKfycbxy3786vNBtYrmWwM3i1i7bkDxnDF-UEI-x3BFDyeeLIvr5qa8La53E8WbMKot3tiCnCQ/exec';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbynfL55pmRKuWG7-Siv3WmhIlgK4gtJIyH3ueM8Zz8rRBNvTUo4UOPEjAFx10ZtgwP4mg/exec';
 
 const AC = ['#1a6fa8','#22c55e','#00b5c8','#00b5c8','#06b6d4','#f97316'];
 const aC = i => AC[Math.abs(i) % AC.length];
@@ -2657,6 +2704,57 @@ async function doRegister() {
   btn.disabled = false;
 }
 
+/* ── Bảng vinh danh ── */
+async function showLeaderboard() {
+  const popup = document.getElementById('leaderboardPopup');
+  popup.style.display = 'flex';
+
+  // Set tháng hiện tại
+  const now = new Date();
+  const monthStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  const monthDisplay = `Tháng ${now.getMonth()+1}/${now.getFullYear()}`;
+  document.getElementById('lbMonth').textContent = monthDisplay;
+
+  const body = document.getElementById('lbBody');
+  body.innerHTML = '<div class="lb-empty">Đang tải dữ liệu...</div>';
+
+  const r = await callApi({ action:'getTop3', month: monthStr });
+  const top3 = r && r.ok ? r.top3 : [];
+
+  const medals = ['🥇','🥈','🥉'];
+  const rankClass = ['r1','r2','r3'];
+
+  if(top3.length === 0) {
+    body.innerHTML = '<div class="lb-empty">Chưa có dữ liệu tháng này 📊</div>';
+    return;
+  }
+
+  body.innerHTML = top3.map(koc => {
+    const init = koc.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const color = hashColor(koc.username);
+    const cls   = rankClass[koc.rank-1];
+    const rev   = koc.hoa_hong.toLocaleString('vi-VN') + ' ₫';
+    return `<div class="lb-item ${cls}">
+      <div class="lb-rank">${medals[koc.rank-1]}</div>
+      <div class="lb-avatar" style="background:${color}">${init}</div>
+      <div class="lb-name">${koc.full_name}</div>
+      <div class="lb-rev">${rev}</div>
+    </div>`;
+  }).join('');
+}
+
+function closeLeaderboard() {
+  document.getElementById('leaderboardPopup').style.display = 'none';
+  // Đánh dấu đã xem trong session này
+  sessionStorage.setItem('lb_shown_' + currentMonthStr(), '1');
+}
+
+function shouldShowLeaderboard() {
+  // Chỉ hiện 1 lần mỗi tháng sau khi login
+  const key = 'lb_shown_' + currentMonthStr();
+  return !sessionStorage.getItem(key);
+}
+
 function doLogout() {
   session=null; portalData=null; allDays=[]; historyData=[];
   localStorage.removeItem('koc_session');
@@ -2708,6 +2806,10 @@ function closeSidebar() {
     } else {
       await loadPortalData();
       showScreen('screen-portal');
+      // Hiện bảng vinh danh sau 800ms (đủ thời gian render portal)
+      setTimeout(() => {
+        if(shouldShowLeaderboard()) showLeaderboard();
+      }, 800);
     }
   } catch(e) {
     // Nếu lỗi parse thì xóa session lỗi
