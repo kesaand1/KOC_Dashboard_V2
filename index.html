@@ -2746,12 +2746,12 @@ async function showLeaderboard() {
 function closeLeaderboard() {
   document.getElementById('leaderboardPopup').style.display = 'none';
   // Đánh dấu đã xem trong session này
-  sessionStorage.setItem('lb_shown_' + currentMonthStr(), '1');
+  sessionStorage.setItem('lb_v2_' + currentMonthStr(), '1');
 }
 
 function shouldShowLeaderboard() {
-  // Chỉ hiện 1 lần mỗi tháng sau khi login
-  const key = 'lb_shown_' + currentMonthStr();
+  // Hiện mỗi lần đăng nhập mới trong tháng (không phải mỗi lần F5)
+  const key = 'lb_v2_' + currentMonthStr();
   return !sessionStorage.getItem(key);
 }
 
@@ -2806,7 +2806,8 @@ function closeSidebar() {
     } else {
       await loadPortalData();
       showScreen('screen-portal');
-      // Hiện bảng vinh danh sau 800ms (đủ thời gian render portal)
+      // Hiện bảng vinh danh sau login mới (không phải restore)
+      sessionStorage.removeItem('lb_v2_' + currentMonthStr());
       setTimeout(() => {
         if(shouldShowLeaderboard()) showLeaderboard();
       }, 800);
