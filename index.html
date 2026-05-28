@@ -1886,6 +1886,12 @@ async function loadPortalData() {
     renderLeadChart(currentLeadFilter);
   }, 200);
 
+  // Hiện bảng vinh danh sau khi load xong (delay 1.5s để chắc chắn)
+  setTimeout(() => {
+    console.log('[LB] Attempting to show leaderboard, shouldShow:', shouldShowLeaderboard());
+    if(shouldShowLeaderboard()) showLeaderboard();
+  }, 1500);
+
   const color = hashColor(session.username);
   const initials = session.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
 
