@@ -2597,7 +2597,8 @@ function renderModalData(filter) {
 }
 
 // Đóng modal khi click ngoài
-document.getElementById('kocDetailModal').addEventListener('click', function(e) {
+const _kocModal = document.getElementById('kocDetailModal');
+if(_kocModal) _kocModal.addEventListener('click', function(e) {
   if(e.target === this) closeKocModal();
 });
 
@@ -2706,7 +2707,9 @@ async function doRegister() {
 
 /* ── Bảng vinh danh ── */
 async function showLeaderboard() {
+  console.log('[LB] showLeaderboard called');
   const popup = document.getElementById('leaderboardPopup');
+  if(!popup) { console.error('[LB] ERROR: popup element not found!'); return; }
   popup.style.display = 'flex';
 
   // Set tháng hiện tại
