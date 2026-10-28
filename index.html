@@ -872,6 +872,19 @@ tr:hover td { background:var(--bg3); }
         </div>
       </div>
       <div class="sidebar-footer">
+        <div style="padding:8px 12px 0;">
+          <div class="lang-switcher" id="langSwitcherDesktop" style="width:100%;">
+            <button class="lang-btn" onclick="toggleLangDropdown(this)" id="langBtnLabelDesktop"
+              style="width:100%;justify-content:center;border-radius:10px;padding:7px 12px;">
+              <span class="lang-flag">🇻🇳</span> VI
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="lang-dropdown" id="langDropdownDesktop">
+              <div class="lang-option active" onclick="setLang('vi')"><span class="lang-flag">🇻🇳</span> Tiếng Việt</div>
+              <div class="lang-option" onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</div>
+            </div>
+          </div>
+        </div>
         <div class="user-card">
           <div class="user-avatar avatar av-sm" id="portalSidebarAvatar" style="background:#1a6fa8"></div>
           <div class="user-info">
@@ -1684,6 +1697,19 @@ tr:hover td { background:var(--bg3); }
         </div>
       </div>
       <div class="sidebar-footer">
+        <div style="padding:8px 12px 0;">
+          <div class="lang-switcher" id="langSwitcherAdminDesktop" style="width:100%;">
+            <button class="lang-btn" onclick="toggleLangDropdown(this)" id="langBtnLabelAdminDesktop"
+              style="width:100%;justify-content:center;border-radius:10px;padding:7px 12px;">
+              <span class="lang-flag">🇻🇳</span> VI
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="lang-dropdown" id="langDropdownAdminDesktop">
+              <div class="lang-option active" onclick="setLang('vi')"><span class="lang-flag">🇻🇳</span> Tiếng Việt</div>
+              <div class="lang-option" onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</div>
+            </div>
+          </div>
+        </div>
         <div class="user-card">
           <div class="user-avatar avatar av-sm" style="background:#00b5c8;">AD</div>
           <div class="user-info">
@@ -3068,7 +3094,7 @@ function setLang(lang) {
   const flag  = isVI ? '🇻🇳' : '🇬🇧';
   const label = isVI ? 'VI'  : 'EN';
 
-  ['langBtnLabel','langBtnLabel2'].forEach(id => {
+  ['langBtnLabel','langBtnLabel2','langBtnLabelDesktop','langBtnLabelAdminDesktop'].forEach(id => {
     const btn = document.getElementById(id);
     if (!btn) return;
     btn.innerHTML = `<span class="lang-flag">${flag}</span> ${label}
