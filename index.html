@@ -574,11 +574,11 @@ tr:hover td { background:var(--bg3); }
 .lang-btn:hover { border-color:#1a6fa8; color:#1a6fa8; }
 .lang-flag { font-size:16px; line-height:1; }
 .lang-dropdown {
-  display:none; position:absolute; top:calc(100% + 6px); right:0;
+  display:none; position:fixed;
   background:var(--bg2); border:1px solid var(--border);
   border-radius:10px; overflow:hidden;
   box-shadow:0 8px 24px rgba(0,0,0,0.25);
-  min-width:150px; z-index:9999;
+  min-width:150px; z-index:99999;
 }
 .lang-dropdown.open { display:block; }
 .lang-option {
@@ -3040,20 +3040,22 @@ function t(key) {
 }
 
 function toggleLangDropdown(btn) {
-  // Find the dropdown sibling inside the same .lang-switcher parent
   const switcher = btn ? btn.closest('.lang-switcher') : null;
   if (switcher) {
     const dd = switcher.querySelector('.lang-dropdown');
     if (dd) {
       const wasOpen = dd.classList.contains('open');
-      // Close all dropdowns first
       document.querySelectorAll('.lang-dropdown').forEach(el => el.classList.remove('open'));
-      // Re-open only this one if it was closed
-      if (!wasOpen) dd.classList.add('open');
+      if (!wasOpen) {
+        // position:fixed needs explicit coordinates (position:sticky creates stacking context)
+        const rect = switcher.getBoundingClientRect();
+        dd.style.top  = (rect.bottom + 6) + 'px';
+        dd.style.right = (window.innerWidth - rect.right) + 'px';
+        dd.classList.add('open');
+      }
       return;
     }
   }
-  // Fallback: toggle whichever exists
   document.querySelectorAll('.lang-dropdown').forEach(el => el.classList.toggle('open'));
 }
 
