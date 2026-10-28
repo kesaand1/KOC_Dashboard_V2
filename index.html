@@ -3150,9 +3150,7 @@ function applyTranslations() {
       const nodes = el.childNodes;
       for (let i = nodes.length - 1; i >= 0; i--) {
         if (nodes[i].nodeType === 3 && nodes[i].textContent.trim()) {
-          nodes[i].textContent = '
-          ' + navMap[oc][isVI ? 0 : 1] + '
-        ';
+          nodes[i].textContent = ' ' + navMap[oc][isVI ? 0 : 1];
           break;
         }
       }
