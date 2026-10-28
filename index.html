@@ -665,7 +665,20 @@ tr:hover td { background:var(--bg3); }
       </div>
     </div>
 
-    <div class="login-right">
+    <div class="login-right" style="position:relative;">
+      <!-- Language switcher on login page -->
+      <div style="position:absolute;top:16px;right:16px;z-index:100;">
+        <div class="lang-switcher" id="langSwitcherLogin">
+          <button class="lang-btn" onclick="toggleLangDropdown(this)" id="langBtnLabelLogin">
+            <span class="lang-flag">🇻🇳</span> VI
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-dropdown" id="langDropdownLogin">
+            <div class="lang-option active" onclick="setLang('vi')"><span class="lang-flag">🇻🇳</span> Tiếng Việt</div>
+            <div class="lang-option" onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</div>
+          </div>
+        </div>
+      </div>
       <div class="login-form-wrap">
         <div class="login-form-logo">
           <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
@@ -703,12 +716,12 @@ tr:hover td { background:var(--bg3); }
 <div class="reg-modal-overlay" id="regModal" onclick="closeRegModal(event)">
   <div class="reg-modal">
     <div class="reg-modal-head">
-      <span class="reg-modal-title">📝 Đăng ký tham gia</span>
+      <span class="reg-modal-title" id="regModalTitle">📝 Đăng ký tham gia</span>
       <button class="reg-modal-close" onclick="closeRegModal()">✕ Đóng</button>
     </div>
     <div class="reg-modal-body" id="regForm">
       <div style="background:linear-gradient(135deg,rgba(26,111,168,0.08),rgba(0,181,200,0.05));border:1px solid rgba(26,111,168,0.2);border-radius:var(--radius-lg);padding:12px 14px;font-size:13px;color:var(--text2);line-height:1.6;">
-        🎉 Điền thông tin bên dưới để tạo tài khoản Edupia Affiliate ngay lập tức.
+        <span id="regModalIntro">🎉 Điền thông tin bên dưới để tạo tài khoản Edupia Affiliate ngay lập tức.</span>
       </div>
       <div>
         <label class="form-label">Tên đăng nhập *</label>
@@ -752,7 +765,7 @@ tr:hover td { background:var(--bg3); }
       </div>
       <div id="regErr" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#ef4444;"></div>
       <button onclick="doRegister()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a6fa8,#00b5c8);color:#fff;border:none;border-radius:var(--radius-lg);font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;" id="regBtn">
-        Gửi đăng ký
+        <span id="regBtnText">Gửi đăng ký</span>
       </button>
       <div style="text-align:center;font-size:12px;color:var(--text2);">
         Liên hệ trực tiếp: <strong style="color:var(--text)">Zalo 0813468321</strong> hoặc <strong style="color:var(--text)">koc_affiliate@edupia.vn</strong>
@@ -760,8 +773,8 @@ tr:hover td { background:var(--bg3); }
     </div>
     <div class="reg-success" id="regSuccess">
       <div class="reg-success-icon">🎉</div>
-      <div class="reg-success-title">Đăng ký thành công!</div>
-      <div class="reg-success-sub">Tài khoản của bạn đã được tạo. Lưu lại thông tin để đăng nhập:</div>
+      <div class="reg-success-title" id="regSuccessTitle">Đăng ký thành công!</div>
+      <div class="reg-success-sub" id="regSuccessSub">Tài khoản của bạn đã được tạo. Lưu lại thông tin để đăng nhập:</div>
       <div style="margin:1rem 0;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;text-align:left;display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <span style="font-size:12px;color:var(--text2);">Tên đăng nhập</span>
@@ -1624,10 +1637,10 @@ tr:hover td { background:var(--bg3); }
             <span class="card-title" id="leadChartTitle">Lead theo ngày</span>
             <div style="display:flex;gap:8px;align-items:center;">
               <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
-                <span style="width:10px;height:10px;border-radius:2px;background:#1a6fa8;display:inline-block;"></span>Tổng lead
+                <span style="width:10px;height:10px;border-radius:2px;background:#1a6fa8;display:inline-block;"></span><span id="legendTotalLead">Tổng lead</span>
               </div>
               <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);">
-                <span style="width:10px;height:10px;border-radius:2px;background:#22c55e;display:inline-block;"></span>Lead hợp lệ
+                <span style="width:10px;height:10px;border-radius:2px;background:#22c55e;display:inline-block;"></span><span id="legendValidLead">Lead hợp lệ</span>
               </div>
             </div>
           </div>
@@ -1761,11 +1774,11 @@ tr:hover td { background:var(--bg3); }
             <table>
               <thead><tr>
                 <th style="width:30%">KOC</th>
-                <th style="width:18%">Tài khoản</th>
+                <th style="width:18%" id="thAdminAccount">Tài khoản</th>
                 <th style="width:14%">Platform</th>
-                <th style="width:14%">Doanh thu</th>
-                <th style="width:12%">Trạng thái</th>
-                <th style="width:12%">Thao tác</th>
+                <th style="width:14%" id="thAdminRev">Doanh thu</th>
+                <th style="width:12%" id="thAdminStatus">Trạng thái</th>
+                <th style="width:12%" id="thAdminAction">Thao tác</th>
               </tr></thead>
               <tbody id="adminTableBody"></tbody>
             </table>
@@ -1775,8 +1788,8 @@ tr:hover td { background:var(--bg3); }
 
       <div class="atab page" id="atab-add">
         <div class="page-header">
-          <div class="page-title">Thêm tài khoản</div>
-          <div class="page-sub">Tạo tài khoản mới cho KOC</div>
+          <div class="page-title" id="addAccTitle">Thêm tài khoản</div>
+          <div class="page-sub" id="addAccSub">Tạo tài khoản mới cho KOC</div>
         </div>
         <div class="card" style="max-width:480px;">
           <div class="error-box" id="addErr"></div>
@@ -1884,6 +1897,8 @@ async function doLogin() {
   localStorage.setItem('koc_session', JSON.stringify({ data: session, savedAt: Date.now() }));
   if (session.role==='admin') { loadAdminData(); showScreen('screen-admin'); }
   else { await loadPortalData(); showScreen('screen-portal'); }
+  // Re-apply language after login (content was just rendered)
+  if (currentLang && currentLang !== 'vi') { setTimeout(()=>setLang(currentLang), 100); }
 }
 
 document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
@@ -2198,7 +2213,7 @@ function renderRevChart(filter) {
 }
 
 function renderRevChartRaw(labels, data, avgData, color, title) {
-  document.getElementById('revChartTitle').textContent = `Hoa hồng — ${title}`;
+  document.getElementById('revChartTitle').textContent = `${currentLang==='en'?'Commission':'Hoa hồng'} — ${title}`;
   const opts = {
     responsive:true, maintainAspectRatio:false,
     interaction:{mode:'index',intersect:false},
@@ -2247,19 +2262,19 @@ function updateRevMetrics(total, days, filter, count, filteredRows) {
 
   document.getElementById('portalRevMetrics').innerHTML=`
     <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
-      <div class="metric-label">Hoa hồng (dự kiến)</div>
+      <div class="metric-label">${currentLang==='en'?'Commission (est.)':'Hoa hồng (dự kiến)'}</div>
       <div class="metric-value" style="font-size:18px">${fmtVND(totalHoaHong)}</div>
-      <div class="metric-change change-up">${count} ngày</div></div>
+      <div class="metric-change change-up">${count} ${currentLang==='en'?'days':'ngày'}</div></div>
     <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
-      <div class="metric-label">Trung bình hoa hồng / ngày</div>
+      <div class="metric-label">${currentLang==='en'?'Avg commission / day':'Trung bình hoa hồng / ngày'}</div>
       <div class="metric-value" style="font-size:18px">${fmtVND(count>0?totalHoaHong/count:0)}</div>
-      <div class="metric-change change-neu">${count} ngày</div></div>
+      <div class="metric-change change-neu">${count} ${currentLang==='en'?'days':'ngày'}</div></div>
   `;
   document.getElementById('revSummaryRow').innerHTML=`
-    <div class="summary-item"><div class="summary-val" style="font-size:15px">${fmtVND(totalHoaHong)}</div><div class="summary-lbl">Tổng hoa hồng</div></div>
-    <div class="summary-item"><div class="summary-val" style="font-size:15px">${fmtVND(count>0?totalHoaHong/count:0)}</div><div class="summary-lbl">TB/ngày</div></div>
-    <div class="summary-item"><div class="summary-val">${count}</div><div class="summary-lbl">Ngày có data</div></div>
-    <div class="summary-item"><div class="summary-val">${count>0?Math.round(totalHoaHong/(portalData.muc_tieu_rev||1)*100):0}%</div><div class="summary-lbl">Mục tiêu</div></div>
+    <div class="summary-item"><div class="summary-val" style="font-size:15px">${fmtVND(totalHoaHong)}</div><div class="summary-lbl">${currentLang==='en'?'Total Commission':'Tổng hoa hồng'}</div></div>
+    <div class="summary-item"><div class="summary-val" style="font-size:15px">${fmtVND(count>0?totalHoaHong/count:0)}</div><div class="summary-lbl">${currentLang==='en'?'Avg/day':'TB/ngày'}</div></div>
+    <div class="summary-item"><div class="summary-val">${count}</div><div class="summary-lbl">${currentLang==='en'?'Days with data':'Ngày có data'}</div></div>
+    <div class="summary-item"><div class="summary-val">${count>0?Math.round(totalHoaHong/(portalData.muc_tieu_rev||1)*100):0}%</div><div class="summary-lbl">${currentLang==='en'?'Goal':'Mục tiêu'}</div></div>
   `;
   renderRevBreakdown(filteredRows || [], filter);
 }
@@ -2371,27 +2386,27 @@ function renderLeadChart(filter) {
   // 4 metric cards
   document.getElementById('portalLeadMetrics').innerHTML=`
     <div class="metric"><div class="metric-accent" style="background:#1a6fa8"></div>
-      <div class="metric-label">Tổng lead</div>
+      <div class="metric-label">${currentLang==='en'?'Total Leads':'Tổng lead'}</div>
       <div class="metric-value">${totalLead}</div>
-      <div class="metric-change change-neu">${sorted.length} ngày</div></div>
+      <div class="metric-change change-neu">${sorted.length} ${currentLang==='en'?'days':'ngày'}</div></div>
     <div class="metric"><div class="metric-accent" style="background:#22c55e"></div>
-      <div class="metric-label">Lead hợp lệ</div>
+      <div class="metric-label">${currentLang==='en'?'Valid Leads':'Lead hợp lệ'}</div>
       <div class="metric-value">${totalHopLe}</div>
-      <div class="metric-change change-neu">${pctHopLe}% tổng lead</div></div>
+      <div class="metric-change change-neu">${pctHopLe}% ${currentLang==='en'?'of total':'tổng lead'}</div></div>
     <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
-      <div class="metric-label">Đơn hàng</div>
+      <div class="metric-label">${currentLang==='en'?'Orders':'Đơn hàng'}</div>
       <div class="metric-value">${totalDon}</div>
-      <div class="metric-change change-neu">từ lead hợp lệ</div></div>
+      <div class="metric-change change-neu">${currentLang==='en'?'from valid leads':'từ lead hợp lệ'}</div></div>
     <div class="metric"><div class="metric-accent" style="background:#00b5c8"></div>
-      <div class="metric-label">Tỷ lệ hợp lệ</div>
+      <div class="metric-label">${currentLang==='en'?'Valid Rate':'Tỷ lệ hợp lệ'}</div>
       <div class="metric-value">${pctHopLe}%</div>
-      <div class="metric-change ${pctHopLe>=60?'change-up':'change-neu'}">${totalLead>0?'lead → hợp lệ':'-'}</div></div>
+      <div class="metric-change ${pctHopLe>=60?'change-up':'change-neu'}">${totalLead>0?(currentLang==='en'?'lead → valid':' lead → hợp lệ'):'-'}</div></div>
   `;
 
   // Chart title
   const fromEl = document.getElementById('leadDateFrom').value;
   const toEl   = document.getElementById('leadDateTo').value;
-  document.getElementById('leadChartTitle').textContent = `Lead theo ngày${fromEl&&toEl?' ('+fromEl+' → '+toEl+')':''}`;
+  document.getElementById('leadChartTitle').textContent = `${currentLang==='en'?'Leads by Day':'Lead theo ngày'}${fromEl&&toEl?' ('+fromEl+' → '+toEl+')':''}`;
 
   // Biểu đồ grouped bar
   const labels    = sorted.map(d=>{ const p=d.date.split('-'); return `${p[2]}/${p[1]}`; });
@@ -2402,8 +2417,8 @@ function renderLeadChart(filter) {
   chartLeadBarInst = new Chart(document.getElementById('portalChartLeadBar'),{
     type:'bar',
     data:{labels, datasets:[
-      { label:'Tổng lead',  data:leadData,  backgroundColor:'#1a6fa855', borderColor:'#1a6fa8', borderWidth:1.5, borderRadius:4 },
-      { label:'Lead hợp lệ', data:hopLeData, backgroundColor:'#22c55e55', borderColor:'#22c55e', borderWidth:1.5, borderRadius:4 }
+      { label:currentLang==='en'?'Total Leads':'Tổng lead',  data:leadData,  backgroundColor:'#1a6fa855', borderColor:'#1a6fa8', borderWidth:1.5, borderRadius:4 },
+      { label:currentLang==='en'?'Valid Leads':'Lead hợp lệ', data:hopLeData, backgroundColor:'#22c55e55', borderColor:'#22c55e', borderWidth:1.5, borderRadius:4 }
     ]},
     options:{
       responsive:true, maintainAspectRatio:false,
@@ -3096,7 +3111,7 @@ function setLang(lang) {
   const flag  = isVI ? '🇻🇳' : '🇬🇧';
   const label = isVI ? 'VI'  : 'EN';
 
-  ['langBtnLabel','langBtnLabel2','langBtnLabelDesktop','langBtnLabelAdminDesktop'].forEach(id => {
+  ['langBtnLabel','langBtnLabel2','langBtnLabelDesktop','langBtnLabelAdminDesktop','langBtnLabelLogin'].forEach(id => {
     const btn = document.getElementById(id);
     if (!btn) return;
     btn.innerHTML = `<span class="lang-flag">${flag}</span> ${label}
@@ -3146,13 +3161,20 @@ function applyTranslations() {
   document.querySelectorAll('.nav-item[onclick]').forEach(el => {
     const oc = el.getAttribute('onclick');
     if (navMap[oc]) {
-      // Only update the text node (last child), keep the svg icon
+      // Try bare text node first
       const nodes = el.childNodes;
+      let found = false;
       for (let i = nodes.length - 1; i >= 0; i--) {
         if (nodes[i].nodeType === 3 && nodes[i].textContent.trim()) {
           nodes[i].textContent = ' ' + navMap[oc][isVI ? 0 : 1];
-          break;
+          found = true; break;
         }
+      }
+      // Fallback: text inside <span> (e.g. "Thông tin chương trình")
+      if (!found) {
+        el.querySelectorAll('span:not(.nav-icon)').forEach(s => {
+          if (s.textContent.trim()) s.textContent = navMap[oc][isVI ? 0 : 1];
+        });
       }
     }
   });
@@ -3261,6 +3283,45 @@ function applyTranslations() {
   _setPlaceholder('#loginUser', isVI ? 'Tên đăng nhập' : 'Username');
   _setPlaceholder('#loginPass', isVI ? 'Mật khẩu' : 'Password');
   _setTextById('btnLoginText', isVI ? 'Đăng nhập' : 'Sign in');
+  _setTextBySelector('.login-heading', isVI ? 'Chào mừng trở lại' : 'Welcome back');
+  _setTextBySelector('.login-subheading', isVI ? 'Đăng nhập để truy cập dashboard của bạn' : 'Sign in to access your dashboard');
+  document.querySelectorAll('.form-label').forEach((el,i) => {
+    if(i===0) el.textContent = isVI ? 'Tên đăng nhập' : 'Username';
+    if(i===1) el.textContent = isVI ? 'Mật khẩu' : 'Password';
+  });
+  // Legend spans for lead chart
+  _setTextById('legendTotalLead', isVI ? 'Tổng lead' : 'Total Leads');
+  _setTextById('legendValidLead', isVI ? 'Lead hợp lệ' : 'Valid Leads');
+  // ── Registration modal ──
+  _setTextById('regModalTitle', isVI ? '📝 Đăng ký tham gia' : '📝 Register');
+  _setTextById('regModalIntro', isVI ? '🎉 Điền thông tin bên dưới để tạo tài khoản Edupia Affiliate ngay lập tức.' : '🎉 Fill in the form below to create your Edupia Affiliate account instantly.');
+  _setTextById('regBtnText', isVI ? 'Gửi đăng ký' : 'Submit Registration');
+  _setTextById('regUsernameHint', isVI ? 'Chỉ gồm chữ cái và số, không dấu, tối thiểu 8 ký tự' : 'Letters and numbers only, no accents, minimum 8 characters');
+  _setTextById('regSuccessTitle', isVI ? 'Đăng ký thành công!' : 'Registration Successful!');
+  _setTextById('regSuccessSub', isVI ? 'Tài khoản của bạn đã được tạo. Lưu lại thông tin để đăng nhập:' : 'Your account has been created. Save this information to log in:');
+  // Reg form labels (order: username, fullname, phone, referral, platform, link)
+  const regLabels = document.querySelectorAll('#regForm .form-label');
+  const regLabelTexts = isVI
+    ? ['Tên đăng nhập *','Họ và tên *','Số điện thoại / Zalo *','Mã giới thiệu','Nền tảng hoạt động *','Link trang / kênh của bạn']
+    : ['Username *','Full name *','Phone / Zalo *','Referral code','Platform *','Your page / channel link'];
+  regLabels.forEach((el,i) => {
+    if(regLabelTexts[i]) {
+      // Keep the optional span inside label if present
+      const span = el.querySelector('span');
+      el.childNodes[0].textContent = regLabelTexts[i];
+      if(i===3 && span) span.textContent = isVI ? '(nếu có)' : '(optional)';
+    }
+  });
+  // Platform select options
+  const platformSel = document.getElementById('regPlatform');
+  if(platformSel && platformSel.options[0]) platformSel.options[0].text = isVI ? '-- Chọn nền tảng --' : '-- Select platform --';
+  // ── Admin panel ──
+  _setTextById('thAdminAccount', isVI ? 'Tài khoản' : 'Account');
+  _setTextById('thAdminRev',     isVI ? 'Doanh thu' : 'Revenue');
+  _setTextById('thAdminStatus',  isVI ? 'Trạng thái' : 'Status');
+  _setTextById('thAdminAction',  isVI ? 'Thao tác' : 'Action');
+  _setTextById('addAccTitle',    isVI ? 'Thêm tài khoản' : 'Add Account');
+  _setTextById('addAccSub',      isVI ? 'Tạo tài khoản mới cho KOC' : 'Create a new KOC account');
 }
 
 function _translateTableHeaders(tableSelector, isVI, pairs) {
