@@ -561,6 +561,35 @@ tr:hover td { background:var(--bg3); }
 .page.active > *:nth-child(2) { animation-delay:0.05s; }
 .page.active > *:nth-child(3) { animation-delay:0.1s; }
 .page.active > *:nth-child(4) { animation-delay:0.15s; }
+
+/* ── Language Switcher ── */
+.lang-switcher { position:relative; display:inline-flex; align-items:center; }
+.lang-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:5px 10px; border-radius:20px;
+  background:var(--bg3); border:1px solid var(--border2);
+  color:var(--text); font-size:12px; font-weight:600;
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.lang-btn:hover { border-color:#1a6fa8; color:#1a6fa8; }
+.lang-flag { font-size:16px; line-height:1; }
+.lang-dropdown {
+  display:none; position:absolute; top:calc(100% + 6px); right:0;
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,0.2);
+  min-width:140px; z-index:999;
+}
+.lang-dropdown.open { display:block; }
+.lang-option {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 14px; cursor:pointer;
+  font-size:13px; font-weight:500; color:var(--text);
+  transition:background 0.15s;
+}
+.lang-option:hover { background:var(--bg3); }
+.lang-option.active { color:#1a6fa8; font-weight:700; }
+
 </style>
 </head>
 <body>
@@ -865,7 +894,16 @@ tr:hover td { background:var(--bg3); }
           <div class="brand-icon" style="width:28px;height:28px;font-size:10px;">KOC</div>
           <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Edupia Affiliate</span>
         </div>
-        <div style="width:36px;"></div>
+        <div class="lang-switcher" id="langSwitcher">
+          <button class="lang-btn" onclick="toggleLangDropdown()" id="langBtnLabel">
+            <span class="lang-flag">🇻🇳</span> VI
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-dropdown" id="langDropdown">
+            <div class="lang-option active" onclick="setLang('vi')"><span class="lang-flag">🇻🇳</span> Tiếng Việt</div>
+            <div class="lang-option" onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</div>
+          </div>
+        </div>
       </div>
 
 
@@ -1668,7 +1706,16 @@ tr:hover td { background:var(--bg3); }
           <div class="brand-icon" style="width:28px;height:28px;font-size:10px;">KOC</div>
           <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Edupia Affiliate — Admin</span>
         </div>
-        <div style="width:36px;"></div>
+        <div class="lang-switcher" id="langSwitcher2">
+          <button class="lang-btn" onclick="toggleLangDropdown()" id="langBtnLabel2">
+            <span class="lang-flag">🇻🇳</span> VI
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-dropdown" id="langDropdown2">
+            <div class="lang-option active" onclick="setLang('vi')"><span class="lang-flag">🇻🇳</span> Tiếng Việt</div>
+            <div class="lang-option" onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</div>
+          </div>
+        </div>
       </div>
 
       <div class="atab active page" id="atab-accounts" style="display:block;">
@@ -2841,6 +2888,218 @@ function closeSidebar() {
     // Nếu lỗi parse thì xóa session lỗi
     localStorage.removeItem('koc_session');
   }
+})();
+</script>
+
+<script>
+// ============================================================
+// LANGUAGE SWITCHER  (VI / EN)
+// ============================================================
+const TRANSLATIONS = {
+  vi: {
+    // Nav / menu
+    nav_dashboard:   'Tổng quan',
+    nav_revenue:     'Doanh thu',
+    nav_leads:       'Leads',
+    nav_materials:   'Tài liệu',
+    nav_profile:     'Hồ sơ',
+    nav_logout:      'Đăng xuất',
+    // Dashboard page
+    dash_title:      'Tổng quan',
+    dash_thismonth:  'Tháng này',
+    dash_lastmonth:  'Tháng trước',
+    dash_6month:     '6 tháng',
+    dash_alltime:    'Tất cả',
+    dash_revenue:    'Doanh thu',
+    dash_leads:      'Leads',
+    dash_orders:     'Đơn hàng',
+    dash_reward:     'Thưởng',
+    // Revenue page
+    rev_title:       'Doanh thu',
+    rev_filter_month:'Tháng này',
+    rev_filter_last: 'Tháng trước',
+    rev_filter_6m:   '6 tháng gần nhất',
+    rev_filter_all:  'Tất cả',
+    rev_date:        'Ngày',
+    rev_leads:       'Tổng Leads',
+    rev_valid:       'Leads hợp lệ',
+    rev_orders:      'Đơn hàng',
+    rev_reward_post: 'Thưởng lên bài',
+    rev_reward_lead: 'Thưởng leads',
+    rev_revenue:     'Doanh thu',
+    rev_total:       'Tổng cộng',
+    rev_nodata:      'Không có dữ liệu trong khoảng thời gian này',
+    // Leads page
+    lead_title:      'Leads',
+    lead_date:       'Ngày',
+    lead_name:       'Họ tên',
+    lead_phone:      'Số điện thoại',
+    lead_status:     'Trạng thái',
+    lead_source:     'Nguồn',
+    lead_nodata:     'Không có dữ liệu leads',
+    // Materials page
+    mat_title:       'Tài liệu',
+    // Profile page
+    prof_title:      'Hồ sơ',
+    prof_username:   'Tên đăng nhập',
+    prof_name:       'Họ tên',
+    prof_level:      'Cấp độ',
+    prof_link:       'Link giới thiệu',
+    prof_copy:       'Sao chép',
+    prof_copied:     'Đã sao chép!',
+    // Login page
+    login_title:     'Đăng nhập',
+    login_username:  'Tên đăng nhập',
+    login_password:  'Mật khẩu',
+    login_btn:       'Đăng nhập',
+    login_error:     'Sai tên đăng nhập hoặc mật khẩu',
+    // Admin
+    admin_koclist:   'Danh sách KOC',
+    admin_search:    'Tìm kiếm...',
+    admin_refresh:   'Làm mới',
+    // Common
+    loading:         'Đang tải...',
+    error_load:      'Lỗi tải dữ liệu',
+    btn_back:        'Quay lại',
+    unit_million:    'triệu đồng',
+  },
+  en: {
+    // Nav / menu
+    nav_dashboard:   'Overview',
+    nav_revenue:     'Revenue',
+    nav_leads:       'Leads',
+    nav_materials:   'Materials',
+    nav_profile:     'Profile',
+    nav_logout:      'Logout',
+    // Dashboard page
+    dash_title:      'Overview',
+    dash_thismonth:  'This month',
+    dash_lastmonth:  'Last month',
+    dash_6month:     '6 months',
+    dash_alltime:    'All time',
+    dash_revenue:    'Revenue',
+    dash_leads:      'Leads',
+    dash_orders:     'Orders',
+    dash_reward:     'Bonus',
+    // Revenue page
+    rev_title:       'Revenue',
+    rev_filter_month:'This month',
+    rev_filter_last: 'Last month',
+    rev_filter_6m:   'Last 6 months',
+    rev_filter_all:  'All time',
+    rev_date:        'Date',
+    rev_leads:       'Total Leads',
+    rev_valid:       'Valid Leads',
+    rev_orders:      'Orders',
+    rev_reward_post: 'Post Bonus',
+    rev_reward_lead: 'Lead Bonus',
+    rev_revenue:     'Revenue',
+    rev_total:       'Total',
+    rev_nodata:      'No data for this period',
+    // Leads page
+    lead_title:      'Leads',
+    lead_date:       'Date',
+    lead_name:       'Full name',
+    lead_phone:      'Phone',
+    lead_status:     'Status',
+    lead_source:     'Source',
+    lead_nodata:     'No leads data available',
+    // Materials page
+    mat_title:       'Materials',
+    // Profile page
+    prof_title:      'Profile',
+    prof_username:   'Username',
+    prof_name:       'Full name',
+    prof_level:      'Level',
+    prof_link:       'Referral link',
+    prof_copy:       'Copy',
+    prof_copied:     'Copied!',
+    // Login page
+    login_title:     'Sign in',
+    login_username:  'Username',
+    login_password:  'Password',
+    login_btn:       'Sign in',
+    login_error:     'Invalid username or password',
+    // Admin
+    admin_koclist:   'KOC List',
+    admin_search:    'Search...',
+    admin_refresh:   'Refresh',
+    // Common
+    loading:         'Loading...',
+    error_load:      'Failed to load data',
+    btn_back:        'Back',
+    unit_million:    'million VND',
+  }
+};
+
+let currentLang = localStorage.getItem('edu_lang') || 'vi';
+
+function t(key) {
+  return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) ||
+         (TRANSLATIONS['vi'][key]) || key;
+}
+
+function toggleLangDropdown() {
+  const dd = document.getElementById('langDropdown') || document.getElementById('langDropdown2');
+  const dd2 = document.getElementById('langDropdown2') || document.getElementById('langDropdown');
+  if (dd)  dd.classList.toggle('open');
+  if (dd2 && dd2 !== dd) dd2.classList.toggle('open');
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('edu_lang', lang);
+
+  // Update all button labels
+  const isVI = lang === 'vi';
+  const flag  = isVI ? '🇻🇳' : '🇬🇧';
+  const label = isVI ? 'VI'  : 'EN';
+
+  ['langBtnLabel','langBtnLabel2'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.innerHTML = `<span class="lang-flag">${flag}</span> ${label}
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>`;
+  });
+
+  // Update active option highlighting in all dropdowns
+  document.querySelectorAll('.lang-option').forEach(el => {
+    const isThis = el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${lang}'`);
+    el.classList.toggle('active', isThis);
+  });
+
+  // Close dropdowns
+  document.querySelectorAll('.lang-dropdown').forEach(el => el.classList.remove('open'));
+
+  // Apply translations to data-i18n elements
+  applyTranslations();
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val) {
+      if (el.tagName === 'INPUT' && el.placeholder !== undefined) {
+        el.placeholder = val;
+      } else {
+        el.textContent = val;
+      }
+    }
+  });
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.lang-switcher')) {
+    document.querySelectorAll('.lang-dropdown').forEach(el => el.classList.remove('open'));
+  }
+});
+
+// Apply saved lang on page load
+(function() {
+  const saved = localStorage.getItem('edu_lang') || 'vi';
+  if (saved !== 'vi') setLang(saved);
 })();
 </script>
 </body>
