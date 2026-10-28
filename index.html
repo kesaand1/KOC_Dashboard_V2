@@ -1651,11 +1651,11 @@ tr:hover td { background:var(--bg3); }
           <div class="table-wrap">
             <table>
               <thead><tr>
-                <th style="width:18%">Ngày tạo</th>
-                <th style="width:20%">Tổng lead</th>
-                <th style="width:20%">Lead hợp lệ</th>
-                <th style="width:20%">Đơn hàng</th>
-                <th style="width:22%">Tỷ lệ hợp lệ</th>
+                <th style="width:18%" id="thLeadDate">Ngày tạo</th>
+                <th style="width:20%" id="thLeadTotal">Tổng lead</th>
+                <th style="width:20%" id="thLeadValid">Lead hợp lệ</th>
+                <th style="width:20%" id="thLeadOrders">Đơn hàng</th>
+                <th style="width:22%" id="thLeadRate">Tỷ lệ hợp lệ</th>
               </tr></thead>
               <tbody id="leadTableBody"></tbody>
             </table>
@@ -2023,7 +2023,7 @@ async function loadPortalData() {
   const lp=Math.round((totalLeadM||koc.leads)/(koc.muc_tieu_lead||1)*100);
   const hlp=Math.round(totalHopLe/((koc.muc_tieu_lead||1))*100);
   document.getElementById('portalProgress').innerHTML=[
-    {label:'Hoa hồng',pct:hp},{label:'Lead phát sinh',pct:lp},{label:'Lead hợp lệ',pct:hlp}
+    {label:currentLang==='en'?'Commission':'Hoa hồng',pct:hp},{label:currentLang==='en'?'Leads':'Lead phát sinh',pct:lp},{label:currentLang==='en'?'Valid Leads':'Lead hợp lệ',pct:hlp}
   ].map(r=>`<div class="prog-item"><span class="prog-label">${r.label}</span><div class="prog-bg"><div class="prog-fill" style="width:${Math.min(r.pct,100)}%;background:${bar(r.pct)}"></div></div><span class="prog-pct">${r.pct}%</span></div>`).join('');
 
   renderDashboardChart(color);
@@ -2072,9 +2072,9 @@ function renderDashboardMetrics() {
   const lp  = Math.round((totalLeadM || koc.leads) / (koc.muc_tieu_lead || 1) * 100);
   const hlp = Math.round(totalHopLe / (koc.muc_tieu_lead || 1) * 100);
   document.getElementById('portalProgress').innerHTML = [
-    {label:'Hoa hồng', pct:hp},
-    {label:'Lead phát sinh', pct:lp},
-    {label:'Lead hợp lệ', pct:hlp}
+    {label:currentLang==='en'?'Commission':'Hoa hồng', pct:hp},
+    {label:currentLang==='en'?'Leads':'Lead phát sinh', pct:lp},
+    {label:currentLang==='en'?'Valid Leads':'Lead hợp lệ', pct:hlp}
   ].map(r=>`<div class="prog-item"><span class="prog-label">${r.label}</span><div class="prog-bg"><div class="prog-fill" style="width:${Math.min(r.pct,100)}%;background:${bar(r.pct)}"></div></div><span class="prog-pct">${r.pct}%</span></div>`).join('');
 }
 
@@ -2219,6 +2219,7 @@ function renderRevChartRaw(labels, data, avgData, color, title) {
 }
 
 function updateRevMetrics(total, days, filter, count, filteredRows) {
+  window._lastRevArgs = [total, days, filter, count, filteredRows];
   const koc = portalData || {};
   const avg = count>0?(total/count):0;
 
@@ -2264,11 +2265,12 @@ function updateRevMetrics(total, days, filter, count, filteredRows) {
 }
 
 function renderRevBreakdown(rows, filter) {
+  window._lastRevRows = rows; window._lastRevFilter = filter;
   const el = document.getElementById('revBreakdown');
   const periodEl = document.getElementById('revBreakdownPeriod');
   if(!el) return;
   if(!rows || rows.length === 0) {
-    el.innerHTML = '<div class="rev-empty">Không có dữ liệu trong khoảng thời gian này</div>';
+    el.innerHTML = `<div class="rev-empty">${currentLang==='en'?'No data for this period':'Không có dữ liệu trong khoảng thời gian này'}</div>`;
     return;
   }
   // Tính từng loại hoa hồng từ raw VNĐ
@@ -2280,11 +2282,11 @@ function renderRevBreakdown(rows, filter) {
   const leadHopLe = rows.reduce((s,r) => s + (+r.lead_hop_le||0), 0);
   const donHang   = rows.reduce((s,r) => s + (+r.don_hang   ||0), 0);
 
-  periodEl.textContent = rows.length + ' ngày có dữ liệu';
+  periodEl.textContent = rows.length + (currentLang==='en'?' days with data':' ngày có dữ liệu');
 
   const items = [
-    { icon:'📣', label:'Thưởng lên bài', detail:'Đăng bài đầu tiên', amount:tb_vnd,  color:'#22c55e' },
-    { icon:'✅', label:'Thưởng lead hợp lệ', detail:leadHopLe+' lead hợp lệ', amount:tl_vnd, color:'#1a6fa8' },
+    { icon:'📣', label:currentLang==='en'?'Post Bonus':'Thưởng lên bài', detail:currentLang==='en'?'First post':'Đăng bài đầu tiên', amount:tb_vnd,  color:'#22c55e' },
+    { icon:'✅', label:currentLang==='en'?'Valid Lead Bonus':'Thưởng lead hợp lệ', detail:leadHopLe+(currentLang==='en'?' valid leads':' lead hợp lệ'), amount:tl_vnd, color:'#1a6fa8' },
   ].filter(i => i.amount > 0);
 
   const maxVal = Math.max(...items.map(i=>i.amount), 1);
@@ -3110,22 +3112,190 @@ function setLang(lang) {
   // Close dropdowns
   document.querySelectorAll('.lang-dropdown').forEach(el => el.classList.remove('open'));
 
-  // Apply translations to data-i18n elements
+  // Apply translations to static elements
   applyTranslations();
+
+  // Re-render dynamic content so labels update immediately
+  try {
+    if (typeof renderDashboardMetrics === 'function') renderDashboardMetrics();
+  } catch(e) {}
+  try {
+    if (typeof updateRevMetrics === 'function' && window._lastRevArgs) {
+      updateRevMetrics(...window._lastRevArgs);
+    }
+  } catch(e) {}
+  try {
+    if (typeof renderRevBreakdown === 'function' && window._lastRevRows) {
+      renderRevBreakdown(window._lastRevRows, window._lastRevFilter);
+    }
+  } catch(e) {}
 }
 
 function applyTranslations() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = t(key);
-    if (val) {
-      if (el.tagName === 'INPUT' && el.placeholder !== undefined) {
-        el.placeholder = val;
-      } else {
-        el.textContent = val;
+  const isVI = currentLang === 'vi';
+
+  // ── KOC Sidebar nav items ──
+  const navMap = {
+    "switchPortalPage('dashboard')": ['Dashboard', 'Dashboard'],
+    "switchPortalPage('revenue')":   ['Hoa hồng',  'Revenue'],
+    "switchPortalPage('leads')":     ['Leads',      'Leads'],
+    "switchPortalPage('about')":     ['Về Edupia',  'About Edupia'],
+    "switchPortalPage('demo')":      ['Lớp học mẫu','Demo Class'],
+    "switchPortalPage('intro')":     ['Thông tin chương trình','Program Info'],
+  };
+  document.querySelectorAll('.nav-item[onclick]').forEach(el => {
+    const oc = el.getAttribute('onclick');
+    if (navMap[oc]) {
+      // Only update the text node (last child), keep the svg icon
+      const nodes = el.childNodes;
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        if (nodes[i].nodeType === 3 && nodes[i].textContent.trim()) {
+          nodes[i].textContent = '
+          ' + navMap[oc][isVI ? 0 : 1] + '
+        ';
+          break;
+        }
       }
     }
   });
+
+  // ── Revenue filter buttons ──
+  const revFilters = {
+    "setRevFilter('7d',this)":    ['7 ngày',    '7 days'],
+    "setRevFilter('14d',this)":   ['14 ngày',   '14 days'],
+    "setRevFilter('30d',this)":   ['30 ngày',   '30 days'],
+    "setRevFilter('month',this)": ['Tháng này', 'This month'],
+    "setRevFilter('6m',this)":    ['6 tháng',   '6 months'],
+    "setRevFilter('all',this)":   ['Tất cả',    'All time'],
+  };
+  document.querySelectorAll('.filter-btn[onclick]').forEach(el => {
+    const oc = el.getAttribute('onclick');
+    if (revFilters[oc]) el.textContent = revFilters[oc][isVI ? 0 : 1];
+  });
+
+  // ── Lead filter buttons ──
+  const leadFilters = {
+    "setLeadFilter('7d',this)":    ['7 ngày',    '7 days'],
+    "setLeadFilter('14d',this)":   ['14 ngày',   '14 days'],
+    "setLeadFilter('30d',this)":   ['30 ngày',   '30 days'],
+    "setLeadFilter('month',this)": ['Tháng này', 'This month'],
+  };
+  document.querySelectorAll('.filter-btn[onclick]').forEach(el => {
+    const oc = el.getAttribute('onclick');
+    if (leadFilters[oc]) el.textContent = leadFilters[oc][isVI ? 0 : 1];
+  });
+
+  // ── Lead table static headers (has IDs) ──
+  _setTextById('thLeadDate',    currentLang==='en'?'Date':'Ngày tạo');
+  _setTextById('thLeadTotal',   currentLang==='en'?'Total Leads':'Tổng lead');
+  _setTextById('thLeadValid',   currentLang==='en'?'Valid Leads':'Lead hợp lệ');
+  _setTextById('thLeadOrders',  currentLang==='en'?'Orders':'Đơn hàng');
+  _setTextById('thLeadRate',    currentLang==='en'?'Valid Rate':'Tỷ lệ hợp lệ');
+
+  // ── Revenue table headers ──
+  _translateTableHeaders('#revTable', isVI, [
+    ['Ngày','Date'],['Tổng Lead','Total Leads'],['Lead hợp lệ','Valid Leads'],
+    ['Đơn hàng','Orders'],['Thưởng lên bài','Post Bonus'],['Thưởng lead','Lead Bonus'],['Doanh thu','Revenue']
+  ]);
+
+  // ── Leads table headers ──
+  _translateTableHeaders('#leadTable', isVI, [
+    ['Ngày','Date'],['Tổng Lead','Total Leads'],['Lead hợp lệ','Valid Leads'],
+    ['Đơn hàng','Orders'],['Thưởng lên bài','Post Bonus'],['Thưởng lead','Lead Bonus'],['Hoa hồng','Commission']
+  ]);
+
+  // ── Card titles (static text match) ──
+  _translateByText('.card-title', isVI, [
+    ['Chi tiết từng ngày','Daily Details'],
+    ['Doanh thu theo ngày','Revenue by Day'],
+    ['Lead theo ngày','Leads by Day'],
+    ['Tiến độ mục tiêu','Goal Progress'],
+    ['Doanh thu 6 tháng','6-Month Revenue'],
+  ]);
+
+  // ── Revenue page subtitle ──
+  const revSub = document.getElementById('revPageSub');
+  if (revSub) revSub.textContent = isVI ? 'Doanh thu theo ngày' : 'Daily Revenue';
+  const revChartTitle = document.getElementById('revChartTitle');
+  if (revChartTitle) revChartTitle.textContent = isVI ? 'Doanh thu' : 'Revenue';
+
+  // ── Leads page subtitle ──
+  const leadSub = document.getElementById('leadPageSub');
+  if (leadSub) leadSub.textContent = isVI ? 'Lead theo ngày' : 'Leads by Day';
+  const leadChartTitle = document.getElementById('leadChartTitle');
+  if (leadChartTitle) leadChartTitle.textContent = isVI ? 'Lead theo ngày' : 'Leads by Day';
+
+  // ── Dashboard metric labels ──
+  _translateByText('.metric-label', isVI, [
+    ['Doanh thu','Revenue'],['Hoa hồng','Commission'],
+    ['Leads','Leads'],['Đơn hàng','Orders'],
+    ['Thưởng','Bonus'],['Lead hợp lệ','Valid Leads'],
+  ]);
+
+  // ── "Từ" / "đến" date range labels ──
+  document.querySelectorAll('.date-range span').forEach(el => {
+    if (el.textContent.trim() === 'Từ' || el.textContent.trim() === 'From') el.textContent = isVI ? 'Từ' : 'From';
+    if (el.textContent.trim() === 'đến' || el.textContent.trim() === 'to') el.textContent = isVI ? 'đến' : 'to';
+  });
+
+  // ── Admin tab labels ──
+  const adminTabMap = {
+    'atab-accounts': ['Tài khoản KOC', 'KOC Accounts'],
+    'atab-add':      ['Thêm tài khoản', 'Add Account'],
+    'atab-reset':    ['Đặt lại mật khẩu', 'Reset Password'],
+  };
+  Object.entries(adminTabMap).forEach(([id, texts]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      // keep icon, update text node
+      const nodes = el.childNodes;
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        if (nodes[i].nodeType === 3 && nodes[i].textContent.trim()) {
+          nodes[i].textContent = ' ' + texts[isVI ? 0 : 1];
+          break;
+        }
+      }
+    }
+  });
+
+  // ── Login page ──
+  _setTextById('loginTitle', isVI ? 'Đăng nhập' : 'Sign in');
+  _setPlaceholder('#loginUser', isVI ? 'Tên đăng nhập' : 'Username');
+  _setPlaceholder('#loginPass', isVI ? 'Mật khẩu' : 'Password');
+  _setTextById('btnLoginText', isVI ? 'Đăng nhập' : 'Sign in');
+}
+
+function _translateTableHeaders(tableSelector, isVI, pairs) {
+  const table = document.querySelector(tableSelector);
+  if (!table) return;
+  const ths = table.querySelectorAll('th');
+  ths.forEach(th => {
+    const txt = th.textContent.trim();
+    const match = pairs.find(([vi, en]) => txt === vi || txt === en);
+    if (match) th.textContent = match[isVI ? 0 : 1];
+  });
+}
+
+function _translateByText(selector, isVI, pairs) {
+  document.querySelectorAll(selector).forEach(el => {
+    const txt = el.textContent.trim();
+    const match = pairs.find(([vi, en]) => txt === vi || txt === en);
+    if (match) el.textContent = match[isVI ? 0 : 1];
+  });
+}
+
+function _setTextById(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+function _setPlaceholder(selector, text) {
+  const el = document.querySelector(selector);
+  if (el) el.placeholder = text;
+}
+
+function _setTextBySelector(selector, text) {
+  document.querySelectorAll(selector).forEach(el => { el.textContent = text; });
 }
 
 // Close dropdown when clicking outside
