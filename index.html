@@ -563,7 +563,7 @@ tr:hover td { background:var(--bg3); }
 .page.active > *:nth-child(4) { animation-delay:0.15s; }
 
 /* ── Language Switcher ── */
-.lang-switcher { position:relative; display:inline-flex; align-items:center; }
+.lang-switcher { position:relative; display:inline-flex; align-items:center; z-index:9999; }
 .lang-btn {
   display:flex; align-items:center; gap:6px;
   padding:5px 10px; border-radius:20px;
@@ -577,8 +577,8 @@ tr:hover td { background:var(--bg3); }
   display:none; position:absolute; top:calc(100% + 6px); right:0;
   background:var(--bg2); border:1px solid var(--border);
   border-radius:10px; overflow:hidden;
-  box-shadow:0 8px 24px rgba(0,0,0,0.2);
-  min-width:140px; z-index:999;
+  box-shadow:0 8px 24px rgba(0,0,0,0.25);
+  min-width:150px; z-index:9999;
 }
 .lang-dropdown.open { display:block; }
 .lang-option {
@@ -895,7 +895,7 @@ tr:hover td { background:var(--bg3); }
           <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Edupia Affiliate</span>
         </div>
         <div class="lang-switcher" id="langSwitcher">
-          <button class="lang-btn" onclick="toggleLangDropdown()" id="langBtnLabel">
+          <button class="lang-btn" onclick="toggleLangDropdown(this)" id="langBtnLabel">
             <span class="lang-flag">🇻🇳</span> VI
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
@@ -1707,7 +1707,7 @@ tr:hover td { background:var(--bg3); }
           <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;">Edupia Affiliate — Admin</span>
         </div>
         <div class="lang-switcher" id="langSwitcher2">
-          <button class="lang-btn" onclick="toggleLangDropdown()" id="langBtnLabel2">
+          <button class="lang-btn" onclick="toggleLangDropdown(this)" id="langBtnLabel2">
             <span class="lang-flag">🇻🇳</span> VI
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
@@ -3039,11 +3039,22 @@ function t(key) {
          (TRANSLATIONS['vi'][key]) || key;
 }
 
-function toggleLangDropdown() {
-  const dd = document.getElementById('langDropdown') || document.getElementById('langDropdown2');
-  const dd2 = document.getElementById('langDropdown2') || document.getElementById('langDropdown');
-  if (dd)  dd.classList.toggle('open');
-  if (dd2 && dd2 !== dd) dd2.classList.toggle('open');
+function toggleLangDropdown(btn) {
+  // Find the dropdown sibling inside the same .lang-switcher parent
+  const switcher = btn ? btn.closest('.lang-switcher') : null;
+  if (switcher) {
+    const dd = switcher.querySelector('.lang-dropdown');
+    if (dd) {
+      const wasOpen = dd.classList.contains('open');
+      // Close all dropdowns first
+      document.querySelectorAll('.lang-dropdown').forEach(el => el.classList.remove('open'));
+      // Re-open only this one if it was closed
+      if (!wasOpen) dd.classList.add('open');
+      return;
+    }
+  }
+  // Fallback: toggle whichever exists
+  document.querySelectorAll('.lang-dropdown').forEach(el => el.classList.toggle('open'));
 }
 
 function setLang(lang) {
