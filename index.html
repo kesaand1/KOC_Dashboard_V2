@@ -1822,6 +1822,13 @@ tr:hover td { background:var(--bg3); }
 </div>
 
 <script>
+/* ── i18n core (declared first so every function below can use it) ── */
+var currentLang = (function(){ try { return localStorage.getItem('edu_lang') || 'vi'; } catch(e) { return 'vi'; } })();
+function _LOC() { return currentLang === 'en' ? 'en-US' : 'vi-VN'; }
+const _EN_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const _EN_MON3   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function _chartMonthLabel(m, yy) { return currentLang === 'en' ? `${_EN_MON3[m-1]} '${yy}` : `T${m}/${yy}`; }
+
 const apiUrl = 'https://script.google.com/macros/s/AKfycbz54ZbZ4bAkHcOGgHBYNPvrPz_OYtPBQajyy5j9CDWgRPuTL-OYlTJfF-PqblsK_Fg8/exec';
 
 const AC = ['#1a6fa8','#22c55e','#00b5c8','#00b5c8','#06b6d4','#f97316'];
@@ -1909,13 +1916,13 @@ function fmtVND(val) {
   // val là đơn vị triệu VNĐ (vd: 14.2 = 14.2 triệu)
   const vnd = Math.round(val * 1000000);
   if (vnd >= 1000000000) {
-    return (vnd/1000000000).toFixed(2).replace(/\.?0+$/,'') + ' tỷ';
+    return (vnd/1000000000).toFixed(2).replace(/\.?0+$/,'') + (currentLang==='en' ? 'B ₫' : ' tỷ');
   } else if (vnd >= 1000000) {
-    return new Intl.NumberFormat('vi-VN').format(Math.round(vnd/1000)*1000) + ' đ';
+    return new Intl.NumberFormat(_LOC()).format(Math.round(vnd/1000)*1000) + (currentLang==='en' ? ' ₫' : ' đ');
   } else if (vnd > 0) {
-    return new Intl.NumberFormat('vi-VN').format(vnd) + ' đ';
+    return new Intl.NumberFormat(_LOC()).format(vnd) + (currentLang==='en' ? ' ₫' : ' đ');
   }
-  return '0 đ';
+  return currentLang==='en' ? '0 ₫' : '0 đ';
 }
 
 function todayStr() {
@@ -2097,11 +2104,11 @@ function renderDashboardChart(color) {
   const c = color || hashColor(session.username);
   const labels = historyData.map(h=>{
     const [y,m] = h.month.split('-');
-    return `T${parseInt(m)}/${y.slice(2)}`;
+    return _chartMonthLabel(parseInt(m), y.slice(2));
   });
   const data = historyData.map(h=>+h.doanh_thu);
-  const opts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(1)} tr`}}},
-    scales:{ y:{ticks:{color:'#555b72',font:{size:11},callback:v=>v+'tr'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+  const opts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(1)} ${currentLang==='en'?'M':'tr'}`}}},
+    scales:{ y:{ticks:{color:'#555b72',font:{size:11},callback:v=>v+(currentLang==='en'?'M':'tr')},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
              x:{ticks:{color:'#555b72',font:{size:11}},grid:{display:false},border:{display:false}} } };
   if(chartRevInst) chartRevInst.destroy();
   chartRevInst = new Chart(document.getElementById('portalChartRev'),{
@@ -2155,12 +2162,12 @@ function renderRevChart(filter) {
         byMonth[m].thuong   += +r.thuong   || 0;
       });
       monthData = Object.entries(byMonth).sort().slice(-6).map(([m,v]) => ({
-        label: `T${parseInt(m.split('-')[1])}/${m.split('-')[0].slice(2)}`,
+        label: _chartMonthLabel(parseInt(m.split('-')[1]), m.split('-')[0].slice(2)),
         hoa_hong: Math.round(v.hoa_hong*100)/100
       }));
     } else {
       monthData = historyData.map(h => ({
-        label: `T${parseInt(h.month.split('-')[1])}/${h.month.split('-')[0].slice(2)}`,
+        label: _chartMonthLabel(parseInt(h.month.split('-')[1]), h.month.split('-')[0].slice(2)),
         hoa_hong: +h.doanh_thu
       }));
     }
@@ -2213,13 +2220,13 @@ function renderRevChart(filter) {
 }
 
 function renderRevChartRaw(labels, data, avgData, color, title) {
-  document.getElementById('revChartTitle').textContent = `${currentLang==='en'?'Commission':'Hoa hồng'} — ${title}`;
+  document.getElementById('revChartTitle').textContent = `${currentLang==='en'?'Commission':'Hoa hồng'} — ${currentLang==='en'?_trCore(title):title}`;
   const opts = {
     responsive:true, maintainAspectRatio:false,
     interaction:{mode:'index',intersect:false},
     plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtVND(ctx.parsed.y)}`}}},
     scales:{
-      y:{ticks:{color:'#555b72',font:{size:10},callback:v=>new Intl.NumberFormat('vi-VN',{notation:'compact',maximumFractionDigits:1}).format(Math.round(v*1000000))},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
+      y:{ticks:{color:'#555b72',font:{size:10},callback:v=>new Intl.NumberFormat(_LOC(),{notation:'compact',maximumFractionDigits:1}).format(Math.round(v*1000000))},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
       x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:14},grid:{display:false},border:{display:false}}
     }
   };
@@ -2227,8 +2234,8 @@ function renderRevChartRaw(labels, data, avgData, color, title) {
   chartRev2Inst = new Chart(document.getElementById('portalChartRev2'),{
     type:'bar',
     data:{labels, datasets:[
-      { label:'Hoa hồng', data, backgroundColor:color+'66', borderColor:color, borderWidth:1.5, borderRadius:4, order:2, yAxisID:'y' },
-      { label:'TB ngày',   data:avgData, type:'line', borderColor:'#00b5c8', borderDash:[5,4], borderWidth:2, pointRadius:0, tension:0, fill:false, order:1, yAxisID:'y' }
+      { label:currentLang==='en'?'Commission':'Hoa hồng', data, backgroundColor:color+'66', borderColor:color, borderWidth:1.5, borderRadius:4, order:2, yAxisID:'y' },
+      { label:currentLang==='en'?'Daily avg':'TB ngày',   data:avgData, type:'line', borderColor:'#00b5c8', borderDash:[5,4], borderWidth:2, pointRadius:0, tension:0, fill:false, order:1, yAxisID:'y' }
     ]}, options:opts
   });
 }
@@ -2313,7 +2320,7 @@ function renderRevBreakdown(rows, filter) {
       <span class="rev-brow-label">${i.label}</span>
       <span class="rev-brow-detail">${i.detail}</span>
       <div class="rev-brow-bar-wrap"><div class="rev-brow-bar" style="width:${pct(i.amount)}%;background:${i.color}"></div></div>
-      <span class="rev-brow-amount">${i.amount.toLocaleString('vi-VN')} ₫</span>
+      <span class="rev-brow-amount">${i.amount.toLocaleString(_LOC())} ₫</span>
     </div>`).join('');
 
   const total_html = `
@@ -2322,7 +2329,7 @@ function renderRevBreakdown(rows, filter) {
       <span class="rev-brow-label">Tổng hoa hồng</span>
       <span class="rev-brow-detail">${rows.length} ngày</span>
       <div class="rev-brow-bar-wrap"></div>
-      <span class="rev-brow-amount">${total.toLocaleString('vi-VN')} ₫</span>
+      <span class="rev-brow-amount">${total.toLocaleString(_LOC())} ₫</span>
     </div>`;
 
   el.innerHTML = items.length > 0 ? rows_html + total_html
@@ -2498,7 +2505,7 @@ async function loadAdminData() {
       const summaryKey = Object.keys(summary).find(k => k.toLowerCase() === a.username.toLowerCase()) || a.username;
       const rev = summary[summaryKey]?.hoa_hong || 0;
       const revDisplay = rev > 0
-        ? `<span style="font-weight:700;color:#1a6fa8;">${rev.toLocaleString('vi-VN')} ₫</span>`
+        ? `<span style="font-weight:700;color:#1a6fa8;">${rev.toLocaleString(_LOC())} ₫</span>`
         : `<span style="color:var(--text3);font-size:12px;">0 ₫</span>`;
       return `<tr>
         <td><div class="koc-row">
@@ -2657,7 +2664,7 @@ function renderModalData(filter) {
   document.getElementById('modalMetrics').innerHTML = `
     <div style="${metricStyle}">
       <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Hoa hồng</div>
-      <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#1a6fa8;">${totalHH.toLocaleString('vi-VN')} ₫</div>
+      <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#1a6fa8;">${totalHH.toLocaleString(_LOC())} ₫</div>
     </div>
     <div style="${metricStyle}border-left:1px solid var(--border);border-right:1px solid var(--border)">
       <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Lead hợp lệ</div>
@@ -2677,13 +2684,13 @@ function renderModalData(filter) {
   modalChartInst = new Chart(document.getElementById('modalChart'),{
     type:'bar',
     data:{labels, datasets:[{
-      label:'Hoa hồng',data,
+      label:currentLang==='en'?'Commission':'Hoa hồng',data,
       backgroundColor:'rgba(26,111,168,0.5)',borderColor:'#1a6fa8',
       borderWidth:1.5,borderRadius:4
     }]},
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toLocaleString('vi-VN')} ₫`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toLocaleString(_LOC())} ₫`}}},
       scales:{
         y:{ticks:{color:'#555b72',font:{size:10},callback:v=>v>=1000000?(v/1000000).toFixed(1)+'M':v>=1000?(v/1000).toFixed(0)+'K':v},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},
         x:{ticks:{color:'#555b72',font:{size:10},maxTicksLimit:12},grid:{display:false},border:{display:false}}
@@ -2699,7 +2706,7 @@ function renderModalData(filter) {
       <td style="padding:8px 10px;text-align:right;color:var(--text2);">${+r.tong_lead||0}</td>
       <td style="padding:8px 10px;text-align:right;color:#00b5c8;font-weight:600;">${+r.lead_hop_le||0}</td>
       <td style="padding:8px 10px;text-align:right;color:#22c55e;">${+r.don_hang||0}</td>
-      <td style="padding:8px 10px;text-align:right;color:#1a6fa8;font-weight:700;">${(+r.hoa_hong_raw||0).toLocaleString('vi-VN')} ₫</td>
+      <td style="padding:8px 10px;text-align:right;color:#1a6fa8;font-weight:700;">${(+r.hoa_hong_raw||0).toLocaleString(_LOC())} ₫</td>
     </tr>`;
   }).join('') || '<tr><td colspan="5" style="padding:1.5rem;text-align:center;color:var(--text2);">Không có dữ liệu</td></tr>';
 }
@@ -2848,7 +2855,7 @@ async function showLeaderboard() {
     const init = koc.full_name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase().slice(0,2);
     const color = hashColor(koc.username);
     const cls   = rankClass[koc.rank-1];
-    const rev   = koc.hoa_hong.toLocaleString('vi-VN') + ' ₫';
+    const rev   = koc.hoa_hong.toLocaleString(_LOC()) + ' ₫';
     return `<div class="lb-item ${cls}">
       <div class="lb-rank">${medals[koc.rank-1]}</div>
       <div class="lb-avatar" style="background:${color}">${init}</div>
@@ -3075,7 +3082,7 @@ const TRANSLATIONS = {
   }
 };
 
-let currentLang = localStorage.getItem('edu_lang') || 'vi';
+/* currentLang is declared at the top of the main script */
 
 function t(key) {
   return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) ||
@@ -3130,20 +3137,18 @@ function setLang(lang) {
   // Apply translations to static elements
   applyTranslations();
 
-  // Re-render dynamic content so labels update immediately
+  // Re-render dynamic content (metrics, charts, tables) in the new language
   try {
-    if (typeof renderDashboardMetrics === 'function') renderDashboardMetrics();
-  } catch(e) {}
-  try {
-    if (typeof updateRevMetrics === 'function' && window._lastRevArgs) {
-      updateRevMetrics(...window._lastRevArgs);
+    if (session && portalData) {
+      renderDashboardMetrics();
+      renderDashboardChart(hashColor(session.username));
+      renderRevChart(currentRevFilter);
+      renderLeadChart(currentLeadFilter);
     }
-  } catch(e) {}
-  try {
-    if (typeof renderRevBreakdown === 'function' && window._lastRevRows) {
-      renderRevBreakdown(window._lastRevRows, window._lastRevFilter);
-    }
-  } catch(e) {}
+  } catch(e) { console.warn('[i18n] re-render failed', e); }
+
+  // Translate / restore every remaining text node + placeholder/title/alt on the page
+  translateAll();
 }
 
 function applyTranslations() {
@@ -3235,13 +3240,13 @@ function applyTranslations() {
 
   // ── Revenue page subtitle ──
   const revSub = document.getElementById('revPageSub');
-  if (revSub) revSub.textContent = isVI ? 'Doanh thu theo ngày' : 'Daily Revenue';
+  if (revSub) revSub.textContent = isVI ? 'Theo dõi hoa hồng và thưởng theo thời gian' : 'Track commissions and bonuses over time';
   const revChartTitle = document.getElementById('revChartTitle');
-  if (revChartTitle) revChartTitle.textContent = isVI ? 'Doanh thu' : 'Revenue';
+  if (revChartTitle) revChartTitle.textContent = isVI ? 'Doanh thu theo ngày' : 'Revenue by Day';
 
   // ── Leads page subtitle ──
   const leadSub = document.getElementById('leadPageSub');
-  if (leadSub) leadSub.textContent = isVI ? 'Lead theo ngày' : 'Leads by Day';
+  if (leadSub) leadSub.textContent = isVI ? 'Theo dõi lead phát sinh theo ngày' : 'Track leads generated each day';
   const leadChartTitle = document.getElementById('leadChartTitle');
   if (leadChartTitle) leadChartTitle.textContent = isVI ? 'Lead theo ngày' : 'Leads by Day';
 
@@ -3280,8 +3285,6 @@ function applyTranslations() {
 
   // ── Login page ──
   _setTextById('loginTitle', isVI ? 'Đăng nhập' : 'Sign in');
-  _setPlaceholder('#loginUser', isVI ? 'Tên đăng nhập' : 'Username');
-  _setPlaceholder('#loginPass', isVI ? 'Mật khẩu' : 'Password');
   _setTextById('btnLoginText', isVI ? 'Đăng nhập' : 'Sign in');
   _setTextBySelector('.login-heading', isVI ? 'Chào mừng trở lại' : 'Welcome back');
   _setTextBySelector('.login-subheading', isVI ? 'Đăng nhập để truy cập dashboard của bạn' : 'Sign in to access your dashboard');
@@ -3308,7 +3311,7 @@ function applyTranslations() {
     if(regLabelTexts[i]) {
       // Keep the optional span inside label if present
       const span = el.querySelector('span');
-      el.childNodes[0].textContent = regLabelTexts[i];
+      el.childNodes[0].textContent = regLabelTexts[i] + (span ? ' ' : '');
       if(i===3 && span) span.textContent = isVI ? '(nếu có)' : '(optional)';
     }
   });
@@ -3357,6 +3360,459 @@ function _setTextBySelector(selector, text) {
   document.querySelectorAll(selector).forEach(el => { el.textContent = text; });
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   Global VI → EN page translator
+   - Walks every text node + placeholder/title/aria-label/alt
+   - Keeps the original Vietnamese so switching back restores it
+   - MutationObserver translates anything the app renders later
+   ═══════════════════════════════════════════════════════════════ */
+const EN_DICT = Object.assign(Object.create(null), {
+"Tăng thu nhập": "Boost your income",
+"cùng": "with",
+"Nền tảng affiliate hàng đầu trong lĩnh vực giáo dục — hoa hồng hấp dẫn, minh bạch và được cập nhật theo thời gian thực.": "The leading affiliate platform in education — attractive, transparent commissions updated in real time.",
+"Hoa hồng minh bạch": "Transparent commission",
+"Xem chi tiết hoa hồng từng ngày, không bỏ sót bất kỳ đơn hàng nào": "See commission details for every day, without missing a single order",
+"Theo dõi doanh thu hiệu quả": "Track revenue effectively",
+"Nắm bắt doanh thu từng ngày, từng đơn hàng — không bỏ lỡ bất kỳ khoản thu nào": "Keep track of revenue day by day, order by order — never miss any income",
+"Hướng dẫn cách làm chi tiết": "Detailed how-to guides",
+"Tài liệu và hướng dẫn bán hàng đầy đủ giúp bạn tối ưu hiệu suất ngay từ đầu": "Complete sales materials and guides to help you optimize performance from the start",
+"Hỗ trợ 24/7": "24/7 support",
+"Đội ngũ hỗ trợ luôn sẵn sàng giải đáp mọi thắc mắc về hoa hồng và chiến dịch": "Our support team is always ready to answer any questions about commissions and campaigns",
+"Minh bạch hoa hồng": "Transparent commission",
+"Cập nhật tức thì": "Instant updates",
+"Bảo mật": "Secure",
+"Dữ liệu riêng tư": "Private data",
+"Chào mừng trở lại": "Welcome back",
+"Đăng nhập để truy cập dashboard của bạn": "Sign in to access your dashboard",
+"Tên đăng nhập": "Username",
+"Tên đăng nhập *": "Username *",
+"Tên đăng nhập KOC": "KOC username",
+"Mật khẩu": "Password",
+"Mật khẩu mới": "New password",
+"Đăng nhập": "Sign in",
+"Chưa có tài khoản?": "Don't have an account?",
+"Đăng ký ngay →": "Register now →",
+"📝 Đăng ký tham gia": "📝 Register",
+"✕ Đóng": "✕ Close",
+"🎉 Điền thông tin bên dưới để tạo tài khoản Edupia Affiliate ngay lập tức.": "🎉 Fill in the form below to create your Edupia Affiliate account instantly.",
+"Chỉ gồm chữ cái và số, không dấu, tối thiểu 8 ký tự": "Letters and numbers only, no accents, minimum 8 characters",
+"Họ và tên": "Full name",
+"Họ và tên *": "Full name *",
+"Số điện thoại / Zalo *": "Phone / Zalo *",
+"Mã giới thiệu": "Referral code",
+"(nếu có)": "(optional)",
+"💡 Mã giới thiệu chính là tên đăng nhập của người giới thiệu": "💡 The referral code is the referrer's username",
+"Nền tảng hoạt động *": "Platform *",
+"-- Chọn nền tảng --": "-- Select platform --",
+"Khác": "Other",
+"Link trang / kênh của bạn": "Your page / channel link",
+"Gửi đăng ký": "Submit registration",
+"Liên hệ trực tiếp:": "Contact directly:",
+"hoặc": "or",
+"hoặc email": "or email",
+"Đăng ký thành công!": "Registration successful!",
+"Tài khoản của bạn đã được tạo. Lưu lại thông tin để đăng nhập:": "Your account has been created. Save this information to sign in:",
+"Mã giới thiệu của bạn": "Your referral code",
+"Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu.": "Please change your password after your first sign-in.",
+"Liên hệ": "Contact",
+"nếu cần hỗ trợ.": "if you need support.",
+"Đóng & Đăng nhập": "Close & Sign in",
+"Bảng Vinh Danh Tháng": "Monthly Leaderboard",
+"Đang tải...": "Loading...",
+"Đang tải dữ liệu...": "Loading data...",
+"Chưa có dữ liệu tháng này 📊": "No data for this month yet 📊",
+"Bắt đầu làm việc 🚀": "Get started 🚀",
+"Hoa hồng": "Commission",
+"Thông tin chương trình": "Program Info",
+"Về Edupia": "About Edupia",
+"Lớp học mẫu": "Demo Class",
+"Đăng xuất": "Sign out",
+"Tổng quan": "Overview",
+"Tài liệu": "Materials",
+"Hồ sơ": "Profile",
+"Quản trị": "Admin",
+"Quản trị viên": "Administrator",
+"Xin chào!": "Hello!",
+"Đây là tổng quan hiệu suất của bạn": "Here is an overview of your performance",
+"Doanh thu": "Revenue",
+"Doanh thu 6 tháng": "6-Month Revenue",
+"Doanh thu theo ngày": "Revenue by Day",
+"Tiến độ mục tiêu": "Goal Progress",
+"Lead phát sinh": "Leads generated",
+"Lead hợp lệ": "Valid Leads",
+"Tổng lead": "Total Leads",
+"Tổng Lead": "Total Leads",
+"Tổng Leads": "Total Leads",
+"Leads hợp lệ": "Valid Leads",
+"Đơn hàng": "Orders",
+"Thưởng": "Bonus",
+"Thưởng lên bài": "Post Bonus",
+"Thưởng lead": "Lead Bonus",
+"Thưởng leads": "Lead Bonus",
+"Thưởng lead hợp lệ": "Valid Lead Bonus",
+"Đăng bài đầu tiên": "First post",
+"Tỷ lệ hợp lệ": "Valid Rate",
+"Tổng cộng": "Total",
+"Tổng hoa hồng": "Total Commission",
+"Hoa hồng (dự kiến)": "Commission (est.)",
+"Trung bình hoa hồng / ngày": "Avg commission / day",
+"TB ngày": "Daily avg",
+"TB/ngày": "Avg/day",
+"Ngày có data": "Days with data",
+"Mục tiêu": "Goal",
+"Ngày": "Date",
+"Ngày tạo": "Date",
+"Tháng này": "This month",
+"Tháng trước": "Last month",
+"Tất cả": "All time",
+"6 tháng": "6 months",
+"6 tháng gần nhất": "Last 6 months",
+"7 ngày": "7 days",
+"14 ngày": "14 days",
+"30 ngày": "30 days",
+"Từ": "From",
+"đến": "to",
+"tháng này": "this month",
+"↑ tháng này": "↑ this month",
+"đơn tháng này": "orders this month",
+"từ lead hợp lệ": "from valid leads",
+"lead → hợp lệ": "lead → valid",
+"Chi tiết từng ngày": "Daily Details",
+"Lead theo ngày": "Leads by Day",
+"Theo dõi hoa hồng và thưởng theo thời gian": "Track commissions and bonuses over time",
+"Theo dõi lead phát sinh theo ngày": "Track leads generated each day",
+"📋 Chi tiết cấu thành doanh thu": "📋 Revenue breakdown",
+"Chọn khoảng thời gian để xem chi tiết": "Select a time range to see details",
+"Chưa có dữ liệu hoa hồng trong kỳ này": "No commission data for this period yet",
+"Không có dữ liệu trong khoảng thời gian này": "No data for this period",
+"Không có dữ liệu": "No data",
+"Không có dữ liệu leads": "No lead data",
+"Tên phụ huynh": "Parent's name",
+"Số điện thoại phụ huynh": "Parent's phone number",
+"Địa chỉ": "Address",
+"Lớp của con": "Child's grade",
+"Họ tên": "Full name",
+"Số điện thoại": "Phone number",
+"Trạng thái": "Status",
+"Nguồn": "Source",
+"Cấp độ": "Level",
+"Link giới thiệu": "Referral link",
+"Sao chép": "Copy",
+"Đã sao chép!": "Copied!",
+"Danh sách KOC": "KOC List",
+"Tìm kiếm...": "Search...",
+"Làm mới": "Refresh",
+"Lỗi tải dữ liệu": "Failed to load data",
+"Quay lại": "Back",
+"triệu đồng": "million VND",
+"Tài khoản": "Account",
+"Tài khoản KOC": "KOC Accounts",
+"Quản lý danh sách tài khoản": "Manage the account list",
+"Thao tác": "Actions",
+"Hành động": "Action",
+"Hoạt động": "Active",
+"Tạm khóa": "Locked",
+"Khóa": "Lock",
+"Mở": "Unlock",
+"Thêm tài khoản": "Add Account",
+"Tạo tài khoản mới cho KOC": "Create a new KOC account",
+"Tạo tài khoản": "Create account",
+"Tạo tài khoản thành công!": "Account created successfully!",
+"Đặt lại mật khẩu": "Reset Password",
+"Reset mật khẩu cho KOC": "Reset a KOC's password",
+"Xác nhận đặt lại": "Confirm reset",
+"Đặt lại mật khẩu thành công!": "Password reset successfully!",
+"Đang tạo...": "Creating...",
+"Đang xử lý...": "Processing...",
+"Đang đăng nhập...": "Signing in...",
+"Đang gửi...": "Submitting...",
+"Vui lòng nhập đầy đủ.": "Please fill in all fields.",
+"Vui lòng điền đầy đủ.": "Please fill in all fields.",
+"Không kết nối được server.": "Could not connect to the server.",
+"Không kết nối được server": "Could not connect to the server",
+"Sai tên đăng nhập hoặc mật khẩu": "Incorrect username or password",
+"Mật khẩu tối thiểu 6 ký tự.": "Password must be at least 6 characters.",
+"Vui lòng nhập tên đăng nhập": "Please enter a username",
+"Tên đăng nhập phải có ít nhất 8 ký tự": "Username must be at least 8 characters",
+"Tên đăng nhập chỉ được dùng chữ cái và số, không dấu, không khoảng trắng": "Username may only contain letters and numbers, no accents, no spaces",
+"Vui lòng nhập họ và tên": "Please enter your full name",
+"Vui lòng nhập số điện thoại": "Please enter your phone number",
+"Vui lòng chọn nền tảng": "Please select a platform",
+"⚠ Chỉ được dùng chữ cái (a-z) và số (0-9), không dấu, không khoảng trắng": "⚠ Only letters (a-z) and digits (0-9) are allowed, no accents, no spaces",
+"✓ Tên đăng nhập hợp lệ": "✓ Username is valid",
+"Tên đăng nhập đã tồn tại": "Username already exists",
+"Tài khoản đã bị khóa": "This account has been locked",
+"Tài khoản không tồn tại": "Account does not exist",
+"Không tìm thấy tài khoản": "Account not found",
+"Mã giới thiệu không tồn tại": "Referral code does not exist",
+"Mật khẩu không đúng": "Incorrect password",
+"Lỗi kết nối": "Connection error",
+"🎓 Chương trình Affiliate Giáo dục": "🎓 Education Affiliate Program",
+"Kiếm thu nhập bền vững": "Earn sustainable income",
+"Edupia là nền tảng học trực tuyến hàng đầu Việt Nam với hàng triệu học viên. Tham gia chương trình Affiliate, bạn sẽ nhận hoa hồng hấp dẫn cho mỗi học viên đăng ký thành công — hoàn toàn minh bạch và thanh toán đúng hạn.": "Edupia is Vietnam's leading online learning platform with millions of learners. By joining the Affiliate program, you earn attractive commissions for every successful student registration — fully transparent and paid on time.",
+"4 bước tham gia đơn giản": "4 simple steps to join",
+"📣 Chia sẻ khóa học": "📣 Share the course",
+"Đăng nội dung giới thiệu khóa học Edupia lên kênh TikTok, Facebook, YouTube hoặc Instagram của bạn": "Post Edupia course promotional content on your TikTok, Facebook, YouTube or Instagram channel",
+"🔗 Học viên đăng ký": "🔗 Student registers",
+"Học viên tiềm năng xem nội dung, quan tâm và hoàn tất đăng ký mua khóa học tại Edupia": "Prospective students view the content, become interested and complete their course purchase at Edupia",
+"✅ Ghi nhận đơn hàng": "✅ Order recorded",
+"Hệ thống tự động ghi nhận đơn hàng hợp lệ và cập nhật báo cáo theo thời gian thực": "The system automatically records valid orders and updates reports in real time",
+"💰 Nhận hoa hồng": "💰 Receive commission",
+"Hoa hồng thanh toán định kỳ, minh bạch — theo dõi toàn bộ ngay trên dashboard này": "Commissions are paid out regularly and transparently — track everything right on this dashboard",
+"Cách tính doanh thu": "How revenue is calculated",
+"Ghi chú": "Notes",
+"📣 Đăng bài đầu tiên lên Facebook": "📣 First Facebook post",
+"✅ 3 lead đầu tiên hợp lệ": "✅ First 3 valid leads",
+"(tính gộp)": "(counted together)",
+"✅ Từ lead thứ 4 hợp lệ": "✅ From the 4th valid lead",
+"🛒 Đơn hàng hợp lệ": "🛒 Valid order",
+"Dễ dàng nhất": "Easiest",
+"Phổ biến nhất": "Most popular",
+"Thu nhập đều": "Steady income",
+"Giá trị cao": "High value",
+"💡 Ví dụ cụ thể": "💡 Example",
+"Tháng 5 bạn đăng bài review khóa học Edupia. Từ bài viết này có": "In May you post a review of an Edupia course. That post brings in",
+"30 lead hợp lệ": "30 valid leads",
+"(3 lead đầu tính gộp = 200.000₫, 27 lead còn lại × 50.000₫) và": "(first 3 leads counted together = 200,000₫, remaining 27 leads × 50,000₫) and",
+"10 đơn hàng": "10 orders",
+"phát sinh.": ".",
+"Đăng bài": "Post",
+"3 leads đầu (gộp)": "First 3 leads (combined)",
+"10 đơn × 500.000": "10 orders × 500,000",
+"Tổng thu nhập": "Total income",
+"Điều kiện & Thanh toán": "Terms & Payment",
+"Chu kỳ thanh toán": "Payment cycle",
+"Thanh toán vào ngày": "Paid on the",
+"10 hàng tháng": "10th of every month",
+"cho doanh thu tháng trước": "for the previous month's revenue",
+"Hình thức thanh toán": "Payment method",
+"Chuyển khoản ngân hàng trực tiếp vào tài khoản đã đăng ký": "Direct bank transfer to your registered account",
+"Ngưỡng rút tối thiểu": "Minimum payout threshold",
+"Tối thiểu": "A minimum of",
+"mới được thanh toán trong kỳ": "is required to be paid out in a period",
+"Câu hỏi thường gặp": "Frequently asked questions",
+"Lead là gì?": "What is a lead?",
+"Lead là": "A lead is",
+"1 data khách hàng có đầy đủ thông tin": "1 customer record with complete information",
+", bao gồm:": ", including:",
+"Làm thế nào để biết lead của tôi có hợp lệ không?": "How do I know whether my lead is valid?",
+"Cần đảm bảo": "Make sure",
+"2 yếu tố": "these 2 factors",
+"sau:": "are met:",
+"1. Số điện thoại:": "1. Phone number:",
+"Là số điện thoại hợp lệ": "Is a valid phone number",
+"Chưa từng đăng ký bất kỳ sản phẩm nào của Edupia": "Has never registered for any Edupia product",
+"2. Khách hàng:": "2. Customer:",
+"Con trong độ tuổi": "Child is in the age range for",
+"lớp 1 – lớp 9": "grades 1–9",
+"tại Việt Nam": "in Vietnam",
+"Có nhu cầu tìm hiểu khóa học tiếng Anh cho con": "Interested in English courses for their child",
+"Tôi có thể quảng bá trên nhiều kênh cùng lúc không?": "Can I promote on several channels at the same time?",
+"Hoàn toàn được! Bạn có thể chia sẻ trên TikTok, Facebook, YouTube, Instagram hoặc bất kỳ nền tảng nào. Đội hỗ trợ sẽ cung cấp tài liệu và nội dung mẫu phù hợp với từng kênh.": "Absolutely! You can share on TikTok, Facebook, YouTube, Instagram or any other platform. The support team will provide materials and sample content suited to each channel.",
+"Hoa hồng được tính trên giá trước hay sau khi giảm giá?": "Is commission calculated on the price before or after discounts?",
+"Hoa hồng tính trên": "Commission is calculated on",
+"giá thực tế học viên thanh toán": "the actual price the student pays",
+"— tức giá sau khi đã áp dụng mã giảm giá, không phải giá gốc.": "— i.e. the price after discount codes are applied, not the list price.",
+"Nếu học viên hoàn tiền, hoa hồng có bị thu hồi không?": "If a student gets a refund, is the commission clawed back?",
+"Nếu học viên hoàn tiền trong 7 ngày đầu, hoa hồng tương ứng sẽ bị trừ vào kỳ thanh toán tiếp theo. Hoàn tiền sau 7 ngày sẽ không ảnh hưởng đến hoa hồng của bạn.": "If a student is refunded within the first 7 days, the corresponding commission will be deducted from the next payment period. Refunds after 7 days do not affect your commission.",
+"Tôi cần hỗ trợ thì liên hệ ở đâu?": "Where can I get support?",
+"Đội hỗ trợ Affiliate Edupia làm việc từ 8:00–22:00 tất cả các ngày trong tuần. Liên hệ qua Zalo Edupia Affiliate:": "The Edupia Affiliate support team works from 8:00–22:00 every day of the week. Contact via Edupia Affiliate Zalo:",
+"Sẵn sàng bắt đầu kiếm thu nhập? 🚀": "Ready to start earning? 🚀",
+"Xem dashboard để theo dõi hoa hồng và leads của bạn ngay hôm nay": "Open the dashboard to track your commissions and leads today",
+"🏫 Về Educa Corporation": "🏫 About Educa Corporation",
+"Vị thế số 1 EdTech Việt Nam": "No. 1 EdTech in Vietnam",
+"& Hành trình kiến tạo tương lai": "& The journey of building the future",
+"Ứng dụng công nghệ giáo dục hiện đại — xóa nhòa khoảng cách học tập, mang tiêu chuẩn quốc tế đến mọi trẻ em Việt Nam.": "Applying modern education technology — bridging learning gaps and bringing international standards to every child in Vietnam.",
+"Học sinh": "Students",
+"EdTech ĐNA": "SEA EdTech",
+"Cải thiện điểm": "Score improvement",
+"Thành lập": "Founded",
+"Tỉnh thành": "Provinces",
+"Sứ mệnh & Giá trị cốt lõi": "Mission & Core Values",
+"Giáo dục tiếp cận mọi người": "Education for everyone",
+"Phổ cập giáo dục chất lượng cao, không phân biệt vùng miền hay điều kiện kinh tế": "Making high-quality education universal, regardless of region or economic conditions",
+"Công nghệ AI tiên tiến": "Advanced AI technology",
+"Cá nhân hóa lộ trình học — đầu tiên tại Việt Nam, mỗi học sinh tiến bộ theo tốc độ riêng": "Personalized learning path — a first in Vietnam, each student progresses at their own pace",
+"Tiêu chuẩn quốc tế": "International standards",
+"Chương trình chuẩn Cambridge, đáp ứng các chứng chỉ quốc tế IELTS, PET": "Cambridge-standard curriculum, meeting international IELTS and PET certificates",
+"Đối tác tin cậy": "Trusted partner",
+"10+ năm đồng hành, xây dựng niềm tin qua chất lượng và sự minh bạch": "10+ years of partnership, building trust through quality and transparency",
+"⭐ Sản phẩm nổi bật": "⭐ Featured product",
+"Edupia Pro — Gia sư Tiếng Anh trực tuyến chất lượng cao": "Edupia Pro — High-quality online English tutoring",
+"👦 Học sinh 6 – 15 tuổi": "👦 Students aged 6 – 15",
+"✨ Điểm nổi bật": "✨ Highlights",
+"AI cá nhân hóa — Đầu tiên tại Việt Nam": "Personalized AI — a first in Vietnam",
+"Chuẩn 6 bậc Bộ GD&ĐT": "MOET 6-level standard",
+"Cam kết hoàn tiền 100%": "100% money-back guarantee",
+"EPAS — Phương pháp quốc tế": "EPAS — international method",
+"Mô hình Gia sư 1 kèm 4 độc quyền": "Exclusive 1-to-4 Tutor Model",
+"Giáo viên chủ nhiệm": "Homeroom teacher",
+"Đồng hành xuyên suốt": "Support throughout",
+"Giáo viên chuyên môn": "Subject specialist teacher",
+"Đảm bảo hiệu quả học": "Ensures learning effectiveness",
+"🎯 6 Lợi thế cốt lõi": "🎯 6 Core advantages",
+"Gia sư Hạng A+": "A+ Tier Tutors",
+"Top 5% gia sư giỏi nhất thị trường, trình độ tương đương IELTS 6.5+": "Top 5% of tutors on the market, at an IELTS 6.5+ level",
+"Kinh nghiệm dạy chuyên lứa tuổi Tiểu học & THCS từ 6 tháng trở lên": "At least 6 months of experience teaching primary and lower-secondary students",
+"Được đào tạo tâm lý trẻ em — luôn vui vẻ, nhiệt huyết và trách nhiệm": "Trained in child psychology — always cheerful, enthusiastic and responsible",
+"Mô hình cố định 1 gia sư đồng hành xuyên suốt khóa học": "Fixed model: one tutor stays with the student throughout the course",
+"Hệ thống đo lường MAPS": "MAPS measurement system",
+"1 bài thi tháng + 1 bài tập về nhà + 1 bài thi vận dụng nói mỗi tháng": "1 monthly test + 1 homework assignment + 1 speaking application test every month",
+"Hội đồng chuyên môn đánh giá từng kỹ năng, phát hiện kịp thời lỗ hổng": "A specialist council assesses each skill and detects gaps in time",
+"GVCN gửi báo cáo qua Zalo, gọi điện cập nhật tiến bộ cho phụ huynh": "Homeroom tutor sends reports via Zalo and calls parents to update on progress",
+"Cam kết đầu ra rõ ràng": "Clear learning-outcome commitment",
+"Bám sát chương trình GDPT Bộ GD&ĐT + chuẩn Cambridge quốc tế": "Follows the Ministry of Education & Training general curriculum + international Cambridge standards",
+"Đạt chuẩn CEFR, quy đổi Cambridge / PET / IELTS sau khi hoàn thành": "CEFR-aligned, convertible to Cambridge / PET / IELTS upon completion",
+"Hoàn tiền 100%": "100% refund",
+"nếu học sinh không tiến bộ sau cam kết": "if the student does not progress after the commitment period",
+"Lộ trình theo năng lực": "Ability-based learning path",
+"Kiểm tra đầu vào phân 4 trình độ: Giỏi (A) · Khá (B) · Trung bình (C) · Yếu (D)": "Entry test places students in 4 levels: Excellent (A) · Good (B) · Average (C) · Weak (D)",
+"Học đúng lộ trình phù hợp năng lực, không quá dễ cũng không quá khó": "Learn on a path that fits their ability — not too easy, not too hard",
+"Định kỳ 6 tháng đánh giá lại và điều chỉnh lộ trình học": "Every 6 months, the learning path is re-assessed and adjusted",
+"Phương pháp EPAS": "EPAS method",
+"Phương pháp tiên tiến đang được các trường Quốc tế áp dụng": "An advanced method used by international schools",
+"Tăng tính thực hành, cải thiện kỹ năng phản xạ và giao tiếp tự nhiên": "More hands-on practice, improving natural communication and reflex skills",
+"App AI + CLB ngoại khóa": "AI App + Extracurricular Club",
+"Môi trường mô phỏng thực tế, tăng phản xạ giao tiếp tự nhiên": "A realistic simulated environment that builds natural communication reflexes",
+"Ôn luyện sau giờ học, bài tập bám sát theo trình độ": "After-class review with exercises matched to the student's level",
+"Edupia Club: Kỹ năng sống · STEM · Công nghệ AI · Khám phá thế giới": "Edupia Club: Life skills · STEM · AI technology · Exploring the world",
+"Thấy kết quả sau 3 tháng": "See results after 3 months",
+"Giáo viên IELTS 6.5+": "IELTS 6.5+ teachers",
+"💡 6 Lợi ích học sinh nhận được": "💡 6 Benefits students receive",
+"Gia sư giỏi, trách nhiệm, hiểu tâm lý": "Excellent, responsible tutors who understand children's psychology",
+"100% gia sư có chứng chỉ quốc tế IELTS 6.5+, kinh nghiệm chuyên lứa tuổi. Cố định 1 gia sư đồng hành xuyên suốt — hiểu rõ điểm mạnh, điểm yếu và tâm lý của từng học sinh.": "100% of tutors hold an international IELTS 6.5+ certificate and have experience with this age group. One fixed tutor stays with the student throughout — understanding each student's strengths, weaknesses and mindset.",
+"Tiến bộ đảm bảo theo tháng": "Guaranteed monthly progress",
+"Hệ thống MAPS theo dõi chặt chẽ, hội đồng chuyên môn can thiệp kịp thời. Phụ huynh nhận báo cáo tiến bộ hàng tháng qua Zalo — minh bạch và rõ ràng.": "The MAPS system tracks closely and the specialist council steps in promptly. Parents receive monthly progress reports via Zalo — transparent and clear.",
+"Điểm cao trên trường + Tự tin giao tiếp": "High school grades + Confident communication",
+"95% học sinh tăng 1–3 điểm sau 1 học kỳ. Phát âm chuẩn, phản xạ giao tiếp tự nhiên nhờ phương pháp EPAS và luyện tập với AI Speak hàng ngày.": "95% of students improve by 1–3 points after one semester. Standard pronunciation and natural communication reflexes thanks to the EPAS method and daily AI Speak practice.",
+"Chuẩn đầu ra quốc tế": "International learning outcomes",
+"Hoàn thành lớp 9 đủ năng lực chinh phục IELTS 5.0–6.5. Quy đổi Cambridge/PET. Tương đương chuẩn đầu vào các trường THPT chuyên và quốc tế.": "Completing grade 9 gives enough ability to take on IELTS 5.0–6.5. Equivalent to Cambridge/PET. Matches the entry standard of specialized and international high schools.",
+"Con yêu thích & tự giác học": "Child enjoys learning & studies independently",
+"Học liệu phù hợp tâm lý lứa tuổi, phương pháp EPAS tạo hứng thú học tập tự nhiên. Gia sư nhiệt huyết giúp con duy trì động lực mà không cần ép buộc.": "Learning materials suited to each age group, and the EPAS method creates natural interest in learning. Enthusiastic tutors help children stay motivated without pressure.",
+"Uy tín số 1 — Bố mẹ yên tâm": "No. 1 in trust — parents can rest easy",
+"Hơn 400.000 học sinh trên 34 tỉnh thành tin dùng. Lộ trình rõ ràng, báo cáo minh bạch. Cam kết hoàn tiền 100% nếu học sinh không tiến bộ theo đúng cam kết.": "Trusted by over 400,000 students across 34 provinces. Clear learning path, transparent reporting. 100% money-back guarantee if the student does not progress as committed.",
+"Tăng điểm": "Score gain",
+"Hoàn tiền nếu không TB": "Refund if no progress",
+"Chuẩn gia sư": "Tutor standard",
+"Trải nghiệm thực tế lớp học Edupia Pro": "Experience an Edupia Pro class first-hand",
+"🎥 Video lớp học mẫu": "🎥 Demo class video",
+"🔑 Tài khoản học thử": "🔑 Trial accounts",
+"Tài khoản học thử app Edupia": "Edupia app trial account",
+"Cấp 1": "Level 1",
+"Cấp 2": "Level 2",
+"Lớp học mẫu Edupia Pro": "Edupia Pro demo class",
+"Nhập mã giới thiệu của người giới thiệu bạn": "Enter your referrer's referral code",
+"Tối thiểu 6 ký tự": "Minimum 6 characters",
+"vd: nguyenvana (chữ + số, tối thiểu 8 ký tự)": "e.g. nguyenvana (letters + digits, min. 8)"
+});
+const EN_RE = [
+  [/^(\d+) ngày$/, m => `${m[1]} ${m[1]==='1'?'day':'days'}`],
+  [/^(\d+) bản ghi$/, m => `${m[1]} ${m[1]==='1'?'record':'records'}`],
+  [/^Tháng (\d{1,2})\/(\d{4})$/, m => `${_EN_MONTHS[+m[1]-1] || 'Month '+m[1]} ${m[2]}`],
+  [/^(?:Hoa hồng|Commission) — (.+)$/, m => 'Commission — ' + _trCore(m[1])],
+  [/^Hoa hồng theo ngày \((\d+) ngày\)$/, m => `Daily commission (${m[1]} ${m[1]==='1'?'day':'days'})`],
+  [/^Hoa hồng tháng này: (.+)$/, m => 'Commission this month: ' + m[1]],
+  [/^Xin chào, (.+)!$/, m => `Hello, ${m[1]}!`],
+  [/^(\d+)% tổng lead$/, m => `${m[1]}% of total leads`],
+  [/^(\d+) ngày có dữ liệu$/, m => `${m[1]} days with data`],
+  [/^(\d+) lead hợp lệ$/, m => `${m[1]} valid leads`],
+  [/^⚠ Cần thêm (\d+) ký tự nữa$/, m => `⚠ ${m[1]} more characters needed`],
+  [/^vd: (.+)$/, m => 'e.g. ' + m[1]],
+  [/^Lead theo ngày \((.+)\)$/, m => 'Leads by Day (' + m[1] + ')'],
+];
+const _MONEY_RE = /(\d{1,3}(?:\.\d{3})+)(\s?)(₫|đ)(?![\p{L}])/gu;
+function _fixMoney(s) { return s.replace(_MONEY_RE, (a, n) => n.replace(/\./g, ',') + ' ₫'); }
+
+// core = whitespace-normalised string; returns translation or the same string
+function _trCore(core) {
+  let out = EN_DICT[core];
+  if (out === undefined) {
+    for (const [re, fn] of EN_RE) { const m = core.match(re); if (m) { out = fn(m); break; } }
+  }
+  if (out === undefined) { const f = _fixMoney(core); if (f !== core) out = f; }
+  return out === undefined ? core : out;
+}
+// returns translated string (keeping surrounding whitespace) or null if nothing to translate
+function translateVI(s) {
+  if (!s) return null;
+  const core = s.replace(/\s+/g, ' ').trim();
+  if (!core) return null;
+  const out = _trCore(core);
+  if (out === core) return null;
+  const lead  = /^[.,;:!?)]/.test(out) ? '' : (s.match(/^\s*/)[0]);
+  const trail = s.match(/\s*$/)[0];
+  return lead + out + trail;
+}
+
+const _SKIP_TAGS = { SCRIPT:1, STYLE:1, TEXTAREA:1, NOSCRIPT:1, CANVAS:1 };
+const _ATTRS = ['placeholder', 'title', 'aria-label', 'alt'];
+const _viOrig = new WeakMap(), _enSet = new WeakMap();
+
+function _tText(n) {
+  const p = n.parentNode;
+  if (!p || _SKIP_TAGS[p.nodeName]) return;
+  if (p.closest && p.closest('.lang-switcher')) return;
+  if (currentLang === 'en') {
+    const v = n.nodeValue;
+    if (_viOrig.has(n) && _enSet.get(n) === v) return;           // already translated
+    const out = translateVI(v);
+    if (out !== null) { _viOrig.set(n, v); _enSet.set(n, out); n.nodeValue = out; }
+    else if (_viOrig.has(n)) { _viOrig.delete(n); _enSet.delete(n); }
+  } else if (_viOrig.has(n)) {
+    if (_enSet.get(n) === n.nodeValue) n.nodeValue = _viOrig.get(n);
+    _viOrig.delete(n); _enSet.delete(n);
+  }
+}
+function _tAttrs(el) {
+  if (!el.hasAttribute) return;
+  for (const a of _ATTRS) {
+    if (!el.hasAttribute(a)) continue;
+    const kv = 'data-vi-' + a, ke = 'data-en-' + a;
+    if (currentLang === 'en') {
+      const v = el.getAttribute(a);
+      if (el.hasAttribute(kv) && el.getAttribute(ke) === v) continue;
+      const out = translateVI(v);
+      if (out !== null) { el.setAttribute(kv, v); el.setAttribute(ke, out); el.setAttribute(a, out); }
+    } else if (el.hasAttribute(kv)) {
+      if (el.getAttribute(ke) === el.getAttribute(a)) el.setAttribute(a, el.getAttribute(kv));
+      el.removeAttribute(kv); el.removeAttribute(ke);
+    }
+  }
+}
+function _walkNode(root) {
+  if (!root) return;
+  if (root.nodeType === 3) { _tText(root); return; }
+  if (root.nodeType !== 1 && root.nodeType !== 11) return;
+  if (root.nodeType === 1) { if (root.nodeName === 'SCRIPT' || root.nodeName === 'STYLE') return; _tAttrs(root); }
+  const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, null);
+  let n;
+  while ((n = tw.nextNode())) {
+    if (n.nodeType === 3) _tText(n);
+    else if (n.nodeName !== 'SCRIPT' && n.nodeName !== 'STYLE') _tAttrs(n);
+  }
+}
+let _pageObs = null;
+function translateAll() {
+  document.documentElement.lang = currentLang;
+  _walkNode(document.body);
+  if (_pageObs) _pageObs.takeRecords();                          // ignore our own writes
+}
+function _startPageObserver() {
+  if (_pageObs || !window.MutationObserver) return;
+  _pageObs = new MutationObserver(muts => {
+    if (currentLang !== 'en') return;
+    for (const m of muts) {
+      if (m.type === 'childList') m.addedNodes.forEach(_walkNode);
+      else if (m.type === 'characterData') _tText(m.target);
+      else if (m.type === 'attributes') _tAttrs(m.target);
+    }
+    _pageObs.takeRecords();
+  });
+  _pageObs.observe(document.body, { childList:true, subtree:true, characterData:true,
+                                    attributes:true, attributeFilter:_ATTRS });
+}
+
 // Close dropdown when clicking outside
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.lang-switcher')) {
@@ -3367,6 +3823,7 @@ document.addEventListener('click', function(e) {
 // Apply saved lang on page load
 (function() {
   const saved = localStorage.getItem('edu_lang') || 'vi';
+  _startPageObserver();
   if (saved !== 'vi') setLang(saved);
 })();
 </script>
